@@ -2,14 +2,15 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
-    namespace = "com.edurda77.impuls.tele_tv"
+    namespace = "com.edurda77.impuls.tele_tv.resources"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.edurda77.impuls.tele_tv"
+        applicationId = "com.edurda77.impuls.tele_tv.resources"
         minSdk = 21
         targetSdk = 35
         versionCode = 1
@@ -41,8 +42,6 @@ android {
 dependencies {
 
     implementation(project(":domain"))
-    implementation(project(":data"))
-    implementation(project(":resources"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -54,8 +53,10 @@ dependencies {
     implementation(libs.androidx.tv.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    //navigation
+    implementation(libs.androidx.navigation.compose)
     debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.ktor.serialization.kotlinx.json)
 }

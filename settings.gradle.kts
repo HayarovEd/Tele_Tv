@@ -21,4 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Tele_Tv"
 include(":app")
- 
+include(":domain")
+include(":data")
+include(":resources")
