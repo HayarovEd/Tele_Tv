@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Surface
-import com.edurda77.impuls.tele_tv.ui.theme.Tele_TvTheme
+import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalTvMaterial3Api::class)

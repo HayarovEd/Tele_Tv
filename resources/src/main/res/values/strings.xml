@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">resources</string>
+
+    <string name="server_error">Ошибка сервера</string>
+    <string name="unknown_error">Незивестная ошибка</string>
+    <string name="email_empty">Email не может быть пустым</string>
+    <string name="email_unvalid">Неправильный email</string>
+    <string name="error_autorization">Ошибка авторизации</string>
+    <string name="not_data">Нет данных</string>
+    <string name="password_blank">Пароль не может быть пустым</string>
+    <string name="user_disabled">Пользователь неактивен</string>
+    <string name="not_unique_id">Неверный запрос</string>
+    <string name="name_is_blank">Имя не может быть пустым</string>
+    <string name="unique_id_is_blank">Идентификатор не может быть пустым</string>
+    <string name="read_error_data">Ошибка чтения локальных данных</string>
+    <string name="write_error_data">Ошибка записи локальных данных</string>
+    <string name="not_found">Не найдены данные</string>
+    <string name="error_take_data">Ошибка получения данных</string>
+    <string name="no_access">Пользователю не назначены доступы</string>
+    <string name="no_connect">Нет соединения</string>
+    <string name="bad_request">Неверный запрос</string>
+    <string name="request_timeout">Превышен интервал ожидания</string>
 </resources>
