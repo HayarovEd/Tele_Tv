@@ -17,9 +17,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,13 +45,25 @@ import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 import com.edurda77.impuls.tele_tv.resources.uikit.UiTextField
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreenRoot(
-    viewModel: LoginScreenViewModel = koinViewModel()
+    viewModel: LoginScreenViewModel = koinViewModel(),
+    onNavigateToChannels: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                UiLoginEvents.ChannelsNavigationEvent -> {
+                    onNavigateToChannels()
+                }
+            }
+        }
+    }
 
     LoginScreenScreen(
         state = state,
@@ -68,8 +78,6 @@ fun LoginScreenScreen(
     onAction: (LoginScreenAction) -> Unit,
 ) {
     val context = LocalContext.current
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val focusRequester = remember { FocusRequester() }
@@ -82,11 +90,11 @@ fun LoginScreenScreen(
     Surface(
         modifier = modifier.fillMaxSize(),
         colors = SurfaceDefaults.colors(
-            containerColor =  MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.colorScheme.background
         ),
     ) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
@@ -99,7 +107,7 @@ fun LoginScreenScreen(
             contentAlignment = Alignment.Center
         ) {
             Column(
-                modifier = Modifier
+                modifier = modifier
                     .width(500.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .background(Color(0xFF2C3E50))
@@ -123,7 +131,7 @@ fun LoginScreenScreen(
                     textAlign = TextAlign.Center
                 )
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
@@ -132,10 +140,10 @@ fun LoginScreenScreen(
                     )
                     UiTextField(
                         modifier = modifier,
-                        content = username,
+                        content = state.username,
                         label = stringResource(R.string.login),
                         onClickContent = {
-                            username = it
+                            onAction(LoginScreenAction.OnSetUsername(it))
                         },
                         keyboardActions = KeyboardActions(
                             onNext = {
@@ -150,7 +158,7 @@ fun LoginScreenScreen(
                     )
                 }
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
@@ -158,18 +166,20 @@ fun LoginScreenScreen(
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
                     )
                     UiTextField(
-                        modifier = Modifier
+                        modifier = modifier
                             .fillMaxWidth()
                             .focusRequester(focusRequester)
                             .focusable(),
-                        content = password,
+                        content = state.password,
                         label = stringResource(R.string.password),
                         onClickContent = {
-                            password = it
+                            onAction(LoginScreenAction.OnSetPassword(it))
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                //
+                                if (state.username.isNotBlank() && state.password.isNotBlank()) {
+                                    onAction(LoginScreenAction.OnLogin)
+                                }
                                 keyboardController?.hide()
                             }
                         ),
@@ -181,13 +191,15 @@ fun LoginScreenScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button (
-                    onClick = { /*onLoginClick(username, password)*/ },
-                    modifier = Modifier
+                Spacer(modifier = modifier.height(16.dp))
+                Button(
+                    onClick = {
+                        onAction(LoginScreenAction.OnLogin)
+                    },
+                    modifier = modifier
                         .fillMaxWidth()
                         .height(48.dp),
+                    enabled = state.username.isNotBlank() && state.password.isNotBlank(),
                     colors = ButtonDefaults.colors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
@@ -196,7 +208,13 @@ fun LoginScreenScreen(
                         shape = RoundedCornerShape(8.dp)
                     )
                 ) {
-                    Text(text = stringResource(R.string.enter), fontSize = 16.sp)
+                    Text(
+                        modifier = modifier
+                            .fillMaxWidth(),
+                        text = if (state.isLoading) stringResource(R.string.checking) else stringResource(R.string.enter),
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }
