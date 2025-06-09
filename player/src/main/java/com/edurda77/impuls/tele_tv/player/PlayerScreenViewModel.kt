@@ -1,6 +1,5 @@
 package com.edurda77.impuls.tele_tv.player
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
@@ -68,8 +67,11 @@ class PlayerScreenViewModel(
                             tvChannels = resultTvChannels.data
                         )
                             .updateState()
-                        resultTvChannels.data.forEach {
-                            Log.d("TELE TV TEST", "channel $it")
+                        if (resultTvChannels.data.isNotEmpty()) {
+                            _state.value.copy(
+                                selectedIndex = 0
+                            )
+                                .updateState()
                         }
                     }
                 }

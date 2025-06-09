@@ -58,11 +58,4 @@ dependencies {
 
     //Koin
     implementation(libs.koin.androidx.compose)
-
-    // Coil
-    implementation(libs.coil.compose)
-
-    // Media3
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.ui)
 }

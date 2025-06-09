@@ -9,4 +9,5 @@ data class PlayerScreenState(
     val tvChannels: List<TvChannel> = emptyList(),
     val isLoading: Boolean = false,
     val message: UiText? = null,
+    val selectedIndex:Int = -1,
 )
