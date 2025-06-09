@@ -24,7 +24,7 @@ class DataStoreRepositoryImpl(
             preferences[FIELD_LABEL_USERNAME] = username
         }
         dataStore.edit { preferences ->
-            preferences[FIELD_LABEL_PASSWORD] = username
+            preferences[FIELD_LABEL_PASSWORD] = password
         }
     }
 

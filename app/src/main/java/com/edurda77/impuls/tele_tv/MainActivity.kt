@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.edurda77.impuls.tele_tv.login.LoginScreenRoot
+import com.edurda77.impuls.tele_tv.navigation.NavController
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 
 class MainActivity : ComponentActivity() {
@@ -11,9 +12,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Tele_TvTheme {
-                LoginScreenRoot(
-                    onNavigateToChannels = {}
-                )
+                NavController()
             }
         }
     }
