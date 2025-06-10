@@ -6,6 +6,8 @@ import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -17,6 +19,9 @@ class PlayerScreenViewModel(
     private val remoteRepository: RemoteRepository,
     private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
+
+
+    private var job: Job? = null
 
 
     private val _state = MutableStateFlow(PlayerScreenState())
@@ -32,7 +37,38 @@ class PlayerScreenViewModel(
 
     fun onAction(action: PlayerScreenAction) {
         when (action) {
-            else -> TODO("Handle actions")
+            PlayerScreenAction.OnShowTitle -> {
+                startTimer()
+            }
+
+            PlayerScreenAction.DecrimentTvChannel -> {
+                if (state.value.tvChannels[state.value.selectedIndex]==state.value.tvChannels.first()) {
+                    _state.value.copy(
+                        selectedIndex = state.value.tvChannels.size-1
+                    )
+                        .updateState()
+                } else {
+                    _state.value.copy(
+                        selectedIndex = state.value.selectedIndex-1
+                    )
+                        .updateState()
+                }
+                startTimer()
+            }
+            PlayerScreenAction.IncrimentTvChannel -> {
+                if (state.value.tvChannels[state.value.selectedIndex]==state.value.tvChannels.last()) {
+                    _state.value.copy(
+                        selectedIndex = 0
+                    )
+                        .updateState()
+                } else {
+                    _state.value.copy(
+                        selectedIndex = state.value.selectedIndex+1
+                    )
+                        .updateState()
+                }
+                startTimer()
+            }
         }
     }
 
@@ -72,6 +108,7 @@ class PlayerScreenViewModel(
                                 selectedIndex = 0
                             )
                                 .updateState()
+                            startTimer()
                         }
                     }
                 }
@@ -79,9 +116,32 @@ class PlayerScreenViewModel(
         }
     }
 
+    private fun startTimer() {
+        job?.cancel()
+        job = viewModelScope.launch {
+            _state.value.copy(
+                isVisibleTitle = true
+            )
+                .updateState()
+            (4 downTo 0).forEach { _ ->
+                delay(1000)
+            }
+            _state.value.copy(
+                isVisibleTitle = false
+            )
+                .updateState()
+        }
+        job?.start()
+    }
+
     private fun PlayerScreenState.updateState() {
         _state.update {
             this
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        job?.cancel()
     }
 }
