@@ -1,5 +1,6 @@
 package com.edurda77.impuls.tele_tv.player
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +35,12 @@ fun ChannelMenu(
 
     LaunchedEffect(selectedIndex) {
         if (selectedIndex >= 0) {
-            scrollState.scrollToItem(selectedIndex)
+            val countVisible = scrollState.layoutInfo.visibleItemsInfo.size
+            val a = when (selectedIndex) {
+                in 0..<countVisible/2  -> 0
+                else -> selectedIndex - countVisible/2
+            }
+            scrollState.animateScrollToItem(a)
         }
     }
 

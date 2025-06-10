@@ -18,7 +18,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -70,7 +72,7 @@ fun PlayerScreenScreen(
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused = interactionSource.collectIsFocusedAsState().value
-   // var isMenuVisible by remember { mutableStateOf(false) }
+    var isMenuVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(exoPlayer, state.tvChannels, state.selectedIndex) {
         state.credintial?.let {
@@ -110,7 +112,8 @@ fun PlayerScreenScreen(
                             }
 
                             KeyEvent.KEYCODE_DPAD_LEFT -> {
-                                onAction(PlayerScreenAction.ShowSideMenu)
+                                isMenuVisible = true
+                               // onAction(PlayerScreenAction.ShowSideMenu)
                                 // onChangeFocus(FocusDirection.Exit)
                             }
                             KeyEvent.KEYCODE_ENTER -> {
@@ -154,7 +157,7 @@ fun PlayerScreenScreen(
                 }
             }
         }
-        if (state.isVisibleSideMenu) {
+        if (isMenuVisible) {
             ChannelMenu(
                 channels = state.tvChannels,
                 selectIndex = { index ->

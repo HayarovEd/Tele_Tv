@@ -75,11 +75,11 @@ class PlayerScreenViewModel(
                     selectedIndex = action.index
                 )
                     .updateState()
-                startTimerVisibleSideMenu()
+                //startTimerVisibleSideMenu()
             }
 
             PlayerScreenAction.ShowSideMenu -> {
-                startTimerVisibleSideMenu()
+               // startTimerVisibleSideMenu()
             }
         }
     }
