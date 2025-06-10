@@ -6,6 +6,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +18,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -62,6 +67,11 @@ fun PlayerScreenScreen(
     val context = LocalContext.current
     val exoPlayer = rememberPlayer(context)
 
+    val focusRequester = remember { FocusRequester() }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused = interactionSource.collectIsFocusedAsState().value
+   // var isMenuVisible by remember { mutableStateOf(false) }
+
     LaunchedEffect(exoPlayer, state.tvChannels, state.selectedIndex) {
         state.credintial?.let {
             exoPlayer.setMediaSource(
@@ -73,40 +83,45 @@ fun PlayerScreenScreen(
             exoPlayer.prepare()
         }
     }
-
     Box(
-        modifier = modifier
-            .focusable()
-            .onKeyEvent {
-                if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
-                    when (it.nativeKeyEvent.keyCode) {
-                        KeyEvent.KEYCODE_DPAD_DOWN -> {
-                            onAction(PlayerScreenAction.IncrimentTvChannel)
-                        }
 
-                        KeyEvent.KEYCODE_DPAD_UP -> {
-                            onAction(PlayerScreenAction.DecrimentTvChannel)
-                        }
-
-                        KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                            onAction(PlayerScreenAction.OnShowTitle)
-                        }
-
-                        KeyEvent.KEYCODE_DPAD_LEFT -> {
-                            // onChangeFocus(FocusDirection.Exit)
-                        }
-                    }
-                }
-                true
-            },
     ) {
         PlayerSurface(
+            modifier = modifier
+                .resizeWithContentScale(
+                    contentScale = ContentScale.Fit,
+                    sourceSizeDp = null
+                )
+                .focusRequester(focusRequester)
+                .focusable(interactionSource = interactionSource)
+                .onKeyEvent {
+                    if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
+                        when (it.nativeKeyEvent.keyCode) {
+                            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                                onAction(PlayerScreenAction.IncrimentTvChannel)
+                            }
+
+                            KeyEvent.KEYCODE_DPAD_UP -> {
+                                onAction(PlayerScreenAction.DecrimentTvChannel)
+                            }
+
+                            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                                onAction(PlayerScreenAction.OnShowTitle)
+                            }
+
+                            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                                onAction(PlayerScreenAction.ShowSideMenu)
+                                // onChangeFocus(FocusDirection.Exit)
+                            }
+                            KeyEvent.KEYCODE_ENTER -> {
+                                // onChangeFocus(FocusDirection.Exit)
+                            }
+                        }
+                    }
+                    true
+                },
             player = exoPlayer,
             surfaceType = SURFACE_TYPE_TEXTURE_VIEW,
-            modifier = modifier.resizeWithContentScale(
-                contentScale = ContentScale.Fit,
-                sourceSizeDp = null
-            )
         )
         AnimatedVisibility(
             visible = state.isVisibleTitle,
@@ -138,6 +153,15 @@ fun PlayerScreenScreen(
                     )
                 }
             }
+        }
+        if (state.isVisibleSideMenu) {
+            ChannelMenu(
+                channels = state.tvChannels,
+                selectIndex = { index ->
+                    onAction(PlayerScreenAction.UpdateSelectedIndex(index))
+                },
+                selectedIndex = state.selectedIndex,
+            )
         }
     }
 }

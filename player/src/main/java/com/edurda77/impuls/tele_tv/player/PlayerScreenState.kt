@@ -10,5 +10,6 @@ data class PlayerScreenState(
     val isLoading: Boolean = false,
     val message: UiText? = null,
     val selectedIndex:Int = -1,
-    val isVisibleTitle: Boolean = false
+    val isVisibleTitle: Boolean = false,
+    val isVisibleSideMenu: Boolean = false
 )

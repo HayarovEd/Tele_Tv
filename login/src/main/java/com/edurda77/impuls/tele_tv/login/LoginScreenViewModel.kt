@@ -24,13 +24,14 @@ class LoginScreenViewModel(
     private val _state = MutableStateFlow(LoginScreenState())
     val state = _state
         .onStart {
-
+            loadLocalData()
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = LoginScreenState()
         )
+
 
     private val _eventFlow = MutableSharedFlow<UiLoginEvents>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -88,6 +89,19 @@ class LoginScreenViewModel(
                     }
                     _eventFlow.emit(UiLoginEvents.ChannelsNavigationEvent)
                 }
+            }
+        }
+    }
+
+    private fun loadLocalData() {
+        viewModelScope.launch {
+            val credintial = dataStoreRepository.getCredintial()
+            credintial?.let {
+                _state.value.copy(
+                    username = credintial.username,
+                    password = credintial.password
+                )
+                    .updateState()
             }
         }
     }
