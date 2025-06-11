@@ -4,14 +4,15 @@ import android.util.Log
 import android.view.KeyEvent
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -112,26 +113,23 @@ fun PlayerScreenScreen(
                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                         when (it.nativeKeyEvent.keyCode) {
                             KeyEvent.KEYCODE_DPAD_DOWN -> {
-                                //onAction(PlayerScreenAction.IncrimentTvChannel)
+                                onAction(PlayerScreenAction.IncrimentTvChannel)
                             }
 
                             KeyEvent.KEYCODE_DPAD_UP -> {
-                                //onAction(PlayerScreenAction.DecrimentTvChannel)
+                                onAction(PlayerScreenAction.DecrimentTvChannel)
                             }
 
                             KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                               // onAction(PlayerScreenAction.OnShowTitle)
+                                onAction(PlayerScreenAction.OnShowTitle)
                             }
 
-                            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                            KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_ENTER -> {
                                 isMenuVisible = true
                                 focusManager.moveFocus(FocusDirection.Left)
-                               // onAction(PlayerScreenAction.ShowSideMenu)
+                                // onAction(PlayerScreenAction.ShowSideMenu)
                                 // onChangeFocus(FocusDirection.Exit)
 
-                            }
-                            KeyEvent.KEYCODE_ENTER -> {
-                                // onChangeFocus(FocusDirection.Exit)
                             }
                         }
                     }
@@ -142,13 +140,12 @@ fun PlayerScreenScreen(
         )
         AnimatedVisibility(
             visible = state.isVisibleTitle,
-            modifier = modifier.align(Alignment.TopStart),
-            enter = slideInVertically { it },
-            exit = slideOutVertically { it }
+            modifier = modifier.align(Alignment.TopEnd),
+            enter = slideInVertically { 0 },
+            exit = slideOutVertically { -it }
         ) {
             Row(
                 modifier = modifier
-                    .fillMaxWidth()
                     .padding(20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -171,7 +168,12 @@ fun PlayerScreenScreen(
                 }
             }
         }
-        if (isMenuVisible) {
+        AnimatedVisibility(
+            visible = isMenuVisible,
+            modifier = modifier.align(Alignment.CenterStart),
+            enter = slideInHorizontally { 0 },
+            exit = slideOutHorizontally { -it }
+        ) {
             ChannelMenu(
                 modifier = modifier
                     .focusRequester(focusRequester)
@@ -186,6 +188,7 @@ fun PlayerScreenScreen(
                                     isMenuVisible = false
                                     focusManager.moveFocus(FocusDirection.Right)
                                 }
+
                                 KeyEvent.KEYCODE_DPAD_DOWN -> {
                                     onAction(PlayerScreenAction.IncrimentTvChannel)
                                 }
