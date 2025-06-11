@@ -1,6 +1,5 @@
 package com.edurda77.impuls.tele_tv.data.repository
 
-import android.util.Log
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
 import com.edurda77.impuls.tele_tv.domain.utils.DataError
@@ -77,7 +76,6 @@ class RemoteRepositoryImpl(
                 }.call
                 if (response.response.status.isSuccess()) {
                     val fileContent = response.response.bodyAsText()
-                    Log.d("TELE TV TEST", "file $fileContent")
                     ResultWork.Success(parseM3U(fileContent))
                 } else {
                     ResultWork.Error(DataError.Network.UNAUTHORIZED)
