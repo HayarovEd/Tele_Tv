@@ -42,31 +42,34 @@ class PlayerScreenViewModel(
             }
 
             PlayerScreenAction.DecrimentTvChannel -> {
-                if (state.value.tvChannels[state.value.selectedIndex]==state.value.tvChannels.first()) {
+                if (state.value.tvChannels[state.value.selectedIndex] == state.value.tvChannels.first()) {
                     _state.value.copy(
-                        selectedIndex = state.value.tvChannels.size-1
+                        selectedIndex = state.value.tvChannels.size - 1
                     )
                         .updateState()
                 } else {
                     _state.value.copy(
-                        selectedIndex = state.value.selectedIndex-1
+                        selectedIndex = state.value.selectedIndex - 1
                     )
                         .updateState()
                 }
+                saveLastChannel()
                 startTimer()
             }
+
             PlayerScreenAction.IncrimentTvChannel -> {
-                if (state.value.tvChannels[state.value.selectedIndex]==state.value.tvChannels.last()) {
+                if (state.value.tvChannels[state.value.selectedIndex] == state.value.tvChannels.last()) {
                     _state.value.copy(
                         selectedIndex = 0
                     )
                         .updateState()
                 } else {
                     _state.value.copy(
-                        selectedIndex = state.value.selectedIndex+1
+                        selectedIndex = state.value.selectedIndex + 1
                     )
                         .updateState()
                 }
+                saveLastChannel()
                 startTimer()
             }
 
@@ -75,11 +78,12 @@ class PlayerScreenViewModel(
                     selectedIndex = action.index
                 )
                     .updateState()
+                saveLastChannel()
                 //startTimerVisibleSideMenu()
             }
 
             PlayerScreenAction.ShowSideMenu -> {
-               // startTimerVisibleSideMenu()
+                // startTimerVisibleSideMenu()
             }
         }
     }
@@ -90,6 +94,14 @@ class PlayerScreenViewModel(
             isLoading = true,
         )
             .updateState()
+        viewModelScope.launch {
+            dataStoreRepository.getLastChannel()?.let {
+                _state.value.copy(
+                    selectedIndex = it,
+                )
+                    .updateState()
+            }
+        }
         viewModelScope.launch {
             val credintial = dataStoreRepository.getCredintial()
             _state.value.copy(
@@ -115,11 +127,12 @@ class PlayerScreenViewModel(
                             tvChannels = resultTvChannels.data
                         )
                             .updateState()
-                        if (resultTvChannels.data.isNotEmpty()) {
+                        if (resultTvChannels.data.isNotEmpty() && state.value.selectedIndex == -1) {
                             _state.value.copy(
                                 selectedIndex = 0
                             )
                                 .updateState()
+
                             startTimer()
                         }
                     }
@@ -162,6 +175,13 @@ class PlayerScreenViewModel(
                 .updateState()
         }
         job2?.start()
+    }
+
+    private fun saveLastChannel() {
+        viewModelScope.launch {
+            delay(300)
+            dataStoreRepository.saveLastChannel(state.value.selectedIndex)
+        }
     }
 
     private fun PlayerScreenState.updateState() {

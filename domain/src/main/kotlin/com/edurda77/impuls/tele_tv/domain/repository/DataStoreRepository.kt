@@ -6,4 +6,6 @@ interface DataStoreRepository {
     suspend fun saveCredintial(username: String, password: String)
     suspend fun getCredintial(): Credintial?
     suspend fun clearCredintial()
+    suspend fun saveLastChannel(number: Int)
+    suspend fun getLastChannel(): Int?
 }
