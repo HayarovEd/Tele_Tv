@@ -5,17 +5,10 @@ import android.view.KeyEvent
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,7 +25,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
@@ -41,9 +33,6 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Text
-import coil.compose.AsyncImage
 import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 import kotlinx.coroutines.delay
@@ -141,33 +130,14 @@ fun PlayerScreenScreen(
         )
         AnimatedVisibility(
             visible = state.isVisibleTitle,
-            modifier = modifier.align(Alignment.TopEnd),
-            enter = slideInVertically { 0 },
-            exit = slideOutVertically { -it }
+            modifier = modifier.align(Alignment.CenterEnd),
+            enter = slideInHorizontally { it },
+            exit = slideOutHorizontally { it }
         ) {
-            Row(
-                modifier = modifier
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (state.tvChannels.isNotEmpty()) {
-                    state.tvChannels[state.selectedIndex].tvgLogo?.let {
-                        AsyncImage(
-                            modifier = modifier.size(50.dp),
-                            model = state.tvChannels[state.selectedIndex].tvgLogo,
-                            contentDescription = "",
-                            contentScale = ContentScale.Fit
-                        )
-                    }
-                    Spacer(modifier = modifier.width(15.dp))
-                    Text(
-                        modifier = modifier,
-                        text = state.tvChannels[state.selectedIndex].tvgChno,
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
+            DrumMenu(
+                channels = state.tvChannels,
+                selectedIndex = state.selectedIndex
+            )
         }
         AnimatedVisibility(
             visible = isMenuVisible,

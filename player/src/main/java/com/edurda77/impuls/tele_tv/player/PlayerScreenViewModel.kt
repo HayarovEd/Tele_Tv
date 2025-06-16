@@ -22,7 +22,6 @@ class PlayerScreenViewModel(
 
 
     private var job: Job? = null
-    private var job2: Job? = null
 
     private val _state = MutableStateFlow(PlayerScreenState())
     val state = _state
@@ -79,7 +78,7 @@ class PlayerScreenViewModel(
                 )
                     .updateState()
                 saveLastChannel()
-                startTimer()
+                //startTimer()
             }
             PlayerScreenAction.DecrimentFocusedIndex -> {
                 if (state.value.tvChannels[state.value.focusedIndex] == state.value.tvChannels.first()) {
@@ -183,24 +182,6 @@ class PlayerScreenViewModel(
         job?.start()
     }
 
-    private fun startTimerVisibleSideMenu() {
-        job2?.cancel()
-        job2 = viewModelScope.launch {
-            _state.value.copy(
-                isVisibleSideMenu = true
-            )
-                .updateState()
-            (3 downTo 0).forEach { _ ->
-                delay(1000)
-            }
-            _state.value.copy(
-                isVisibleSideMenu = false
-            )
-                .updateState()
-        }
-        job2?.start()
-    }
-
     private fun saveLastChannel() {
         viewModelScope.launch {
             delay(300)
@@ -217,6 +198,5 @@ class PlayerScreenViewModel(
     override fun onCleared() {
         super.onCleared()
         job?.cancel()
-        job2?.cancel()
     }
 }
