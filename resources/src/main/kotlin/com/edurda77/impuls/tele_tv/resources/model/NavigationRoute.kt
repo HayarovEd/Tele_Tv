@@ -12,5 +12,8 @@ sealed class NavigationRoute {
     @Serializable
     data object Player : NavigationRoute()
 
+    @Serializable
+    data object Channels : NavigationRoute()
+
 
 }

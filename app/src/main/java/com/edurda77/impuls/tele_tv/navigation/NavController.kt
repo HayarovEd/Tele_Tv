@@ -4,13 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.edurda77.impuls.tele_tv.channels.ChannelsScreenRoot
 import com.edurda77.impuls.tele_tv.login.LoginScreenRoot
 import com.edurda77.impuls.tele_tv.player.PlayerScreenRoot
 import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
 
 @Composable
 fun NavController(
-    startDestination: NavigationRoute = NavigationRoute.Login,
+    startDestination: NavigationRoute,
 ) {
     val navController = rememberNavController()
 
@@ -29,6 +30,8 @@ fun NavController(
         composable<NavigationRoute.Player> {
             PlayerScreenRoot()
         }
-
+        composable<NavigationRoute.Channels> {
+            ChannelsScreenRoot()
+        }
     }
 }
