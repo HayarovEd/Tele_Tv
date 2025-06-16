@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -80,14 +79,16 @@ fun PlayerScreenScreen(
     var isMenuVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(exoPlayer, state.tvChannels, state.selectedIndex) {
-        state.credintial?.let {
-            exoPlayer.setMediaSource(
-                intoMediaItem(
-                    credintial = state.credintial,
-                    uri = state.tvChannels[state.selectedIndex].url
+        if (state.tvChannels.isNotEmpty()) {
+            state.credintial?.let {
+                exoPlayer.setMediaSource(
+                    intoMediaItem(
+                        credintial = state.credintial,
+                        uri = state.tvChannels[state.selectedIndex].url
+                    )
                 )
-            )
-            exoPlayer.prepare()
+                exoPlayer.prepare()
+            }
         }
     }
 
@@ -178,11 +179,12 @@ fun PlayerScreenScreen(
                 modifier = modifier
                     .focusRequester(focusRequester)
                     .focusable(interactionSource = interactionSource)
-                    .onFocusChanged {
+                    /*.onFocusChanged {
                         Log.d("TELE TV TEST", "isFocused ${it.isFocused}")
-                    }
+                    }*/
                     .onKeyEvent {
                         if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
+                            Log.d("REST TELE TV", "action ${it.nativeKeyEvent.keyCode}")
                             when (it.nativeKeyEvent.keyCode) {
                                 KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_BACK -> {
                                     isMenuVisible = false
@@ -190,21 +192,23 @@ fun PlayerScreenScreen(
                                 }
 
                                 KeyEvent.KEYCODE_DPAD_DOWN -> {
-                                    onAction(PlayerScreenAction.IncrimentTvChannel)
+                                    onAction(PlayerScreenAction.IncrimentFocusedIndex)
                                 }
 
                                 KeyEvent.KEYCODE_DPAD_UP -> {
-                                    onAction(PlayerScreenAction.DecrimentTvChannel)
+                                    onAction(PlayerScreenAction.DecrimentFocusedIndex)
+                                }
+
+                                KeyEvent.KEYCODE_DPAD_CENTER -> {
+                                    onAction(PlayerScreenAction.UpdateSelectedIndex)
                                 }
                             }
                         }
                         true
                     },
                 channels = state.tvChannels,
-                selectIndex = { index ->
-                    onAction(PlayerScreenAction.UpdateSelectedIndex(index))
-                },
                 selectedIndex = state.selectedIndex,
+                focusedIndex = state.focusedIndex
             )
         }
     }

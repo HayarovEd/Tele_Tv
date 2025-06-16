@@ -1,5 +1,6 @@
 package com.edurda77.impuls.tele_tv.player
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,10 +11,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.MaterialTheme
@@ -26,6 +29,7 @@ import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 fun ChannelItem(
     channel: TvChannel,
     isCurrent: Boolean,
+    isFocused: Boolean,
     onSelected: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -43,7 +47,14 @@ fun ChannelItem(
                 }
                 true
             },
-       // shape = CardShape(),
+        border = CardDefaults.border(
+            border = Border(
+                border = BorderStroke(
+                    color = if (isFocused) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
+                    width = 3.dp
+                )
+            )
+        ),
         colors = CardDefaults.colors(
             containerColor = if (isCurrent) MaterialTheme.colorScheme.primaryContainer
             else MaterialTheme.colorScheme.surfaceVariant
@@ -78,8 +89,8 @@ fun ChannelItem(
 
 @Preview
 @Composable
-private fun ChannelItemView()  {
-    Tele_TvTheme{
+private fun ChannelItemView() {
+    Tele_TvTheme {
         ChannelItem(
             channel = TvChannel(
                 tvgId = "111",
@@ -89,15 +100,16 @@ private fun ChannelItemView()  {
                 url = ""
             ),
             isCurrent = true,
-            onSelected = {}
+            onSelected = {},
+            isFocused = false
         )
     }
 }
 
 @Preview
 @Composable
-private fun ChannelItemView2()  {
-    Tele_TvTheme  {
+private fun ChannelItemView2() {
+    Tele_TvTheme {
         ChannelItem(
             channel = TvChannel(
                 tvgId = "111",
@@ -107,7 +119,8 @@ private fun ChannelItemView2()  {
                 url = ""
             ),
             isCurrent = false,
-            onSelected = {}
+            onSelected = {},
+            isFocused = true
         )
     }
 }

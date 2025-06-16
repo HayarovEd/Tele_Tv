@@ -4,6 +4,7 @@ sealed interface PlayerScreenAction {
     data object OnShowTitle:PlayerScreenAction
     data object DecrimentTvChannel:PlayerScreenAction
     data object IncrimentTvChannel:PlayerScreenAction
-    class UpdateSelectedIndex(val index: Int):PlayerScreenAction
-    data object ShowSideMenu : PlayerScreenAction
+    data object DecrimentFocusedIndex:PlayerScreenAction
+    data object IncrimentFocusedIndex:PlayerScreenAction
+    data object UpdateSelectedIndex:PlayerScreenAction
 }

@@ -75,15 +75,37 @@ class PlayerScreenViewModel(
 
             is PlayerScreenAction.UpdateSelectedIndex -> {
                 _state.value.copy(
-                    selectedIndex = action.index
+                    selectedIndex = state.value.focusedIndex
                 )
                     .updateState()
                 saveLastChannel()
-                //startTimerVisibleSideMenu()
+                startTimer()
             }
-
-            PlayerScreenAction.ShowSideMenu -> {
-                // startTimerVisibleSideMenu()
+            PlayerScreenAction.DecrimentFocusedIndex -> {
+                if (state.value.tvChannels[state.value.focusedIndex] == state.value.tvChannels.first()) {
+                    _state.value.copy(
+                        focusedIndex = state.value.tvChannels.size - 1
+                    )
+                        .updateState()
+                } else {
+                    _state.value.copy(
+                        focusedIndex = state.value.focusedIndex - 1
+                    )
+                        .updateState()
+                }
+            }
+            PlayerScreenAction.IncrimentFocusedIndex -> {
+                if (state.value.tvChannels[state.value.focusedIndex] == state.value.tvChannels.last()) {
+                    _state.value.copy(
+                        focusedIndex = 0
+                    )
+                        .updateState()
+                } else {
+                    _state.value.copy(
+                        focusedIndex = state.value.focusedIndex + 1
+                    )
+                        .updateState()
+                }
             }
         }
     }
@@ -98,6 +120,7 @@ class PlayerScreenViewModel(
             dataStoreRepository.getLastChannel()?.let {
                 _state.value.copy(
                     selectedIndex = it,
+                    focusedIndex = it
                 )
                     .updateState()
             }
@@ -129,7 +152,8 @@ class PlayerScreenViewModel(
                             .updateState()
                         if (resultTvChannels.data.isNotEmpty() && state.value.selectedIndex == -1) {
                             _state.value.copy(
-                                selectedIndex = 0
+                                selectedIndex = 0,
+                                focusedIndex = 0
                             )
                                 .updateState()
 

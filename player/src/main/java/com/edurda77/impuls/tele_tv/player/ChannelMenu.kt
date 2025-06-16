@@ -28,19 +28,19 @@ import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 fun ChannelMenu(
     channels: List<TvChannel>,
     selectedIndex: Int,
-    selectIndex: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    focusedIndex: Int
 ) {
     val scrollState = rememberLazyListState()
 
-    LaunchedEffect(selectedIndex) {
-        if (selectedIndex >= 0) {
+    LaunchedEffect(focusedIndex) {
+        if (focusedIndex >= 0) {
             val countVisible = scrollState.layoutInfo.visibleItemsInfo.size
-            val a = when (selectedIndex) {
+            val scrolledIndex = when (focusedIndex) {
                 in 0..<countVisible/2  -> 0
-                else -> selectedIndex - countVisible/2
+                else -> focusedIndex - countVisible/2
             }
-            scrollState.animateScrollToItem(a)
+            scrollState.scrollToItem(scrolledIndex)
         }
     }
 
@@ -68,7 +68,8 @@ fun ChannelMenu(
                     ChannelItem(
                         channel = channel,
                         isCurrent = channel == channels[selectedIndex],
-                        onSelected = { selectIndex(index) },
+                        isFocused = channel == channels[focusedIndex],
+                        onSelected = { /*selectIndex(index) */},
                     )
                 }
             }
@@ -93,7 +94,7 @@ private fun ChannelMenuView() {
         ChannelMenu(
             channels = channels,
             selectedIndex = 1,
-            selectIndex = {},
+            focusedIndex = 2,
         )
     }
 }
