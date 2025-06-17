@@ -1,5 +1,6 @@
 package com.edurda77.impuls.tele_tv.channels
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -53,6 +54,8 @@ fun ChannelsScreenRoot(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    Log.d("REST TELE TV", "focused index ${state.focusedIndex}")
+
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -84,11 +87,11 @@ private fun ChannelsScreenScreen(
                 in 0..<countVisible/2  -> 0
                 else -> state.focusedIndex - countVisible/2
             }
-            scrollState.scrollToItem(scrolledIndex)
+            scrollState.scrollToItem(state.focusedIndex)
         }
     }
 
-    LaunchedEffect(state.focusedIndex) {
+    /*LaunchedEffect(state.focusedIndex) {
         if (state.focusedIndex >= 0) {
             val countVisible = scrollState.layoutInfo.visibleItemsInfo.size
             val scrolledIndex = when (state.focusedIndex) {
@@ -97,7 +100,7 @@ private fun ChannelsScreenScreen(
             }
             scrollState.animateScrollToItem(scrolledIndex)
         }
-    }
+    }*/
 
 
     Surface(

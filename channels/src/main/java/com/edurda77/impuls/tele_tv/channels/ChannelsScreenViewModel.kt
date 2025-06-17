@@ -1,6 +1,5 @@
 package com.edurda77.impuls.tele_tv.channels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
@@ -122,8 +121,8 @@ class ChannelsScreenViewModel(
                     )
                         .updateState()
                     val currentVersion = servoceRepository.getVersionName()
-                    Log.d("REST TELE TV", "release ${result.data.lastVersion}")
-                    Log.d("REST TELE TV", "currentVersion $currentVersion")
+                    //Log.d("REST TELE TV", "release ${result.data.lastVersion}")
+                    //Log.d("REST TELE TV", "currentVersion $currentVersion")
                     currentVersion?.let {
                         _state.value.copy(
                             enableUpdate = currentVersion<result.data.lastVersion
