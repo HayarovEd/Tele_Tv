@@ -20,4 +20,10 @@
     <string name="no_connect">Нет соединения</string>
     <string name="bad_request">Неверный запрос</string>
     <string name="request_timeout">Превышен интервал ожидания</string>
+
+    <string name="enter_to_system">Вход</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="enter">Войти</string>
+    <string name="checking">Проверка…</string>
 </resources>

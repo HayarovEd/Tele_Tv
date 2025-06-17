@@ -42,13 +42,15 @@ import java.util.Collections
 
 @Composable
 fun PlayerScreenRoot(
-    viewModel: PlayerScreenViewModel = koinViewModel()
+    viewModel: PlayerScreenViewModel = koinViewModel(),
+    onNavigateToChannels: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     PlayerScreenScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        onNavigateToChannels = onNavigateToChannels
     )
 }
 
@@ -58,6 +60,7 @@ fun PlayerScreenScreen(
     modifier: Modifier = Modifier,
     state: PlayerScreenState,
     onAction: (PlayerScreenAction) -> Unit,
+    onNavigateToChannels: () -> Unit
 ) {
     val context = LocalContext.current
     val exoPlayer = rememberPlayer(context)
@@ -99,6 +102,7 @@ fun PlayerScreenScreen(
                 .focusable(interactionSource = interactionSource)
                 .onKeyEvent {
                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
+                        Log.d("REST TELE TV", "action ${it.nativeKeyEvent.keyCode}")
                         when (it.nativeKeyEvent.keyCode) {
                             KeyEvent.KEYCODE_DPAD_DOWN -> {
                                 onAction(PlayerScreenAction.IncrimentTvChannel)
@@ -117,7 +121,9 @@ fun PlayerScreenScreen(
                                 focusManager.moveFocus(FocusDirection.Left)
                                 // onAction(PlayerScreenAction.ShowSideMenu)
                                 // onChangeFocus(FocusDirection.Exit)
-
+                            }
+                            KeyEvent.KEYCODE_BACK -> {
+                               onNavigateToChannels()
                             }
                         }
                     }
@@ -152,7 +158,6 @@ fun PlayerScreenScreen(
                     }*/
                     .onKeyEvent {
                         if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
-                            Log.d("REST TELE TV", "action ${it.nativeKeyEvent.keyCode}")
                             when (it.nativeKeyEvent.keyCode) {
                                 KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_BACK -> {
                                     isMenuVisible = false
@@ -188,7 +193,8 @@ private fun Preview() {
     Tele_TvTheme {
         PlayerScreenScreen(
             state = PlayerScreenState(),
-            onAction = {}
+            onAction = {},
+            onNavigateToChannels = {}
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.edurda77.impuls.tele_tv.channels
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +49,8 @@ fun ChannelsScreenRoot(
     viewModel: ChannelsScreenViewModel = koinViewModel(),
     onNavigateTopPlayer: () -> Unit
 ) {
+    BackHandler {  }
+
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = true) {

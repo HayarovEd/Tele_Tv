@@ -1,6 +1,8 @@
 package com.edurda77.impuls.tele_tv.login
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +27,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -38,7 +41,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
-import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
@@ -47,6 +49,7 @@ import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 import com.edurda77.impuls.tele_tv.resources.uikit.UiTextField
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
+import com.edurda77.impuls.tele_tv.resources.R
 
 @Composable
 fun LoginScreenRoot(
@@ -54,6 +57,8 @@ fun LoginScreenRoot(
     onNavigateToChannels: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    BackHandler {  }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -115,6 +120,14 @@ fun LoginScreenScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo2),
+                    contentDescription = "",
+                    contentScale = ContentScale.FillWidth,
+                    modifier = modifier
+                        .width(64.dp)
+                )/*
+
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_dialog_email),
                     contentDescription = "",
@@ -122,7 +135,7 @@ fun LoginScreenScreen(
                     modifier = Modifier
                         .width(64.dp)
                         .height(64.dp)
-                )
+                )*/
 
                 Text(
                     text = stringResource(R.string.enter_to_system),
