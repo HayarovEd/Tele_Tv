@@ -104,11 +104,11 @@ fun PlayerScreenScreen(
                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                         Log.d("REST TELE TV", "action ${it.nativeKeyEvent.keyCode}")
                         when (it.nativeKeyEvent.keyCode) {
-                            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                            KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_PAGE_UP -> {
                                 onAction(PlayerScreenAction.IncrimentTvChannel)
                             }
 
-                            KeyEvent.KEYCODE_DPAD_UP -> {
+                            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_DOWN -> {
                                 onAction(PlayerScreenAction.DecrimentTvChannel)
                             }
 
