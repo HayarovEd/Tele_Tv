@@ -20,7 +20,7 @@ fun NavController(
         composable<NavigationRoute.Login> {
             LoginScreenRoot(
                 onNavigateToChannels = {
-                    navController.navigate(NavigationRoute.Player)
+                    navController.navigate(NavigationRoute.Channels)
                 }
             )
         }
@@ -31,7 +31,11 @@ fun NavController(
             PlayerScreenRoot()
         }
         composable<NavigationRoute.Channels> {
-            ChannelsScreenRoot()
+            ChannelsScreenRoot(
+                onNavigateTopPlayer = {
+                    navController.navigate(NavigationRoute.Player)
+                }
+            )
         }
     }
 }

@@ -2,23 +2,29 @@ package com.edurda77.impuls.tele_tv.channels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
+import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
+import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
+import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class ChannelsScreenViewModel : ViewModel() {
-
-    private var hasLoadedInitialData = false
+class ChannelsScreenViewModel(
+    private val remoteRepository: RemoteRepository,
+    private val dataStoreRepository: DataStoreRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(ChannelsScreenState())
     val state = _state
         .onStart {
-            if (!hasLoadedInitialData) {
-                /** Load initial data here **/
-                hasLoadedInitialData = true
-            }
+            getInitialData()
         }
         .stateIn(
             scope = viewModelScope,
@@ -26,9 +32,79 @@ class ChannelsScreenViewModel : ViewModel() {
             initialValue = ChannelsScreenState()
         )
 
+    private val _eventFlow = MutableSharedFlow<UiChannelsEvents>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
     fun onAction(action: ChannelsScreenAction) {
         when (action) {
-            else -> TODO("Handle actions")
+            is ChannelsScreenAction.UpdateFocusedIndex -> {
+                _state.value.copy(
+                    focusedIndex = action.index,
+                )
+                    .updateState()
+            }
+
+            ChannelsScreenAction.SaveSelectedChannel -> {
+                saveLastChannel()
+            }
+        }
+    }
+
+    private fun getInitialData() {
+        _state.value.copy(
+            isLoading = true,
+        )
+            .updateState()
+        viewModelScope.launch {
+            dataStoreRepository.getLastChannel()?.let {
+                _state.value.copy(
+                    focusedIndex = it
+                )
+                    .updateState()
+            }
+        }
+        viewModelScope.launch {
+            val credintial = dataStoreRepository.getCredintial()
+            _state.value.copy(
+                credintial = credintial,
+            )
+                .updateState()
+            credintial?.let {
+                when (val resultTvChannels = remoteRepository.downloadPlaylist(
+                    username = credintial.username,
+                    password = credintial.password
+                )) {
+                    is ResultWork.Error -> {
+                        _state.value.copy(
+                            isLoading = false,
+                            message = resultTvChannels.error.asUiText()
+                        )
+                            .updateState()
+                    }
+
+                    is ResultWork.Success -> {
+                        _state.value.copy(
+                            isLoading = false,
+                            tvChannels = resultTvChannels.data
+                        )
+                            .updateState()
+                        if (resultTvChannels.data.isNotEmpty()&& state.value.focusedIndex == -1) {
+                            _state.value.copy(
+                                focusedIndex = 0
+                            )
+                                .updateState()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun saveLastChannel() {
+        viewModelScope.launch {
+            dataStoreRepository.saveLastChannel(state.value.focusedIndex)
+            delay(300)
+            _eventFlow.emit(UiChannelsEvents.PlayerNavigationEvent)
         }
     }
 

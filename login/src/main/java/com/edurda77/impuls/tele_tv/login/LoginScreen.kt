@@ -99,8 +99,8 @@ fun LoginScreenScreen(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            Color(0xFF1E2A3A),
-                            Color(0xFF121A24)
+                            MaterialTheme.colorScheme.onTertiary,
+                            MaterialTheme.colorScheme.onTertiaryContainer
                         )
                     )
                 ),

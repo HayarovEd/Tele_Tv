@@ -88,9 +88,7 @@ fun PlayerScreenScreen(
             focusRequester.requestFocus()
         }
     }
-    Box(
-
-    ) {
+    Box() {
         PlayerSurface(
             modifier = modifier
                 .resizeWithContentScale(
