@@ -1,9 +1,12 @@
 package com.edurda77.impuls.tele_tv.channels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
+import com.edurda77.impuls.tele_tv.domain.repository.DownloadRepository
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
+import com.edurda77.impuls.tele_tv.domain.repository.ServoceRepository
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
 import kotlinx.coroutines.delay
@@ -18,19 +21,23 @@ import kotlinx.coroutines.launch
 
 class ChannelsScreenViewModel(
     private val remoteRepository: RemoteRepository,
-    private val dataStoreRepository: DataStoreRepository
+    private val dataStoreRepository: DataStoreRepository,
+    private val downloadRepository: DownloadRepository,
+    private val servoceRepository: ServoceRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ChannelsScreenState())
     val state = _state
         .onStart {
             getInitialData()
+            checkEnableUpdates()
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = ChannelsScreenState()
         )
+
 
     private val _eventFlow = MutableSharedFlow<UiChannelsEvents>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -94,6 +101,34 @@ class ChannelsScreenViewModel(
                             )
                                 .updateState()
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun checkEnableUpdates() {
+        viewModelScope.launch {
+            when (val result = downloadRepository.getLastUpdateVersion()) {
+                is ResultWork.Error -> {
+                    _state.value.copy(
+                        message = result.error.asUiText()
+                    )
+                        .updateState()
+                }
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        release = result.data
+                    )
+                        .updateState()
+                    val currentVersion = servoceRepository.getVersionName()
+                    Log.d("REST TELE TV", "release ${result.data.lastVersion}")
+                    Log.d("REST TELE TV", "currentVersion $currentVersion")
+                    currentVersion?.let {
+                        _state.value.copy(
+                            enableUpdate = currentVersion<result.data.lastVersion
+                        )
+                            .updateState()
                     }
                 }
             }
