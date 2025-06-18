@@ -27,6 +27,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
@@ -64,7 +66,15 @@ fun PlayerScreenScreen(
 ) {
     val context = LocalContext.current
     val exoPlayer = rememberPlayer(context)
-
+    val playerListener = object : Player.Listener {
+        override fun onPlayerError(error: PlaybackException) {
+            super.onPlayerError(error)
+            val errorCode = error.errorCode
+            Log.d("REST TELE TV", "errorCode play $errorCode")
+            Log.d("REST TELE TV", "error play $error")
+        }
+    }
+    exoPlayer.addListener(playerListener)
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
     val focusManager = LocalFocusManager.current

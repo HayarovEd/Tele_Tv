@@ -1,6 +1,9 @@
 <resources>
 
-    <style name="Theme.Tele_Tv" parent="Theme.AppCompat.DayNight.NoActionBar" />
+    <style name="Theme.Tele_Tv" parent="Theme.SplashScreen.IconBackground">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:windowFullscreen">true</item>

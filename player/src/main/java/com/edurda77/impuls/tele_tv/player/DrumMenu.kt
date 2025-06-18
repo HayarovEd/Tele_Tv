@@ -104,7 +104,9 @@ fun DrumMenu(
                         Spacer(modifier = modifier.width(15.dp))
                     }
                     Text(
-                        modifier = modifier.basicMarquee(),
+                        modifier = modifier
+                            .padding(vertical = 10.dp)
+                            .basicMarquee(),
                         text = channel.tvgChno,
                         fontSize = baseTextSize,
                         style = MaterialTheme.typography.bodyMedium,
