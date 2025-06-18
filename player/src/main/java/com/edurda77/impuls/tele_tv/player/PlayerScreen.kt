@@ -5,7 +5,9 @@ import android.view.KeyEvent
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -134,9 +136,9 @@ fun PlayerScreenScreen(
         )
         AnimatedVisibility(
             visible = state.isVisibleTitle,
-            modifier = modifier.align(Alignment.CenterEnd),
-            enter = slideInHorizontally { it },
-            exit = slideOutHorizontally { it }
+            modifier = modifier.align(Alignment.BottomCenter),
+            enter = slideInVertically { it },
+            exit = slideOutVertically { it }
         ) {
             DrumMenu(
                 channels = state.tvChannels,

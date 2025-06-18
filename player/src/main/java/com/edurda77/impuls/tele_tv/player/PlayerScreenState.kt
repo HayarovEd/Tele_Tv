@@ -12,5 +12,6 @@ data class PlayerScreenState(
     val selectedIndex:Int = -1,
     val focusedIndex: Int = -1,
     val isVisibleTitle: Boolean = false,
-    val isVisibleSideMenu: Boolean = false
+    val isVisibleSideMenu: Boolean = false,
+    val channelInputQuery: String = ""
 )

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -184,11 +185,14 @@ private fun ChannelsScreenScreen(
                                     Spacer(modifier = modifier.height(15.dp))
                                 }
                                 Text(
-                                    modifier = modifier.fillMaxWidth(),
+                                    modifier = modifier
+                                        .fillMaxWidth()
+                                        .basicMarquee(),
                                     text = tvChannel.tvgChno,
                                     style = MaterialTheme.typography.headlineMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
-                                    textAlign = TextAlign.Center
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1
                                 )
                             }
                         }

@@ -22,6 +22,7 @@ class PlayerScreenViewModel(
 
 
     private var job: Job? = null
+    private var inputJob: Job? = null
 
     private val _state = MutableStateFlow(PlayerScreenState())
     val state = _state
@@ -43,12 +44,14 @@ class PlayerScreenViewModel(
             PlayerScreenAction.DecrimentTvChannel -> {
                 if (state.value.tvChannels[state.value.selectedIndex] == state.value.tvChannels.first()) {
                     _state.value.copy(
-                        selectedIndex = state.value.tvChannels.size - 1
+                        selectedIndex = state.value.tvChannels.size - 1,
+                        focusedIndex = state.value.tvChannels.size - 1,
                     )
                         .updateState()
                 } else {
                     _state.value.copy(
-                        selectedIndex = state.value.selectedIndex - 1
+                        selectedIndex = state.value.selectedIndex - 1,
+                        focusedIndex = state.value.selectedIndex - 1
                     )
                         .updateState()
                 }
@@ -59,12 +62,14 @@ class PlayerScreenViewModel(
             PlayerScreenAction.IncrimentTvChannel -> {
                 if (state.value.tvChannels[state.value.selectedIndex] == state.value.tvChannels.last()) {
                     _state.value.copy(
-                        selectedIndex = 0
+                        selectedIndex = 0,
+                        focusedIndex = 0
                     )
                         .updateState()
                 } else {
                     _state.value.copy(
-                        selectedIndex = state.value.selectedIndex + 1
+                        selectedIndex = state.value.selectedIndex + 1,
+                        focusedIndex = state.value.selectedIndex + 1
                     )
                         .updateState()
                 }
@@ -182,6 +187,10 @@ class PlayerScreenViewModel(
         job?.start()
     }
 
+
+
+
+
     private fun saveLastChannel() {
         viewModelScope.launch {
             delay(300)
@@ -198,5 +207,6 @@ class PlayerScreenViewModel(
     override fun onCleared() {
         super.onCleared()
         job?.cancel()
+        inputJob?.cancel()
     }
 }
