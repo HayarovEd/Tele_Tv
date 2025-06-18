@@ -7,4 +7,5 @@ sealed interface PlayerScreenAction {
     data object DecrimentFocusedIndex:PlayerScreenAction
     data object IncrimentFocusedIndex:PlayerScreenAction
     data object UpdateSelectedIndex:PlayerScreenAction
+    data object ShowSideMenu:PlayerScreenAction
 }

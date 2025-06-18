@@ -23,6 +23,7 @@ class PlayerScreenViewModel(
 
     private var job: Job? = null
     private var inputJob: Job? = null
+    private var menuJob: Job? = null
 
     private val _state = MutableStateFlow(PlayerScreenState())
     val state = _state
@@ -83,7 +84,7 @@ class PlayerScreenViewModel(
                 )
                     .updateState()
                 saveLastChannel()
-                //startTimer()
+                startTimerVisibleMenu()
             }
             PlayerScreenAction.DecrimentFocusedIndex -> {
                 if (state.value.tvChannels[state.value.focusedIndex] == state.value.tvChannels.first()) {
@@ -97,6 +98,7 @@ class PlayerScreenViewModel(
                     )
                         .updateState()
                 }
+                startTimerVisibleMenu()
             }
             PlayerScreenAction.IncrimentFocusedIndex -> {
                 if (state.value.tvChannels[state.value.focusedIndex] == state.value.tvChannels.last()) {
@@ -110,6 +112,15 @@ class PlayerScreenViewModel(
                     )
                         .updateState()
                 }
+                startTimerVisibleMenu()
+            }
+
+            PlayerScreenAction.ShowSideMenu -> {
+                _state.value.copy(
+                    isVisibleSideMenu = true
+                )
+                    .updateState()
+                startTimerVisibleMenu()
             }
         }
     }
@@ -187,6 +198,24 @@ class PlayerScreenViewModel(
         job?.start()
     }
 
+    private fun startTimerVisibleMenu() {
+        menuJob?.cancel()
+        menuJob = viewModelScope.launch {
+           /* _state.value.copy(
+                isVisibleSideMenu = true
+            )
+                .updateState()*/
+            (2 downTo 0).forEach { _ ->
+                delay(1000)
+            }
+            _state.value.copy(
+                isVisibleSideMenu = false
+            )
+                .updateState()
+        }
+        menuJob?.start()
+    }
+
 
 
 
@@ -208,5 +237,6 @@ class PlayerScreenViewModel(
         super.onCleared()
         job?.cancel()
         inputJob?.cancel()
+        menuJob?.cancel()
     }
 }

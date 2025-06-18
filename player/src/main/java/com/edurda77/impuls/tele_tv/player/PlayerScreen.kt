@@ -14,9 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -70,7 +68,7 @@ fun PlayerScreenScreen(
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
     val focusManager = LocalFocusManager.current
-    var isMenuVisible by remember { mutableStateOf(false) }
+    //var isMenuVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(exoPlayer, state.tvChannels, state.selectedIndex) {
         if (state.tvChannels.isNotEmpty()) {
@@ -86,8 +84,8 @@ fun PlayerScreenScreen(
         }
     }
 
-    LaunchedEffect(isMenuVisible) {
-        if (isMenuVisible) {
+    LaunchedEffect(state.isVisibleSideMenu) {
+        if (state.isVisibleSideMenu) {
             delay(300)
             focusManager.moveFocus(FocusDirection.Left)
             focusRequester.requestFocus()
@@ -119,7 +117,8 @@ fun PlayerScreenScreen(
                             }
 
                             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_ENTER -> {
-                                isMenuVisible = true
+                               // isMenuVisible = true
+                                onAction(PlayerScreenAction.ShowSideMenu)
                                 focusManager.moveFocus(FocusDirection.Left)
                                 // onAction(PlayerScreenAction.ShowSideMenu)
                                 // onChangeFocus(FocusDirection.Exit)
@@ -146,7 +145,7 @@ fun PlayerScreenScreen(
             )
         }
         AnimatedVisibility(
-            visible = isMenuVisible,
+            visible = state.isVisibleSideMenu,
             modifier = modifier.align(Alignment.CenterStart),
             enter = slideInHorizontally { 0 },
             exit = slideOutHorizontally { -it }
@@ -162,7 +161,7 @@ fun PlayerScreenScreen(
                         if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                             when (it.nativeKeyEvent.keyCode) {
                                 KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_BACK -> {
-                                    isMenuVisible = false
+                                    //isMenuVisible = false
                                     focusManager.moveFocus(FocusDirection.Right)
                                 }
 
