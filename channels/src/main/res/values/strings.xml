@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="enable_update">Доступно обновление</string>
+    <string name="update_downloading">Обновление загружается</string>
+</resources>

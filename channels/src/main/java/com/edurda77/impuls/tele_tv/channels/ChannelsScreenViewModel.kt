@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.repository.DownloadRepository
+import com.edurda77.impuls.tele_tv.domain.repository.Installer
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
-import com.edurda77.impuls.tele_tv.domain.repository.ServoceRepository
+import com.edurda77.impuls.tele_tv.domain.repository.ServiceRepository
+import com.edurda77.impuls.tele_tv.domain.utils.APK_EXT
+import com.edurda77.impuls.tele_tv.domain.utils.DownloadStatus
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
 import kotlinx.coroutines.delay
@@ -22,7 +25,8 @@ class ChannelsScreenViewModel(
     private val remoteRepository: RemoteRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val downloadRepository: DownloadRepository,
-    private val servoceRepository: ServoceRepository,
+    private val serviceRepository: ServiceRepository,
+    private val installer: Installer,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ChannelsScreenState())
@@ -53,8 +57,13 @@ class ChannelsScreenViewModel(
             ChannelsScreenAction.SaveSelectedChannel -> {
                 saveLastChannel()
             }
+
+            ChannelsScreenAction.DownloadUpdate -> {
+                downloadAndInstall()
+            }
         }
     }
+
 
     private fun getInitialData() {
         _state.value.copy(
@@ -120,7 +129,7 @@ class ChannelsScreenViewModel(
                         release = result.data
                     )
                         .updateState()
-                    val currentVersion = servoceRepository.getVersionName()
+                    val currentVersion = serviceRepository.getVersionName()
                     //Log.d("REST TELE TV", "release ${result.data.lastVersion}")
                     //Log.d("REST TELE TV", "currentVersion $currentVersion")
                     currentVersion?.let {
@@ -128,6 +137,45 @@ class ChannelsScreenViewModel(
                             enableUpdate = currentVersion<result.data.lastVersion
                         )
                             .updateState()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun downloadAndInstall() {
+        viewModelScope.launch {
+            state.value.release?.let { release->
+                val fileName = "${release.name}-${release.lastVersion}.$APK_EXT"
+                downloadRepository.downloadFile(downloadedFileName = fileName).collect { collector->
+                    when (collector) {
+                        is DownloadStatus.Error -> {
+                            _state.value.copy(
+                                message = collector.error.asUiText(),
+                                isUpdating = false
+                            )
+                                .updateState()
+                        }
+                        is DownloadStatus.InProgress -> {
+                            _state.value.copy(
+                                percentDownload = collector.percentage.toInt()
+                            )
+                                .updateState()
+                        }
+                        DownloadStatus.Started -> {
+                            _state.value.copy(
+                                isUpdating = true
+                            )
+                                .updateState()
+                        }
+                        DownloadStatus.Success -> {
+                            _state.value.copy(
+                                isUpdating = false,
+                                enableUpdate = false
+                            )
+                                .updateState()
+                            installer.installAPK(fileName)
+                        }
                     }
                 }
             }

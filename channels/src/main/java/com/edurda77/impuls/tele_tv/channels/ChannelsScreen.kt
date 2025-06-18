@@ -29,11 +29,14 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Border
+import androidx.tv.material3.Button
+import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
@@ -120,66 +123,99 @@ private fun ChannelsScreenScreen(
                         )
                     )
                 ),
-            contentAlignment = Alignment.Center
         ) {
-            LazyRow(
-                state = scrollState,
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
-                contentPadding = PaddingValues(20.dp),
-            ) {
-                itemsIndexed(state.tvChannels) { index, tvChannel ->
-                    Surface(
-                        onClick = {
-                            onAction(ChannelsScreenAction.SaveSelectedChannel)
-                        },
-                        modifier = modifier
-                            .width(200.dp)
-                            .aspectRatio(9f / 16)
-                            .onFocusChanged {
-                                if (it.hasFocus) {
-                                    onAction(ChannelsScreenAction.UpdateFocusedIndex(index))
-                                }
+            if (state.isUpdating) {
+                Text(
+                    modifier = modifier.align(Alignment.Center),
+                    text = "${stringResource(R.string.update_downloading)} ${state.percentDownload}%",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
+                )
+            } else {
+                LazyRow(
+                    modifier = modifier.align(Alignment.Center),
+                    state = scrollState,
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    contentPadding = PaddingValues(20.dp),
+                ) {
+                    itemsIndexed(state.tvChannels) { index, tvChannel ->
+                        Surface(
+                            onClick = {
+                                onAction(ChannelsScreenAction.SaveSelectedChannel)
                             },
-                        colors = ClickableSurfaceDefaults.colors(
-                            containerColor = if (tvChannel == state.tvChannels[state.focusedIndex]) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(
-                                alpha = 0.5f
-                            ),
-                        ),
-                        border = ClickableSurfaceDefaults.border(
-                            border = Border(
-                                border = BorderStroke(
-                                    width = 3.dp,
-                                    color = if (tvChannel == state.tvChannels[state.focusedIndex]) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
-                                ),
-                                inset = 4.dp
-                            )
-                        )
-                    ) {
-                        Column(
                             modifier = modifier
-                                .fillMaxHeight()
-                                .padding(16.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            tvChannel.tvgLogo?.let {
-                                AsyncImage(
-                                    modifier = modifier.size(150.dp),
-                                    model = tvChannel.tvgLogo,
-                                    contentDescription = "",
-                                    contentScale = ContentScale.Fit
+                                .width(200.dp)
+                                .aspectRatio(9f / 16)
+                                .onFocusChanged {
+                                    if (it.hasFocus) {
+                                        onAction(ChannelsScreenAction.UpdateFocusedIndex(index))
+                                    }
+                                },
+                            colors = ClickableSurfaceDefaults.colors(
+                                containerColor = if (tvChannel == state.tvChannels[state.focusedIndex]) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(
+                                    alpha = 0.5f
+                                ),
+                            ),
+                            border = ClickableSurfaceDefaults.border(
+                                border = Border(
+                                    border = BorderStroke(
+                                        width = 3.dp,
+                                        color = if (tvChannel == state.tvChannels[state.focusedIndex]) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
+                                    ),
+                                    inset = 4.dp
                                 )
-                                Spacer(modifier = modifier.height(15.dp))
-                            }
-                            Text(
-                                modifier = modifier.fillMaxWidth(),
-                                text = tvChannel.tvgChno,
-                                style = MaterialTheme.typography.headlineMedium,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                textAlign = TextAlign.Center
                             )
+                        ) {
+                            Column(
+                                modifier = modifier
+                                    .fillMaxHeight()
+                                    .padding(16.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                tvChannel.tvgLogo?.let {
+                                    AsyncImage(
+                                        modifier = modifier.size(150.dp),
+                                        model = tvChannel.tvgLogo,
+                                        contentDescription = "",
+                                        contentScale = ContentScale.Fit
+                                    )
+                                    Spacer(modifier = modifier.height(15.dp))
+                                }
+                                Text(
+                                    modifier = modifier.fillMaxWidth(),
+                                    text = tvChannel.tvgChno,
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
                         }
                     }
+                }
+            }
+            if (state.enableUpdate&&!state.isUpdating) {
+                Button(
+                    modifier = modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(vertical = 15.dp, horizontal = 100.dp)
+                        .fillMaxWidth(),
+                    colors = ButtonDefaults.colors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    ),
+                    onClick = {
+                        onAction(ChannelsScreenAction.DownloadUpdate)
+                    }
+                ) {
+                    Text(
+                        modifier = modifier.fillMaxWidth(),
+                        text = stringResource(R.string.enable_update),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }
@@ -203,6 +239,55 @@ private fun Preview() {
             state = ChannelsScreenState(
                 tvChannels = channels,
                 focusedIndex = 0
+            ),
+            onAction = {}
+        )
+    }
+}
+
+@Preview()
+@Composable
+private fun Preview2() {
+    val channels = (1..10).map {
+        TvChannel(
+            tvgId = "www",
+            tvgLogo = "",
+            tvgChno = "$it channel",
+            name = "channel",
+            url = ""
+        )
+    }
+    Tele_TvTheme {
+        ChannelsScreenScreen(
+            state = ChannelsScreenState(
+                tvChannels = channels,
+                focusedIndex = 0,
+                enableUpdate = true
+            ),
+            onAction = {}
+        )
+    }
+}
+
+@Preview()
+@Composable
+private fun Preview3() {
+    val channels = (1..10).map {
+        TvChannel(
+            tvgId = "www",
+            tvgLogo = "",
+            tvgChno = "$it channel",
+            name = "channel",
+            url = ""
+        )
+    }
+    Tele_TvTheme {
+        ChannelsScreenScreen(
+            state = ChannelsScreenState(
+                tvChannels = channels,
+                focusedIndex = 0,
+                enableUpdate = true,
+                isUpdating = true
             ),
             onAction = {}
         )

@@ -12,5 +12,7 @@ data class ChannelsScreenState(
     val message: UiText? = null,
     val focusedIndex: Int = -1,
     val enableUpdate: Boolean = false,
+    val isUpdating: Boolean = false,
     val release: LastVersionApp? = null,
-)
+    val percentDownload: Int = 0,
+ )
