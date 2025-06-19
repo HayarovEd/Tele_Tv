@@ -128,8 +128,13 @@ class PlayerScreenViewModel(
             is PlayerScreenAction.EnterStringNumber -> {
                 switchChannelByQuery(action.number)
             }
+
+            PlayerScreenAction.DeleteLastNumber -> {
+                deleteLastNumber()
+            }
         }
     }
+
 
 
     private fun getInitialData() {
@@ -225,15 +230,7 @@ class PlayerScreenViewModel(
                     channelInputQuery = "${state.value.channelInputQuery}$number"
                 )
                     .updateState()
-                queryJob?.cancel()
-                queryJob = viewModelScope.launch {
-                    (3 downTo 0).forEach { _ ->
-                        delay(1000)
-                    }
-                    Log.d("REST TELE TV", "channelInputQuery ${state.value.channelInputQuery}")
-                    processSwitchChannel()
-                }
-                queryJob?.start()
+                switchTimer()
             } else  {
                 _state.value.copy(
                     channelInputQuery = state.value.channelInputQuery+number
@@ -242,6 +239,18 @@ class PlayerScreenViewModel(
                // delay(300)
                 processSwitchChannel()
         }
+    }
+
+    private fun switchTimer() {
+        queryJob?.cancel()
+        queryJob = viewModelScope.launch {
+            (3 downTo 0).forEach { _ ->
+                delay(1000)
+            }
+            Log.d("REST TELE TV", "channelInputQuery ${state.value.channelInputQuery}")
+            processSwitchChannel()
+        }
+        queryJob?.start()
     }
 
     private fun processSwitchChannel() {
@@ -262,6 +271,16 @@ class PlayerScreenViewModel(
                 )
                     .updateState()
             }
+        }
+    }
+
+    private fun deleteLastNumber() {
+        if (state.value.channelInputQuery.isNotEmpty()) {
+            _state.value.copy(
+                channelInputQuery = state.value.channelInputQuery.dropLast(1)
+            )
+                .updateState()
+            switchTimer()
         }
     }
 

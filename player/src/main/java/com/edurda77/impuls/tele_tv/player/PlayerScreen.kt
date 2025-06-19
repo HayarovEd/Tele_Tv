@@ -11,6 +11,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
@@ -151,6 +153,9 @@ fun PlayerScreenScreen(
                             KeyEvent.KEYCODE_9,     -> {
                                 onAction(PlayerScreenAction.EnterStringNumber(it.nativeKeyEvent.keyCode-7))
                             }
+                            KeyEvent.KEYCODE_DEL -> {
+                                onAction(PlayerScreenAction.DeleteLastNumber)
+                            }
                         }
                     }
                     true
@@ -213,11 +218,12 @@ fun PlayerScreenScreen(
         if (state.channelInputQuery.isNotEmpty()) {
             Text(
                 modifier = modifier
-                    .align(Alignment.TopCenter),
+                    .align(Alignment.TopCenter)
+                    .padding(vertical = 15.dp),
                 text = state.channelInputQuery,
                 fontSize = 30.sp,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.error,
+                color = MaterialTheme.colorScheme.errorContainer,
             )
         }
     }
