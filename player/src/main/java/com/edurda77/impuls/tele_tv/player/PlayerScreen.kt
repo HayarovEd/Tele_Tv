@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -35,6 +36,8 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
+import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.Text
 import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 import kotlinx.coroutines.delay
@@ -136,6 +139,18 @@ fun PlayerScreenScreen(
                             KeyEvent.KEYCODE_BACK -> {
                                onNavigateToChannels()
                             }
+                            KeyEvent.KEYCODE_0,
+                            KeyEvent.KEYCODE_1,
+                            KeyEvent.KEYCODE_2,
+                            KeyEvent.KEYCODE_3,
+                            KeyEvent.KEYCODE_4,
+                            KeyEvent.KEYCODE_5,
+                            KeyEvent.KEYCODE_6,
+                            KeyEvent.KEYCODE_7,
+                            KeyEvent.KEYCODE_8,
+                            KeyEvent.KEYCODE_9,     -> {
+                                onAction(PlayerScreenAction.EnterStringNumber(it.nativeKeyEvent.keyCode-7))
+                            }
                         }
                     }
                     true
@@ -193,6 +208,16 @@ fun PlayerScreenScreen(
                 channels = state.tvChannels,
                 selectedIndex = state.selectedIndex,
                 focusedIndex = state.focusedIndex
+            )
+        }
+        if (state.channelInputQuery.isNotEmpty()) {
+            Text(
+                modifier = modifier
+                    .align(Alignment.TopCenter),
+                text = state.channelInputQuery,
+                fontSize = 30.sp,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error,
             )
         }
     }

@@ -1,5 +1,6 @@
 package com.edurda77.impuls.tele_tv.player
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
@@ -24,6 +25,7 @@ class PlayerScreenViewModel(
     private var job: Job? = null
     private var inputJob: Job? = null
     private var menuJob: Job? = null
+    private var queryJob: Job? = null
 
     private val _state = MutableStateFlow(PlayerScreenState())
     val state = _state
@@ -122,6 +124,10 @@ class PlayerScreenViewModel(
                     .updateState()
                 startTimerVisibleMenu()
             }
+
+            is PlayerScreenAction.EnterStringNumber -> {
+                switchChannelByQuery(action.number)
+            }
         }
     }
 
@@ -201,10 +207,6 @@ class PlayerScreenViewModel(
     private fun startTimerVisibleMenu() {
         menuJob?.cancel()
         menuJob = viewModelScope.launch {
-           /* _state.value.copy(
-                isVisibleSideMenu = true
-            )
-                .updateState()*/
             (2 downTo 0).forEach { _ ->
                 delay(1000)
             }
@@ -217,7 +219,51 @@ class PlayerScreenViewModel(
     }
 
 
+    private fun switchChannelByQuery(number: Int) {
+            if (state.value.channelInputQuery.length<3) {
+                _state.value.copy(
+                    channelInputQuery = "${state.value.channelInputQuery}$number"
+                )
+                    .updateState()
+                queryJob?.cancel()
+                queryJob = viewModelScope.launch {
+                    (3 downTo 0).forEach { _ ->
+                        delay(1000)
+                    }
+                    Log.d("REST TELE TV", "channelInputQuery ${state.value.channelInputQuery}")
+                    processSwitchChannel()
+                }
+                queryJob?.start()
+            } else  {
+                _state.value.copy(
+                    channelInputQuery = state.value.channelInputQuery+number
+                )
+                    .updateState()
+               // delay(300)
+                processSwitchChannel()
+        }
+    }
 
+    private fun processSwitchChannel() {
+        val number = state.value.channelInputQuery.toIntOrNull()
+        number?.let {
+            if (number in 1..<state.value.tvChannels.size){
+                _state.value.copy(
+                    selectedIndex = number-1,
+                    focusedIndex = number-1,
+                    channelInputQuery = ""
+                )
+                    .updateState()
+                saveLastChannel()
+                startTimer()
+            } else  {
+                _state.value.copy(
+                    channelInputQuery = ""
+                )
+                    .updateState()
+            }
+        }
+    }
 
 
     private fun saveLastChannel() {
@@ -238,5 +284,6 @@ class PlayerScreenViewModel(
         job?.cancel()
         inputJob?.cancel()
         menuJob?.cancel()
+        queryJob?.cancel()
     }
 }
