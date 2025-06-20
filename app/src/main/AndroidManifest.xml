@@ -15,6 +15,7 @@
     <application
         android:name=".TeleApp"
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:banner="@mipmap/app_banner"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -45,11 +44,11 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
+import com.edurda77.impuls.tele_tv.resources.R
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 import com.edurda77.impuls.tele_tv.resources.uikit.UiTextField
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
-import com.edurda77.impuls.tele_tv.resources.R
 
 @Composable
 fun LoginScreenRoot(
@@ -109,33 +108,23 @@ fun LoginScreenScreen(
                         )
                     )
                 ),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopCenter
         ) {
             Column(
                 modifier = modifier
                     .width(500.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFF2C3E50))
+                    .background(MaterialTheme.colorScheme.onTertiary)
                     .padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(24.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo2),
+                    painter = painterResource(id = R.drawable.logo61),
                     contentDescription = "",
                     contentScale = ContentScale.FillWidth,
-                    modifier = modifier
-                        .width(64.dp)
-                )/*
-
-                Icon(
-                    painter = painterResource(id = android.R.drawable.ic_dialog_email),
-                    contentDescription = "",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .width(64.dp)
-                        .height(64.dp)
-                )*/
+                    modifier = modifier.padding(horizontal = 25.dp)
+                )
 
                 Text(
                     text = stringResource(R.string.enter_to_system),
@@ -203,8 +192,7 @@ fun LoginScreenScreen(
                         }
                     )
                 }
-
-                Spacer(modifier = modifier.height(16.dp))
+                Spacer(modifier = modifier.height(8.dp))
                 Button(
                     onClick = {
                         onAction(LoginScreenAction.OnLogin)

@@ -4,10 +4,9 @@ import android.util.Log
 import android.view.KeyEvent
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -174,12 +173,7 @@ fun PlayerScreenScreen(
                 selectedIndex = state.selectedIndex
             )
         }
-        AnimatedVisibility(
-            visible = state.isVisibleSideMenu,
-            modifier = modifier.align(Alignment.CenterStart),
-            enter = slideInHorizontally { 0 },
-            exit = slideOutHorizontally { -it }
-        ) {
+        if (state.isVisibleSideMenu) {
             ChannelMenu(
                 modifier = modifier
                     .focusRequester(focusRequester)
@@ -215,11 +209,21 @@ fun PlayerScreenScreen(
                 focusedIndex = state.focusedIndex
             )
         }
+        /*AnimatedVisibility(
+            visible = state.isVisibleSideMenu,
+            modifier = modifier.align(Alignment.CenterStart),
+            enter = slideInHorizontally { 0 },
+            exit = slideOutHorizontally { -it }
+        ) {
+
+        }*/
         if (state.channelInputQuery.isNotEmpty()) {
             Text(
                 modifier = modifier
                     .align(Alignment.TopCenter)
-                    .padding(vertical = 15.dp),
+                    .padding(vertical = 15.dp)
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .padding(15.dp),
                 text = state.channelInputQuery,
                 fontSize = 30.sp,
                 style = MaterialTheme.typography.bodyMedium,

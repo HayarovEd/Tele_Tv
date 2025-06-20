@@ -6,6 +6,11 @@
     <!-- Centered logo/image -->
     <item>
         <bitmap
+            android:gravity="fill"
+            android:src="@drawable/scale_1200" />
+    </item>
+    <item>
+        <bitmap
             android:gravity="center"
             android:src="@drawable/logo61" />
     </item>

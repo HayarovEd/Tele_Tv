@@ -90,7 +90,7 @@ fun DrumMenu(
                 )
             ) {
                 Row(
-                    modifier = modifier.width(screenWidth/5),
+                    modifier = modifier.width(screenWidth/6),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {

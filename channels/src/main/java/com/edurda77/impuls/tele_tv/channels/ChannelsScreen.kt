@@ -3,6 +3,7 @@ package com.edurda77.impuls.tele_tv.channels
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -125,6 +127,15 @@ private fun ChannelsScreenScreen(
                     )
                 ),
         ) {
+            Image(
+                painter = painterResource(id = com.edurda77.impuls.tele_tv.resources.R.drawable.logo61),
+                contentDescription = "",
+                contentScale = ContentScale.FillHeight,
+                modifier = modifier
+                    .align(Alignment.TopCenter)
+                    .height(100.dp)
+                    .padding(vertical = 15.dp)
+            )
             if (state.isUpdating) {
                 Text(
                     modifier = modifier.align(Alignment.Center),
