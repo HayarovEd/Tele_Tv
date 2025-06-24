@@ -24,6 +24,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
+import com.edurda77.impuls.tele_tv.resources.R
 
 @Composable
 fun ChannelMenu(

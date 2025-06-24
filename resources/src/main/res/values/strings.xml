@@ -26,4 +26,9 @@
     <string name="password">Пароль</string>
     <string name="enter">Войти</string>
     <string name="checking">Проверка…</string>
+
+    <string name="enable_update">Доступно обновление</string>
+    <string name="update_downloading">Обновление загружается</string>
+    <string name="last_showed">Последние просмотренные</string>
+    <string name="channels">Каналы</string>
 </resources>
