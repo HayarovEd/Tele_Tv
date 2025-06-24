@@ -86,7 +86,7 @@ private fun ChannelMenuView() {
         TvChannel(
             tvgId = "www",
             tvgLogo = "",
-            tvgChno = "$it channel",
+            tvgChannelNumber = it,
             name = "channel",
             url = ""
         )

@@ -22,7 +22,7 @@ class LocalRepositoryImpl(
     override suspend fun insertLocation(
         tvgId: String,
         tvgLogo: String?,
-        tvgChno: String,
+        tvgChno: Int,
         name: String,
         url: String
     ): ResultWork<Unit, DataError.LocalDateBase> {
@@ -41,14 +41,14 @@ class LocalRepositoryImpl(
         }
     }
 
-    override suspend fun getAllLocations(): Flow<ResultWork<List<TvChannel>, DataError.LocalDateBase>> {
+    override suspend fun getAllChannels(): Flow<ResultWork<List<TvChannel>, DataError.LocalDateBase>> {
         return handleReadFromDataBase {
             dao.getLatest10Items().map { tvChannelEntity ->
                 tvChannelEntity.map {
                     TvChannel(
                         tvgId = it.tvgId,
                         tvgLogo = it.tvgLogo,
-                        tvgChno = it.tvgChno,
+                        tvgChannelNumber = it.tvgChno,
                         name = it.name,
                         url = it.url
                     )

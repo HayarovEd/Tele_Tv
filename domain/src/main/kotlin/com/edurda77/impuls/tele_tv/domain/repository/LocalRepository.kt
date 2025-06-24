@@ -9,10 +9,10 @@ interface LocalRepository {
     suspend fun insertLocation(
         tvgId: String,
         tvgLogo: String?,
-        tvgChno: String,
+        tvgChno: Int,
         name: String,
         url: String
     ): ResultWork<Unit, DataError.LocalDateBase>
 
-    suspend fun getAllLocations(): Flow<ResultWork<List<TvChannel>, DataError.LocalDateBase>>
+    suspend fun getAllChannels(): Flow<ResultWork<List<TvChannel>, DataError.LocalDateBase>>
 }

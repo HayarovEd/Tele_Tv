@@ -199,7 +199,7 @@ private fun ChannelsScreenScreen(
                                     modifier = modifier
                                         .fillMaxWidth()
                                         .basicMarquee(),
-                                    text = tvChannel.tvgChno,
+                                    text = "${tvChannel.tvgChannelNumber}, ${tvChannel.name}",
                                     style = MaterialTheme.typography.headlineMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                     textAlign = TextAlign.Center,
@@ -244,7 +244,7 @@ private fun Preview() {
         TvChannel(
             tvgId = "www",
             tvgLogo = "",
-            tvgChno = "$it channel",
+            tvgChannelNumber = it,
             name = "channel",
             url = ""
         )
@@ -267,8 +267,8 @@ private fun Preview2() {
         TvChannel(
             tvgId = "www",
             tvgLogo = "",
-            tvgChno = "$it channel",
-            name = "channel",
+            tvgChannelNumber = it,
+            name = "Channel",
             url = ""
         )
     }
@@ -291,7 +291,7 @@ private fun Preview3() {
         TvChannel(
             tvgId = "www",
             tvgLogo = "",
-            tvgChno = "$it channel",
+            tvgChannelNumber = it,
             name = "channel",
             url = ""
         )

@@ -78,7 +78,7 @@ fun ChannelItem(
             Spacer(modifier = modifier.width(15.dp))
             Text(
                 modifier = modifier,
-                text = channel.tvgChno,
+                text = "${channel.tvgChannelNumber}, ${channel.name}",
                 style = MaterialTheme.typography.headlineMedium,
                 color = if (isCurrent) MaterialTheme.colorScheme.onPrimaryContainer
                 else MaterialTheme.colorScheme.onSurface,
@@ -95,7 +95,7 @@ private fun ChannelItemView() {
             channel = TvChannel(
                 tvgId = "111",
                 tvgLogo = "",
-                tvgChno = "1.First",
+                tvgChannelNumber = 1,
                 name = "First",
                 url = ""
             ),
@@ -114,7 +114,7 @@ private fun ChannelItemView2() {
             channel = TvChannel(
                 tvgId = "111",
                 tvgLogo = "",
-                tvgChno = "1.First",
+                tvgChannelNumber = 1,
                 name = "First",
                 url = ""
             ),

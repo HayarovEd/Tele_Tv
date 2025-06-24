@@ -6,5 +6,5 @@ import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 
 interface RemoteRepository {
     suspend fun authorization(username: String, password: String): ResultWork<Unit, DataError>
-    suspend fun downloadPlaylist(username: String, password: String): ResultWork<List<TvChannel>, DataError>
+    suspend fun getTvChannels(username: String, password: String): ResultWork<List<TvChannel>, DataError>
 }

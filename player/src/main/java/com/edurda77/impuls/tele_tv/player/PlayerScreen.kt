@@ -131,15 +131,17 @@ fun PlayerScreenScreen(
                             }
 
                             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_ENTER -> {
-                               // isMenuVisible = true
+                                // isMenuVisible = true
                                 onAction(PlayerScreenAction.ShowSideMenu)
                                 focusManager.moveFocus(FocusDirection.Left)
                                 // onAction(PlayerScreenAction.ShowSideMenu)
                                 // onChangeFocus(FocusDirection.Exit)
                             }
+
                             KeyEvent.KEYCODE_BACK -> {
-                               onNavigateToChannels()
+                                onNavigateToChannels()
                             }
+
                             KeyEvent.KEYCODE_0,
                             KeyEvent.KEYCODE_1,
                             KeyEvent.KEYCODE_2,
@@ -149,9 +151,11 @@ fun PlayerScreenScreen(
                             KeyEvent.KEYCODE_6,
                             KeyEvent.KEYCODE_7,
                             KeyEvent.KEYCODE_8,
-                            KeyEvent.KEYCODE_9,     -> {
-                                onAction(PlayerScreenAction.EnterStringNumber(it.nativeKeyEvent.keyCode-7))
+                            KeyEvent.KEYCODE_9,
+                                -> {
+                                onAction(PlayerScreenAction.EnterStringNumber(it.nativeKeyEvent.keyCode - 7))
                             }
+
                             KeyEvent.KEYCODE_DEL -> {
                                 onAction(PlayerScreenAction.DeleteLastNumber)
                             }

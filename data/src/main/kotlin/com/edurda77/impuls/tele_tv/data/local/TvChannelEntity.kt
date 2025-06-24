@@ -20,7 +20,7 @@ data class TvChannelEntity(
     @ColumnInfo(name = TB_CHANNEL_LOGO)
     val tvgLogo: String?,
     @ColumnInfo(name = TB_CHANNEL_CHNO)
-    val tvgChno: String,
+    val tvgChno: Int,
     @ColumnInfo(name = TB_CHANNEL_NAME)
     val name: String,
     @ColumnInfo(name = TB_CHANNEL_URL)

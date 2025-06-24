@@ -85,7 +85,7 @@ class ChannelsScreenViewModel(
             )
                 .updateState()
             credintial?.let {
-                when (val resultTvChannels = remoteRepository.downloadPlaylist(
+                when (val resultTvChannels = remoteRepository.getTvChannels(
                     username = credintial.username,
                     password = credintial.password
                 )) {

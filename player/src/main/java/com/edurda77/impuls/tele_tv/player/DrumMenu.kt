@@ -107,7 +107,7 @@ fun DrumMenu(
                         modifier = modifier
                             .padding(vertical = 10.dp)
                             .basicMarquee(),
-                        text = channel.tvgChno,
+                        text = "${channel.tvgChannelNumber}, ${channel.name}",
                         fontSize = baseTextSize,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -128,7 +128,7 @@ private fun DrumMenuView() {
         TvChannel(
             tvgId = "www",
             tvgLogo = "",
-            tvgChno = "$it channel",
+            tvgChannelNumber = it,
             name = "channel",
             url = ""
         )

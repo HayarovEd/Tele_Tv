@@ -1,19 +1,25 @@
 package com.edurda77.impuls.tele_tv.data.repository
 
+import com.edurda77.impuls.tele_tv.data.remote.ChannelListResponse
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
+import com.edurda77.impuls.tele_tv.domain.utils.BASE_URL
+import com.edurda77.impuls.tele_tv.domain.utils.CHANNEL_URL_PREFIX
 import com.edurda77.impuls.tele_tv.domain.utils.DataError
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.basicAuth
+import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import io.ktor.http.parameters
 import io.ktor.serialization.JsonConvertException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -61,22 +67,44 @@ class RemoteRepositoryImpl(
         }
     }
 
-    override suspend fun downloadPlaylist(
+    override suspend fun getTvChannels(
         username: String,
         password: String,
     ): ResultWork<List<TvChannel>, DataError> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = httpClient.get("playlist") {
-                    // contentType(ContentType.Application.Json)
+                /*val response = httpClient.post("api/channel/grid") {
+                    contentType(ContentType.Application.Json)
+                    basicAuth(
+                        username = username,
+                        password = password
+                    )
+                }.call*/
+                val response = httpClient.submitForm (
+                    url = "api/channel/grid",
+                    formParameters = parameters {
+                        append("limit", "500")
+                        append("sort", "number")
+                    }
+                ) {
+                    method = HttpMethod.Post
                     basicAuth(
                         username = username,
                         password = password
                     )
                 }.call
                 if (response.response.status.isSuccess()) {
-                    val fileContent = response.response.bodyAsText()
-                    ResultWork.Success(parseM3U(fileContent))
+                    val successResponse = response.response.body<ChannelListResponse>()
+                    val channels = successResponse.entries.map {
+                        TvChannel(
+                            tvgChannelNumber = it.number,
+                            name = it.name,
+                            url = "$BASE_URL$CHANNEL_URL_PREFIX${it.uuid}",
+                            tvgLogo = it.iconPublicUrl,
+                            tvgId = it.uuid
+                        )
+                    }
+                    ResultWork.Success(channels)
                 } else {
                     ResultWork.Error(DataError.Network.UNAUTHORIZED)
                 }
@@ -101,7 +129,7 @@ class RemoteRepositoryImpl(
         }
     }
 
-    private suspend fun parseM3U(m3uContent: String): List<TvChannel> {
+    /*private suspend fun parseM3U(m3uContent: String): List<TvChannel> {
         return withContext(Dispatchers.Default) {
             val tvChannels = mutableListOf<TvChannel>()
             val lines = m3uContent.lines()
@@ -118,7 +146,7 @@ class RemoteRepositoryImpl(
                             TvChannel(
                                 tvgId = metadata["tvg-id"] ?: "",
                                 tvgLogo = metadata["tvg-logo"],
-                                tvgChno = metadata["tvg-chno"] ?: "",
+                                tvgChannelNumber = metadata["tvg-chno"] ?: "",
                                 name = metadata["name"] ?: "",
                                 url = url
                             )
@@ -149,5 +177,5 @@ class RemoteRepositoryImpl(
             metadata["name"] = name
         }
         return metadata
-    }
+    }*/
 }
