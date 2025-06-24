@@ -214,18 +214,9 @@ fun PlayerScreenScreen(
                     },
                 channels = state.tvChannels,
                 selectedIndex = state.selectedIndex,
-                focusedIndex = state.selectedIndex,
-                focusedId = state.selectedChannelId
+                focusedIndex = state.focusedIndex,
             )
         }
-        /*AnimatedVisibility(
-            visible = state.isVisibleSideMenu,
-            modifier = modifier.align(Alignment.CenterStart),
-            enter = slideInHorizontally { 0 },
-            exit = slideOutHorizontally { -it }
-        ) {
-
-        }*/
         if (state.channelInputQuery.isNotEmpty()) {
             Text(
                 modifier = modifier

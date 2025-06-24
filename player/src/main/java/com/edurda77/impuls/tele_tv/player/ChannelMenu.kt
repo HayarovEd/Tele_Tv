@@ -1,7 +1,6 @@
 package com.edurda77.impuls.tele_tv.player
 
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +15,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,13 +30,13 @@ import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 @Composable
 fun ChannelMenu(
     channels: List<TvChannel>,
-    focusedId: String?,
     selectedIndex: Int?,
     modifier: Modifier = Modifier,
     focusedIndex: Int?
 ) {
     val scrollState = rememberLazyListState()
-    Log.d("REST TELE TV", "focusedId 2 $focusedId")
+    val configuration = LocalWindowInfo.current.containerSize
+    val screenWidth = configuration.height.dp
     LaunchedEffect(focusedIndex) {
         if (focusedIndex != null && focusedIndex >= 0) {
             val countVisible = scrollState.layoutInfo.visibleItemsInfo.size
@@ -51,7 +51,7 @@ fun ChannelMenu(
     Box(
         modifier = modifier
             .fillMaxHeight()
-            .width(400.dp)
+            .width(screenWidth / 4)
             .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
     ) {
         Column(modifier = modifier.padding(16.dp)) {
@@ -67,15 +67,11 @@ fun ChannelMenu(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                val fc = channels.indexOf(channels.first { it.tvgId== focusedId})
-                Log.d("REST TELE TV", "fc $fc")
                 items(channels) { channel ->
                     ChannelItem(
                         channel = channel,
-                        isCurrent = selectedIndex != null && channel == channels[fc],
-                        isFocused = channel == channels[fc],
-
-                        onSelected = { /*selectIndex(index) */ },
+                        isCurrent = selectedIndex != null && channel == channels[selectedIndex],
+                        isFocused = focusedIndex != null && channel == channels[focusedIndex],
                     )
                 }
             }
@@ -101,7 +97,6 @@ private fun ChannelMenuView() {
             channels = channels,
             selectedIndex = 1,
             focusedIndex = 2,
-            focusedId = ""
         )
     }
 }
