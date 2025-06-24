@@ -21,6 +21,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 class ChannelsScreenViewModel(
     private val remoteRepository: RemoteRepository,
@@ -37,6 +40,7 @@ class ChannelsScreenViewModel(
             getInitialData()
             getLastChannels()
             checkEnableUpdates()
+            getCurrentTime()
         }
         .stateIn(
             scope = viewModelScope,
@@ -215,6 +219,19 @@ class ChannelsScreenViewModel(
                             .updateState()
                     }
                 }
+            }
+        }
+    }
+
+    private fun getCurrentTime() {
+        viewModelScope.launch {
+            while (true) {
+                delay(60_000)
+                _state.value.copy(
+                    currentTime =  Clock.System.now()
+                        .toLocalDateTime(TimeZone.currentSystemDefault()).time
+                )
+                    .updateState()
             }
         }
     }

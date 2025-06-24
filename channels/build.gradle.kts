@@ -61,4 +61,7 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+
+    //date-time
+    implementation(libs.kotlinx.datetime)
 }

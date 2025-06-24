@@ -6,8 +6,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -114,13 +116,27 @@ private fun ChannelsScreenScreen(
                 )
                 .padding(15.dp),
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo61),
-                contentDescription = "",
-                contentScale = ContentScale.FillHeight,
+            Row(
                 modifier = modifier
-                    .height(50.dp)
-            )
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo61),
+                    contentDescription = "",
+                    contentScale = ContentScale.FillHeight,
+                    modifier = modifier
+                        .height(50.dp)
+                )
+                StatusPanel(
+                    currentTime = state.currentTime,
+                    isEnableUpdate = state.enableUpdate,
+                    onUpdateClick = {
+                        onAction(ChannelsScreenAction.DownloadUpdate)
+                    }
+                )
+            }
             if (state.isUpdating) {
                 Text(
                     modifier = modifier.align(Alignment.CenterHorizontally),
