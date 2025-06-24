@@ -7,6 +7,11 @@ import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.serialization.JsonConvertException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 
 suspend fun <D> handleResponse(data: suspend () -> D): ResultWork<D, DataError> {
     return try {
@@ -31,3 +36,30 @@ suspend fun <D> handleResponse(data: suspend () -> D): ResultWork<D, DataError> 
         ResultWork.Error(DataError.Network.UNKNOWN)
     }
 }
+
+suspend fun <D> handleWriteToDataBase(data: suspend () -> D): ResultWork<D, DataError.LocalDateBase> {
+    return withContext(Dispatchers.IO) {
+        try {
+            ResultWork.Success(data())
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ResultWork.Error(DataError.LocalDateBase.ERROR_WRITE_DATA)
+        }
+    }
+}
+
+fun <D> handleReadFromDataBase(data: () -> Flow<D>): Flow<ResultWork<D, DataError.LocalDateBase>> {
+    return flow<ResultWork<D, DataError.LocalDateBase>> {
+        data.invoke().collect { collector ->
+            emit(
+                ResultWork.Success(collector)
+            )
+        }
+    }.catch {
+        emit(
+            ResultWork.Error(DataError.LocalDateBase.ERROR_READ_DATA)
+        )
+    }
+}
+

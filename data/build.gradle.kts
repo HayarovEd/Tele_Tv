@@ -53,4 +53,13 @@ dependencies {
     api(libs.ktor.client.logging)
     api(libs.ktor.client.andriod)
     api(libs.ktor.client.websockets)
+
+    //date-time
+    api(libs.kotlinx.datetime)
+
+    //room
+    api(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
+    api(libs.androidx.room.ktx)
 }

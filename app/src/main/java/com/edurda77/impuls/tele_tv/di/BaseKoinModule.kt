@@ -6,8 +6,11 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.room.Room
+import com.edurda77.impuls.tele_tv.data.local.TeleTVDatabase
 import com.edurda77.impuls.tele_tv.domain.utils.APP_PREFERENCES
 import com.edurda77.impuls.tele_tv.domain.utils.BASE_URL
+import com.edurda77.impuls.tele_tv.domain.utils.TELE_TV_DB
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
@@ -53,5 +56,14 @@ val baseModule = module {
                 })
             }
         }
+    }
+
+    single<TeleTVDatabase> {
+        Room.databaseBuilder(
+            androidContext(),
+            TeleTVDatabase::class.java,
+            TELE_TV_DB
+        )
+            .build()
     }
 }

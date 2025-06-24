@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         screenStateFilter.addAction(Intent.ACTION_SCREEN_ON)
         registerReceiver(UnlockReceiver(), screenStateFilter)
         val isScreenOn = intent.getBooleanExtra(IS_SCREEN_ON, false)
-       // Log.d("REST TELE TV", "originalIntent $rs")
+       // enableEdgeToEdge()
         setContent {
             Tele_TvTheme {
                 NavController(
