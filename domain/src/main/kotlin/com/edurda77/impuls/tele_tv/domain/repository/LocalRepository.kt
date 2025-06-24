@@ -7,11 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalRepository {
     suspend fun insertLocation(
-        tvgId: String,
-        tvgLogo: String?,
-        tvgChno: Int,
-        name: String,
-        url: String
+        tvChannel: TvChannel
     ): ResultWork<Unit, DataError.LocalDateBase>
 
     suspend fun getAllChannels(): Flow<ResultWork<List<TvChannel>, DataError.LocalDateBase>>

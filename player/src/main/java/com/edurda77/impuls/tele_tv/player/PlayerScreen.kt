@@ -84,16 +84,18 @@ fun PlayerScreenScreen(
     val focusManager = LocalFocusManager.current
     //var isMenuVisible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(exoPlayer, state.tvChannels, state.selectedIndex) {
+    LaunchedEffect(exoPlayer, state.tvChannels, state.selectedChannelId) {
         if (state.tvChannels.isNotEmpty()) {
             state.credintial?.let {
-                exoPlayer.setMediaSource(
-                    intoMediaItem(
-                        credintial = state.credintial,
-                        uri = state.tvChannels[state.selectedIndex].url
+                state.selectedIndex?.let {
+                    exoPlayer.setMediaSource(
+                        intoMediaItem(
+                            credintial = state.credintial,
+                            uri = state.tvChannels[state.selectedIndex].url
+                        )
                     )
-                )
-                exoPlayer.prepare()
+                    exoPlayer.prepare()
+                }
             }
         }
     }
@@ -172,10 +174,12 @@ fun PlayerScreenScreen(
             enter = slideInVertically { it },
             exit = slideOutVertically { it }
         ) {
-            DrumMenu(
-                channels = state.tvChannels,
-                selectedIndex = state.selectedIndex
-            )
+            state.selectedIndex?.let {
+                DrumMenu(
+                    channels = state.tvChannels,
+                    selectedIndex = state.selectedIndex
+                )
+            }
         }
         if (state.isVisibleSideMenu) {
             ChannelMenu(
@@ -210,7 +214,8 @@ fun PlayerScreenScreen(
                     },
                 channels = state.tvChannels,
                 selectedIndex = state.selectedIndex,
-                focusedIndex = state.focusedIndex
+                focusedIndex = state.selectedIndex,
+                focusedId = state.selectedChannelId
             )
         }
         /*AnimatedVisibility(

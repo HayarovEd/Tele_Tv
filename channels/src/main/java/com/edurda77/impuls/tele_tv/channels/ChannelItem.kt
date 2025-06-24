@@ -24,7 +24,6 @@ import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 fun ChannelItem(
     onAction: (ChannelsScreenAction) -> Unit,
     modifier: Modifier = Modifier,
-    index: Int,
     tvChannel: TvChannel,
     state: ChannelsScreenState
 ) {
@@ -35,15 +34,15 @@ fun ChannelItem(
             onAction(ChannelsScreenAction.SaveSelectedChannel)
         },
         modifier = modifier
-            .width(screenWidth/8)
+            .width(screenWidth / 8)
             .aspectRatio(16f / 9)
             .onFocusChanged {
                 if (it.hasFocus) {
-                    onAction(ChannelsScreenAction.UpdateFocusedIndex(index))
+                    onAction(ChannelsScreenAction.UpdateFocusedIndex(tvChannel.tvgId))
                 }
             },
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (tvChannel == state.tvChannels[state.focusedIndex]) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(
+            containerColor = if (state.scrolledIndex != null && tvChannel == state.tvChannels[state.scrolledIndex]) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(
                 alpha = 0.5f
             ),
         ),
@@ -51,7 +50,7 @@ fun ChannelItem(
             border = Border(
                 border = BorderStroke(
                     width = 3.dp,
-                    color = if (tvChannel == state.tvChannels[state.focusedIndex]) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
+                    color = if (state.scrolledIndex != null && tvChannel == state.tvChannels[state.scrolledIndex]) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
                 ),
                 inset = 4.dp
             )

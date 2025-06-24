@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
+import com.edurda77.impuls.tele_tv.domain.repository.LocalRepository
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 
 class PlayerScreenViewModel(
     private val remoteRepository: RemoteRepository,
-    private val dataStoreRepository: DataStoreRepository
+    private val dataStoreRepository: DataStoreRepository,
+    private val localRepository: LocalRepository,
 ) : ViewModel() {
 
 
@@ -45,76 +47,88 @@ class PlayerScreenViewModel(
             }
 
             PlayerScreenAction.DecrimentTvChannel -> {
-                if (state.value.tvChannels[state.value.selectedIndex] == state.value.tvChannels.first()) {
-                    _state.value.copy(
-                        selectedIndex = state.value.tvChannels.size - 1,
-                        focusedIndex = state.value.tvChannels.size - 1,
-                    )
-                        .updateState()
-                } else {
-                    _state.value.copy(
-                        selectedIndex = state.value.selectedIndex - 1,
-                        focusedIndex = state.value.selectedIndex - 1
-                    )
-                        .updateState()
+                state.value.selectedIndex?.let { selectedIndex ->
+                    if (state.value.tvChannels[selectedIndex] == state.value.tvChannels.first()) {
+                        _state.value.copy(
+                            selectedChannelId = state.value.tvChannels.last().tvgId,
+                            focusedChannelId = state.value.tvChannels.last().tvgId,
+                        )
+                            .updateState()
+                    } else {
+                        _state.value.copy(
+                            selectedChannelId = state.value.tvChannels[selectedIndex - 1].tvgId,
+                            focusedChannelId = state.value.tvChannels[selectedIndex - 1].tvgId,
+                        )
+                            .updateState()
+                    }
+                    saveLastChannel()
+                    startTimer()
                 }
-                saveLastChannel()
-                startTimer()
             }
 
             PlayerScreenAction.IncrimentTvChannel -> {
-                if (state.value.tvChannels[state.value.selectedIndex] == state.value.tvChannels.last()) {
-                    _state.value.copy(
-                        selectedIndex = 0,
-                        focusedIndex = 0
-                    )
-                        .updateState()
-                } else {
-                    _state.value.copy(
-                        selectedIndex = state.value.selectedIndex + 1,
-                        focusedIndex = state.value.selectedIndex + 1
-                    )
-                        .updateState()
+                state.value.selectedIndex?.let { selectedIndex ->
+                    if (state.value.tvChannels[selectedIndex] == state.value.tvChannels.last()) {
+                        _state.value.copy(
+                            selectedChannelId = state.value.tvChannels.first().tvgId,
+                            focusedChannelId = state.value.tvChannels.first().tvgId
+                        )
+                            .updateState()
+                    } else {
+                        _state.value.copy(
+                            selectedChannelId = state.value.tvChannels[selectedIndex + 1].tvgId,
+                            focusedChannelId = state.value.tvChannels[selectedIndex + 1].tvgId,
+                        )
+                            .updateState()
+                    }
+                    saveLastChannel()
+                    startTimer()
                 }
-                saveLastChannel()
-                startTimer()
             }
 
             is PlayerScreenAction.UpdateSelectedIndex -> {
                 _state.value.copy(
-                    selectedIndex = state.value.focusedIndex
+                    selectedChannelId = state.value.focusedChannelId
                 )
                     .updateState()
                 saveLastChannel()
                 startTimerVisibleMenu()
             }
+
             PlayerScreenAction.DecrimentFocusedIndex -> {
-                if (state.value.tvChannels[state.value.focusedIndex] == state.value.tvChannels.first()) {
-                    _state.value.copy(
-                        focusedIndex = state.value.tvChannels.size - 1
-                    )
-                        .updateState()
-                } else {
-                    _state.value.copy(
-                        focusedIndex = state.value.focusedIndex - 1
-                    )
-                        .updateState()
+                state.value.focusedIndex?.let { focusedIndex ->
+                    Log.d("REST TELE TV", "focusedIndex vm increment $focusedIndex")
+                    if (state.value.tvChannels[focusedIndex] == state.value.tvChannels.first()) {
+                        _state.value.copy(
+                            focusedChannelId = state.value.tvChannels.last().tvgId
+                        )
+                            .updateState()
+                    } else {
+                        _state.value.copy(
+                            focusedChannelId = state.value.tvChannels[focusedIndex - 1].tvgId
+                        )
+                            .updateState()
+                    }
+                    startTimerVisibleMenu()
                 }
-                startTimerVisibleMenu()
             }
+
             PlayerScreenAction.IncrimentFocusedIndex -> {
-                if (state.value.tvChannels[state.value.focusedIndex] == state.value.tvChannels.last()) {
-                    _state.value.copy(
-                        focusedIndex = 0
-                    )
-                        .updateState()
-                } else {
-                    _state.value.copy(
-                        focusedIndex = state.value.focusedIndex + 1
-                    )
-                        .updateState()
+                state.value.focusedIndex?.let { focusedIndex ->
+                    Log.d("REST TELE TV", "focusedIndex vm decrement $focusedIndex")
+                    if (state.value.tvChannels[focusedIndex] == state.value.tvChannels.last()) {
+                        _state.value.copy(
+                            focusedChannelId = state.value.tvChannels.first().tvgId
+                        )
+                            .updateState()
+                    } else {
+                        _state.value.copy(
+                            focusedChannelId = state.value.tvChannels[focusedIndex + 1].tvgId
+                        )
+                            .updateState()
+                    }
+                    startTimerVisibleMenu()
                 }
-                startTimerVisibleMenu()
             }
 
             PlayerScreenAction.ShowSideMenu -> {
@@ -136,7 +150,6 @@ class PlayerScreenViewModel(
     }
 
 
-
     private fun getInitialData() {
         _state.value.copy(
             isLoading = true,
@@ -145,8 +158,8 @@ class PlayerScreenViewModel(
         viewModelScope.launch {
             dataStoreRepository.getLastChannel()?.let {
                 _state.value.copy(
-                    selectedIndex = it,
-                    focusedIndex = it
+                    selectedChannelId = it,
+                    focusedChannelId = it
                 )
                     .updateState()
             }
@@ -176,10 +189,10 @@ class PlayerScreenViewModel(
                             tvChannels = resultTvChannels.data
                         )
                             .updateState()
-                        if (resultTvChannels.data.isNotEmpty() && state.value.selectedIndex == -1) {
+                        if (resultTvChannels.data.isNotEmpty() && state.value.selectedChannelId == null) {
                             _state.value.copy(
-                                selectedIndex = 0,
-                                focusedIndex = 0
+                                selectedChannelId = resultTvChannels.data.first().tvgId,
+                                focusedChannelId = resultTvChannels.data.first().tvgId,
                             )
                                 .updateState()
 
@@ -225,19 +238,19 @@ class PlayerScreenViewModel(
 
 
     private fun switchChannelByQuery(number: Int) {
-            if (state.value.channelInputQuery.length<3) {
-                _state.value.copy(
-                    channelInputQuery = "${state.value.channelInputQuery}$number"
-                )
-                    .updateState()
-                switchTimer()
-            } else  {
-                _state.value.copy(
-                    channelInputQuery = state.value.channelInputQuery+number
-                )
-                    .updateState()
-               // delay(300)
-                processSwitchChannel()
+        if (state.value.channelInputQuery.length < 3) {
+            _state.value.copy(
+                channelInputQuery = "${state.value.channelInputQuery}$number"
+            )
+                .updateState()
+            switchTimer()
+        } else {
+            _state.value.copy(
+                channelInputQuery = state.value.channelInputQuery + number
+            )
+                .updateState()
+            // delay(300)
+            processSwitchChannel()
         }
     }
 
@@ -256,16 +269,16 @@ class PlayerScreenViewModel(
     private fun processSwitchChannel() {
         val number = state.value.channelInputQuery.toIntOrNull()
         number?.let {
-            if (number in 1..<state.value.tvChannels.size){
+            if (number in 1..<state.value.tvChannels.size) {
                 _state.value.copy(
-                    selectedIndex = number-1,
-                    focusedIndex = number-1,
+                    selectedChannelId = state.value.tvChannels[number - 1].tvgId,
+                    focusedChannelId = state.value.tvChannels[number - 1].tvgId,
                     channelInputQuery = ""
                 )
                     .updateState()
                 saveLastChannel()
                 startTimer()
-            } else  {
+            } else {
                 _state.value.copy(
                     channelInputQuery = ""
                 )
@@ -288,7 +301,13 @@ class PlayerScreenViewModel(
     private fun saveLastChannel() {
         viewModelScope.launch {
             delay(300)
-            dataStoreRepository.saveLastChannel(state.value.selectedIndex)
+            state.value.selectedChannelId?.let {
+                dataStoreRepository.saveLastChannel(it)
+                state.value.selectedIndex?.let { index->
+                    val savedChannel = state.value.tvChannels[index]
+                    localRepository.insertLocation(savedChannel)
+                }
+            }
         }
     }
 

@@ -20,20 +20,16 @@ class LocalRepositoryImpl(
     private val dao = db.channelDao
 
     override suspend fun insertLocation(
-        tvgId: String,
-        tvgLogo: String?,
-        tvgChno: Int,
-        name: String,
-        url: String
+        tvChannel: TvChannel
     ): ResultWork<Unit, DataError.LocalDateBase> {
         return handleWriteToDataBase {
             dao.insertTvChannel(
                TvChannelEntity(
-                   tvgLogo =tvgLogo,
-                   tvgId = tvgId,
-                   tvgChno = tvgChno,
-                   name = name,
-                   url = url,
+                   tvgLogo =tvChannel.tvgLogo,
+                   tvgId = tvChannel.tvgId,
+                   tvgChno = tvChannel.tvgChannelNumber,
+                   name = tvChannel.name,
+                   url = tvChannel.url,
                    updateAt = Clock.System.now()
                        .toLocalDateTime(TimeZone.currentSystemDefault())
                )

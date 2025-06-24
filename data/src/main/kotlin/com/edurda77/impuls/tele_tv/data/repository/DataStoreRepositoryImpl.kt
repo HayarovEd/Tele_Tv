@@ -3,7 +3,6 @@ package com.edurda77.impuls.tele_tv.data.repository
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
@@ -46,15 +45,15 @@ class DataStoreRepositoryImpl(
     }
 
     override suspend fun saveLastChannel(
-        number: Int,
+        uuid: String,
     ) {
         dataStore.edit { preferences ->
-            preferences[FIELD_LAST_CHANNEL] = number
+            preferences[FIELD_LAST_CHANNEL] = uuid
         }
     }
 
 
-    override suspend fun getLastChannel(): Int? {
+    override suspend fun getLastChannel(): String? {
         return dataStore.data.map { preferences ->
             preferences[FIELD_LAST_CHANNEL]
         }.first()
@@ -70,6 +69,6 @@ class DataStoreRepositoryImpl(
     companion object {
         val FIELD_LABEL_USERNAME = stringPreferencesKey(LABEL_USERNAME)
         val FIELD_LABEL_PASSWORD = stringPreferencesKey(LABEL_PASSWORD)
-        val FIELD_LAST_CHANNEL = intPreferencesKey(LAST_CHANNEL)
+        val FIELD_LAST_CHANNEL = stringPreferencesKey(LAST_CHANNEL)
     }
 }

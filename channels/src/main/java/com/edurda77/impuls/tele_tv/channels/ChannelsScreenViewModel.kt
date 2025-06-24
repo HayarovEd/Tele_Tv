@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.repository.DownloadRepository
 import com.edurda77.impuls.tele_tv.domain.repository.Installer
+import com.edurda77.impuls.tele_tv.domain.repository.LocalRepository
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
 import com.edurda77.impuls.tele_tv.domain.repository.ServiceRepository
 import com.edurda77.impuls.tele_tv.domain.utils.APK_EXT
@@ -27,12 +28,14 @@ class ChannelsScreenViewModel(
     private val downloadRepository: DownloadRepository,
     private val serviceRepository: ServiceRepository,
     private val installer: Installer,
+    private val localRepository: LocalRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ChannelsScreenState())
     val state = _state
         .onStart {
             getInitialData()
+            getLastChannels()
             checkEnableUpdates()
         }
         .stateIn(
@@ -49,7 +52,7 @@ class ChannelsScreenViewModel(
         when (action) {
             is ChannelsScreenAction.UpdateFocusedIndex -> {
                 _state.value.copy(
-                    focusedIndex = action.index,
+                    focusedChannelId = action.id,
                 )
                     .updateState()
             }
@@ -73,7 +76,7 @@ class ChannelsScreenViewModel(
         viewModelScope.launch {
             dataStoreRepository.getLastChannel()?.let {
                 _state.value.copy(
-                    focusedIndex = it
+                    focusedChannelId = it
                 )
                     .updateState()
             }
@@ -103,9 +106,9 @@ class ChannelsScreenViewModel(
                             tvChannels = resultTvChannels.data
                         )
                             .updateState()
-                        if (resultTvChannels.data.isNotEmpty()&& state.value.focusedIndex == -1) {
+                        if (resultTvChannels.data.isNotEmpty()&& state.value.focusedChannelId == null) {
                             _state.value.copy(
-                                focusedIndex = 0
+                                focusedChannelId = resultTvChannels.data.first().tvgId
                             )
                                 .updateState()
                         }
@@ -184,9 +187,35 @@ class ChannelsScreenViewModel(
 
     private fun saveLastChannel() {
         viewModelScope.launch {
-            dataStoreRepository.saveLastChannel(state.value.focusedIndex)
-            delay(300)
-            _eventFlow.emit(UiChannelsEvents.PlayerNavigationEvent)
+            state.value.focusedChannelId?.let {
+                dataStoreRepository.saveLastChannel(it)
+                state.value.scrolledIndex?.let {index->
+                    localRepository.insertLocation(state.value.tvChannels[index])
+                }
+                delay(300)
+                _eventFlow.emit(UiChannelsEvents.PlayerNavigationEvent)
+            }
+        }
+    }
+
+    private fun getLastChannels() {
+        viewModelScope.launch {
+            localRepository.getAllChannels().collect { collector->
+                when (collector) {
+                    is ResultWork.Error -> {
+                        _state.value.copy(
+                            message = collector.error.asUiText(),
+                        )
+                            .updateState()
+                    }
+                    is ResultWork.Success -> {
+                        _state.value.copy(
+                            lastTvChannels = collector.data
+                        )
+                            .updateState()
+                    }
+                }
+            }
         }
     }
 
