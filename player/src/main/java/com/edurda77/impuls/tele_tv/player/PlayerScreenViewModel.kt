@@ -10,6 +10,7 @@ import com.edurda77.impuls.tele_tv.domain.utils.CHANNEL_LIMIT
 import com.edurda77.impuls.tele_tv.domain.utils.DELAY_MINUTE
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.domain.utils.SINGLE_LIMIT
+import com.edurda77.impuls.tele_tv.domain.utils.convertToDate
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -413,6 +414,9 @@ class PlayerScreenViewModel(
                             _state.value.copy(
                                 isLoadingFocusedChannelEpg = false,
                                 focusedChannelEpg = result.data
+                                    .groupBy {
+                                        it.start.convertToDate()
+                                    }
                             )
                                 .updateState()
                         }

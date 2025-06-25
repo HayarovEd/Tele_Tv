@@ -258,6 +258,7 @@ fun PlayerScreenScreen(
                         LazyColumn(
                             modifier = modifier
                                 .width(screenWidth * 3 / 4)
+                                .padding(16.dp)
                                 //.focusRequester(focusRequester)
                                 //.focusable(interactionSource = interactionSource)
                                 .onKeyEvent {
@@ -267,13 +268,13 @@ fun PlayerScreenScreen(
                                                 isEpgVisible = false
                                             }
 
-                                           /* KeyEvent.KEYCODE_DPAD_DOWN -> {
+                                            KeyEvent.KEYCODE_DPAD_DOWN -> {
                                                 focusManager.moveFocus(FocusDirection.Down)
                                             }
 
                                             KeyEvent.KEYCODE_DPAD_UP -> {
                                                 focusManager.moveFocus(FocusDirection.Up)
-                                            }*/
+                                            }
 
                                             KeyEvent.KEYCODE_DPAD_LEFT -> {
                                                 focusManager.moveFocus(FocusDirection.Left)
@@ -282,11 +283,24 @@ fun PlayerScreenScreen(
                                     }
                                     true
                                 },
+                            ver
                         ) {
-                            items(state.focusedChannelEpg) {
-                                ItemFullTvEpg(
-                                    tvEpg = it,
-                                )
+                            state.focusedChannelEpg.forEach { entry->
+                                stickyHeader {
+                                    Text(
+                                        modifier = modifier
+                                            .fillMaxWidth(),
+                                        text = entry.key.toString(),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                                items(entry.value) {
+                                    ItemFullTvEpg(
+                                        tvEpg = it,
+                                    )
+                                }
                             }
                         }
                     }

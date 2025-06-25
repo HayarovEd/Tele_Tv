@@ -1,6 +1,7 @@
 package com.edurda77.impuls.tele_tv.domain.utils
 
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -11,4 +12,9 @@ fun Long.calculateHoursMins(): String {
     return "${localDateTime.hour.toString().padStart(2, '0')}:${
         localDateTime.minute.toString().padStart(2, '0')
     }"
+}
+
+fun Long.convertToDate(): LocalDate {
+    val instant = Instant.fromEpochSeconds(this)
+    return instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
 }

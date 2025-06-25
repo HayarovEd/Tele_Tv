@@ -38,6 +38,7 @@ fun ItemFullTvEpg(
     Surface(
         onClick = {},
         modifier = modifier
+            .fillMaxWidth()
             .onFocusChanged {
                 if (it.hasFocus) {
                     Log.d("REST TELE TV", "tvEpg ${it.isFocused}")
