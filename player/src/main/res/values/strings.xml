@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="duration">Длительность</string>
+    <string name="hour_unit">час.</string>
+    <string name="minute_unit">мин.</string>
+    <string name="age_rating">Возрастной рейтинг</string>
 </resources>

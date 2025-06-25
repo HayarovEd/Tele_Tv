@@ -2,7 +2,9 @@ package com.edurda77.impuls.tele_tv.player
 
 import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
+import com.edurda77.impuls.tele_tv.domain.model.TvEpg
 import com.edurda77.resources.uikit.UiText
+import kotlinx.datetime.Clock
 
 data class PlayerScreenState(
     val credintial: Credintial? = null,
@@ -13,7 +15,9 @@ data class PlayerScreenState(
     val focusedChannelId: String? = null,
     val isVisibleTitle: Boolean = false,
     val isVisibleSideMenu: Boolean = false,
-    val channelInputQuery: String = ""
+    val channelInputQuery: String = "",
+    val allTvEpg: List<TvEpg> = emptyList(),
+    val currentTime:Long = Clock.System.now().epochSeconds
 ) {
     private val selectedChannel =
         if (selectedChannelId != null && tvChannels.isNotEmpty()) tvChannels.first { it.tvgId == selectedChannelId } else null

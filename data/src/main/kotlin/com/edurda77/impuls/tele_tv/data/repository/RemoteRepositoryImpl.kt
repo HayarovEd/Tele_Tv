@@ -1,7 +1,10 @@
 package com.edurda77.impuls.tele_tv.data.repository
 
+import com.edurda77.impuls.tele_tv.data.handler.convertToTvEpg
 import com.edurda77.impuls.tele_tv.data.remote.ChannelListResponse
+import com.edurda77.impuls.tele_tv.data.remote.EpgDataResponse
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
+import com.edurda77.impuls.tele_tv.domain.model.TvEpg
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
 import com.edurda77.impuls.tele_tv.domain.utils.BASE_URL
 import com.edurda77.impuls.tele_tv.domain.utils.CHANNEL_URL_PREFIX
@@ -73,13 +76,6 @@ class RemoteRepositoryImpl(
     ): ResultWork<List<TvChannel>, DataError> {
         return withContext(Dispatchers.IO) {
             try {
-                /*val response = httpClient.post("api/channel/grid") {
-                    contentType(ContentType.Application.Json)
-                    basicAuth(
-                        username = username,
-                        password = password
-                    )
-                }.call*/
                 val response = httpClient.submitForm (
                     url = "api/channel/grid",
                     formParameters = parameters {
@@ -129,53 +125,104 @@ class RemoteRepositoryImpl(
         }
     }
 
-    /*private suspend fun parseM3U(m3uContent: String): List<TvChannel> {
-        return withContext(Dispatchers.Default) {
-            val tvChannels = mutableListOf<TvChannel>()
-            val lines = m3uContent.lines()
-
-            var i = 0
-            while (i < lines.size) {
-                val line = lines[i]
-                if (line.startsWith("#EXTINF")) {
-                    val metadata = parseExtInf(line)
-                    val url = lines.getOrNull(i + 1)?.takeIf { it.startsWith("http") } ?: ""
-
-                    if (url.isNotEmpty()) {
-                        tvChannels.add(
-                            TvChannel(
-                                tvgId = metadata["tvg-id"] ?: "",
-                                tvgLogo = metadata["tvg-logo"],
-                                tvgChannelNumber = metadata["tvg-chno"] ?: "",
-                                name = metadata["name"] ?: "",
-                                url = url
-                            )
-                        )
+    override suspend fun getEpg(
+        username: String,
+        password: String,
+        dir: String,
+        start: Int,
+        limit: Int
+    ): ResultWork<List<TvEpg>, DataError> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = httpClient.submitForm (
+                    url = "api/epg/events/grid",
+                    formParameters = parameters {
+                        append("dir", dir)
+                        append("start", "$start")
+                        append("limit", "$limit")
                     }
-                    i += 2 // Skip the URL line
+                ) {
+                    method = HttpMethod.Post
+                    basicAuth(
+                        username = username,
+                        password = password
+                    )
+                }.call
+                if (response.response.status.isSuccess()) {
+                    val successResponse = response.response.body<EpgDataResponse>()
+                    ResultWork.Success(successResponse.convertToTvEpg())
                 } else {
-                    i++
+                    ResultWork.Error(DataError.Network.UNAUTHORIZED)
                 }
+            } catch (e: ClientRequestException) {
+                when (e.response.status.value) {
+                    403 -> ResultWork.Error(DataError.Network.UNAUTHORIZED)
+                    else -> ResultWork.Error(DataError.Network.UNKNOWN)
+                }
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                ResultWork.Error(DataError.Network.SERVER_ERROR)
+            } catch (e: HttpRequestTimeoutException) {
+                e.printStackTrace()
+                ResultWork.Error(DataError.Network.REQUEST_TIMEOUT)
+            } catch (e: JsonConvertException) {
+                e.printStackTrace()
+                ResultWork.Error(DataError.SerializationError.FORMAT_ERROR)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                ResultWork.Error(DataError.Network.UNKNOWN)
             }
-            tvChannels
         }
     }
 
-    private fun parseExtInf(extInfLine: String): Map<String, String?> {
-        val metadata = mutableMapOf<String, String?>()
-        val parts = extInfLine.split(" ", limit = 2)
-
-        val attributes = parts.getOrNull(1)?.split(" ") ?: emptyList()
-        attributes.forEach { attr ->
-            if (attr.contains("=")) {
-                val (key, value) = attr.split("=", limit = 2)
-                metadata[key] = value.removeSurrounding("\"")
+    override suspend fun getEpgByChannelId(
+        username: String,
+        password: String,
+        dir: String,
+        start: Int,
+        limit: Int,
+        channelId: String
+    ): ResultWork<List<TvEpg>, DataError> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = httpClient.submitForm (
+                    url = "api/epg/events/grid",
+                    formParameters = parameters {
+                        append("dir", dir)
+                        append("start", "$start")
+                        append("limit", "$limit")
+                    }
+                ) {
+                    method = HttpMethod.Post
+                    basicAuth(
+                        username = username,
+                        password = password
+                    )
+                }.call
+                if (response.response.status.isSuccess()) {
+                    val successResponse = response.response.body<EpgDataResponse>()
+                    ResultWork.Success(successResponse.convertToTvEpg())
+                } else {
+                    ResultWork.Error(DataError.Network.UNAUTHORIZED)
+                }
+            } catch (e: ClientRequestException) {
+                when (e.response.status.value) {
+                    403 -> ResultWork.Error(DataError.Network.UNAUTHORIZED)
+                    else -> ResultWork.Error(DataError.Network.UNKNOWN)
+                }
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                ResultWork.Error(DataError.Network.SERVER_ERROR)
+            } catch (e: HttpRequestTimeoutException) {
+                e.printStackTrace()
+                ResultWork.Error(DataError.Network.REQUEST_TIMEOUT)
+            } catch (e: JsonConvertException) {
+                e.printStackTrace()
+                ResultWork.Error(DataError.SerializationError.FORMAT_ERROR)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                ResultWork.Error(DataError.Network.UNKNOWN)
             }
         }
-        val name = extInfLine.substringAfterLast(",").trim()
-        if (name.isNotEmpty()) {
-            metadata["name"] = name
-        }
-        return metadata
-    }*/
+    }
 }

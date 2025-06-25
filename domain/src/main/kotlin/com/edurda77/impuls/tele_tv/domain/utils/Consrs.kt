@@ -20,3 +20,9 @@ const val TB_CHANNEL_URL = "tb_channel_url"
 const val TB_CHANNEL_TIME = "tb_channel_time"
 
 const val TELE_TV_DB = "tele_tv_db"
+
+const val ASC = "ASC"
+const val START_LIMIT = 300
+const val CHANNEL_LIMIT = 500
+const val SINGLE_LIMIT = 1
+const val START_POSITION = 0

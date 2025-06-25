@@ -24,15 +24,19 @@ import androidx.compose.ui.unit.sp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
+import com.edurda77.impuls.tele_tv.domain.model.TvEpg
 import com.edurda77.impuls.tele_tv.resources.R
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
+import kotlinx.datetime.Clock
 
 @Composable
 fun ChannelMenu(
     channels: List<TvChannel>,
+    allTvEpg: List<TvEpg>,
     selectedIndex: Int?,
     modifier: Modifier = Modifier,
-    focusedIndex: Int?
+    focusedIndex: Int?,
+    currentTime: Long,
 ) {
     val scrollState = rememberLazyListState()
     val configuration = LocalWindowInfo.current.containerSize
@@ -72,6 +76,8 @@ fun ChannelMenu(
                         channel = channel,
                         isCurrent = selectedIndex != null && channel == channels[selectedIndex],
                         isFocused = focusedIndex != null && channel == channels[focusedIndex],
+                        tvEpg = allTvEpg.first { it.channelUuid == channel.tvgId },
+                        currentTime = currentTime
                     )
                 }
             }
@@ -92,11 +98,27 @@ private fun ChannelMenuView() {
             url = ""
         )
     }
+    val epgs = (1..10).map {
+        TvEpg(
+            channelName = "Рифей (22)",
+            channelNumber = "$it",
+            channelUuid = "bb96aabb80ee7139983ed081a341d148",
+            ageRating = 16,
+            description = "Девочка Маша и Медведь — неразлучные друзья. В голову озорной Маши всегда приходят самые невероятные идеи, и поэтому каждый день героев наполнен весельем, приключениями и новыми открытиями.",
+            eventId = 464049,
+            nextEventId = 464050,
+            start = 1750806000,
+            stop = 1750845600,
+            title = "Новости на Рифее."
+        )
+    }
     Tele_TvTheme {
         ChannelMenu(
             channels = channels,
             selectedIndex = 1,
             focusedIndex = 2,
+            allTvEpg = epgs,
+            currentTime = Clock.System.now().epochSeconds,
         )
     }
 }

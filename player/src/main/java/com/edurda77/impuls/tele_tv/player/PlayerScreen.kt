@@ -215,6 +215,8 @@ fun PlayerScreenScreen(
                 channels = state.tvChannels,
                 selectedIndex = state.selectedIndex,
                 focusedIndex = state.focusedIndex,
+                allTvEpg = state.allTvEpg,
+                currentTime = state.currentTime
             )
         }
         if (state.channelInputQuery.isNotEmpty()) {

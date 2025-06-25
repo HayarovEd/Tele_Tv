@@ -3,6 +3,7 @@ package com.edurda77.impuls.tele_tv.player
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,13 +24,17 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
+import com.edurda77.impuls.tele_tv.domain.model.TvEpg
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
+import kotlinx.datetime.Clock
 
 @Composable
 fun ChannelItem(
     channel: TvChannel,
     isCurrent: Boolean,
     isFocused: Boolean,
+    tvEpg: TvEpg,
+    currentTime: Long,
     modifier: Modifier = Modifier
 ) {
 
@@ -57,31 +62,38 @@ fun ChannelItem(
         ),
         colors = CardDefaults.colors(
             containerColor = if (isCurrent) MaterialTheme.colorScheme.primaryContainer
-            else MaterialTheme.colorScheme.surfaceVariant
+            else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
         ),
         onClick = {  }
     ) {
-        Row(
+        Column (
             modifier = modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            channel.tvgLogo?.let {
-                AsyncImage(
-                    modifier = modifier.size(30.dp),
-                    model = channel.tvgLogo,
-                    contentDescription = "",
-                    contentScale = ContentScale.Fit
+        ){
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                channel.tvgLogo?.let {
+                    AsyncImage(
+                        modifier = modifier.size(30.dp),
+                        model = channel.tvgLogo,
+                        contentDescription = "",
+                        contentScale = ContentScale.Fit
+                    )
+                }
+                Spacer(modifier = modifier.width(15.dp))
+                Text(
+                    modifier = modifier.basicMarquee(),
+                    text = "${channel.tvgChannelNumber}, ${channel.name}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (isCurrent) MaterialTheme.colorScheme.onPrimaryContainer
+                    else MaterialTheme.colorScheme.onSurface,
                 )
             }
-            Spacer(modifier = modifier.width(15.dp))
-            Text(
-                modifier = modifier.basicMarquee(),
-                text = "${channel.tvgChannelNumber}, ${channel.name}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (isCurrent) MaterialTheme.colorScheme.onPrimaryContainer
-                else MaterialTheme.colorScheme.onSurface,
+            ItemTvEpg(
+                tvEpg = tvEpg,
+                currentTime = currentTime
             )
         }
     }
@@ -100,7 +112,20 @@ private fun ChannelItemView() {
                 url = ""
             ),
             isCurrent = true,
-            isFocused = false
+            isFocused = false,
+            currentTime = Clock.System.now().epochSeconds,
+            tvEpg = TvEpg(
+                channelName = "Рифей (22)",
+                channelNumber = "22",
+                channelUuid = "bb96aabb80ee7139983ed081a341d148",
+                ageRating = 16,
+                description = "Девочка Маша и Медведь — неразлучные друзья. В голову озорной Маши всегда приходят самые невероятные идеи, и поэтому каждый день героев наполнен весельем, приключениями и новыми открытиями.",
+                eventId = 464049,
+                nextEventId = 464050,
+                start = 1750806000,
+                stop = 1750845600,
+                title = "Новости на Рифее."
+            )
         )
     }
 }
@@ -118,7 +143,20 @@ private fun ChannelItemView2() {
                 url = ""
             ),
             isCurrent = false,
-            isFocused = true
+            isFocused = true,
+            currentTime = Clock.System.now().epochSeconds,
+            tvEpg = TvEpg(
+                channelName = "Рифей (22)",
+                channelNumber = "22",
+                channelUuid = "bb96aabb80ee7139983ed081a341d148",
+                ageRating = 16,
+                description = "Девочка Маша и Медведь — неразлучные друзья. В голову озорной Маши всегда приходят самые невероятные идеи, и поэтому каждый день героев наполнен весельем, приключениями и новыми открытиями.",
+                eventId = 464049,
+                nextEventId = 464050,
+                start = 1750806000,
+                stop = 1750845600,
+                title = "Новости на Рифее."
+            )
         )
     }
 }

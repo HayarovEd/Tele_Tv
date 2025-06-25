@@ -9,6 +9,7 @@ import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -171,13 +172,22 @@ class PlayerScreenViewModel(
             )
                 .updateState()
             credintial?.let {
-                when (val resultTvChannels = remoteRepository.getTvChannels(
-                    username = credintial.username,
-                    password = credintial.password
-                )) {
+                val resultTvChannelsDiff = async {
+                    remoteRepository.getTvChannels(
+                        username = credintial.username,
+                        password = credintial.password
+                    )
+                }
+                val resultTvEpgDiff = async {
+                    remoteRepository.getEpg(
+                        username = credintial.username,
+                        password = credintial.password
+                    )
+                }
+
+                when (val resultTvChannels = resultTvChannelsDiff.await()) {
                     is ResultWork.Error -> {
                         _state.value.copy(
-                            isLoading = false,
                             message = resultTvChannels.error.asUiText()
                         )
                             .updateState()
@@ -185,7 +195,6 @@ class PlayerScreenViewModel(
 
                     is ResultWork.Success -> {
                         _state.value.copy(
-                            isLoading = false,
                             tvChannels = resultTvChannels.data
                         )
                             .updateState()
@@ -198,6 +207,23 @@ class PlayerScreenViewModel(
 
                             startTimer()
                         }
+                    }
+                }
+                when (val resultTvEpgs = resultTvEpgDiff.await()) {
+                    is ResultWork.Error -> {
+                        _state.value.copy(
+                            isLoading = false,
+                            message = resultTvEpgs.error.asUiText()
+                        )
+                            .updateState()
+                    }
+
+                    is ResultWork.Success -> {
+                        _state.value.copy(
+                            isLoading = false,
+                            allTvEpg = resultTvEpgs.data.distinctBy { it.channelUuid }
+                        )
+                            .updateState()
                     }
                 }
             }
