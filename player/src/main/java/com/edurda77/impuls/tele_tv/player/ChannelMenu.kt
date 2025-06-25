@@ -76,7 +76,7 @@ fun ChannelMenu(
                         channel = channel,
                         isCurrent = selectedIndex != null && channel == channels[selectedIndex],
                         isFocused = focusedIndex != null && channel == channels[focusedIndex],
-                        tvEpg = allTvEpg.first { it.channelUuid == channel.tvgId },
+                        tvEpg = allTvEpg.firstOrNull { it.channelUuid == channel.tvgId },
                         currentTime = currentTime
                     )
                 }

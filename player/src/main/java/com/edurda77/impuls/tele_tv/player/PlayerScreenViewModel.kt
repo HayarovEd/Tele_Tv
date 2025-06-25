@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.repository.LocalRepository
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
+import com.edurda77.impuls.tele_tv.domain.utils.DELAY_MINUTE
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
+import com.edurda77.impuls.tele_tv.domain.utils.SINGLE_LIMIT
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -17,6 +19,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 
 class PlayerScreenViewModel(
     private val remoteRepository: RemoteRepository,
@@ -34,6 +37,7 @@ class PlayerScreenViewModel(
     val state = _state
         .onStart {
             getInitialData()
+            getCurrentTime()
         }
         .stateIn(
             scope = viewModelScope,
@@ -329,9 +333,48 @@ class PlayerScreenViewModel(
             delay(300)
             state.value.selectedChannelId?.let {
                 dataStoreRepository.saveLastChannel(it)
-                state.value.selectedIndex?.let { index->
+                state.value.selectedIndex?.let { index ->
                     val savedChannel = state.value.tvChannels[index]
                     localRepository.insertLocation(savedChannel)
+                }
+            }
+        }
+    }
+
+    private fun getCurrentTime() {
+        viewModelScope.launch {
+            while (true) {
+                delay(DELAY_MINUTE)
+                val currentTime = Clock.System.now().epochSeconds
+                state.value.credintial?.let { credintial ->
+                    val newEpgs = state.value.allTvEpg.map { epg ->
+                        if (epg.stop > currentTime) {
+                            when (val result = remoteRepository.getEpgByChannelId(
+                                username = credintial.username,
+                                password = credintial.password,
+                                limit = SINGLE_LIMIT,
+                                channelId = epg.channelUuid
+                            )) {
+                                is ResultWork.Error -> {
+                                    _state.value.copy(
+                                        message = result.error.asUiText()
+                                    )
+                                        .updateState()
+                                    epg
+                                }
+
+                                is ResultWork.Success -> {
+                                    if (result.data.isEmpty()) epg else
+                                        result.data.first()
+                                }
+                            }
+                        } else epg
+                    }
+                    _state.value.copy(
+                        currentTime = currentTime,
+                        allTvEpg = newEpgs
+                    )
+                        .updateState()
                 }
             }
         }

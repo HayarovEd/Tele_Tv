@@ -9,6 +9,7 @@ import com.edurda77.impuls.tele_tv.domain.repository.LocalRepository
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
 import com.edurda77.impuls.tele_tv.domain.repository.ServiceRepository
 import com.edurda77.impuls.tele_tv.domain.utils.APK_EXT
+import com.edurda77.impuls.tele_tv.domain.utils.DELAY_MINUTE
 import com.edurda77.impuls.tele_tv.domain.utils.DownloadStatus
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
@@ -226,7 +227,7 @@ class ChannelsScreenViewModel(
     private fun getCurrentTime() {
         viewModelScope.launch {
             while (true) {
-                delay(60_000)
+                delay(DELAY_MINUTE)
                 _state.value.copy(
                     currentTime =  Clock.System.now()
                         .toLocalDateTime(TimeZone.currentSystemDefault()).time

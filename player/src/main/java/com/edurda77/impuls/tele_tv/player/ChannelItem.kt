@@ -33,7 +33,7 @@ fun ChannelItem(
     channel: TvChannel,
     isCurrent: Boolean,
     isFocused: Boolean,
-    tvEpg: TvEpg,
+    tvEpg: TvEpg?,
     currentTime: Long,
     modifier: Modifier = Modifier
 ) {
@@ -91,10 +91,12 @@ fun ChannelItem(
                     else MaterialTheme.colorScheme.onSurface,
                 )
             }
-            ItemTvEpg(
-                tvEpg = tvEpg,
-                currentTime = currentTime
-            )
+            tvEpg?.let { epg->
+                ItemTvEpg(
+                    tvEpg = epg,
+                    currentTime = currentTime
+                )
+            }
         }
     }
 }

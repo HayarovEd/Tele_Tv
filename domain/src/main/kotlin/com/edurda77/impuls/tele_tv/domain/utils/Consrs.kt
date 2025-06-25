@@ -26,3 +26,4 @@ const val START_LIMIT = 300
 const val CHANNEL_LIMIT = 500
 const val SINGLE_LIMIT = 1
 const val START_POSITION = 0
+const val DELAY_MINUTE = 60_000L
