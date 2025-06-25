@@ -18,8 +18,6 @@ data class EpgDto(
     val description: String = "",
     @SerialName("eventId")
     val eventId: Int,
-    @SerialName("nextEventId")
-    val nextEventId: Int,
     @SerialName("start")
     val start: Long,
     @SerialName("stop")

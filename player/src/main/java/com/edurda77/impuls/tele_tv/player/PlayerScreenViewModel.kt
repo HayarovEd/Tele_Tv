@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.repository.LocalRepository
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
+import com.edurda77.impuls.tele_tv.domain.utils.CHANNEL_LIMIT
 import com.edurda77.impuls.tele_tv.domain.utils.DELAY_MINUTE
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.domain.utils.SINGLE_LIMIT
@@ -114,6 +115,7 @@ class PlayerScreenViewModel(
                         )
                             .updateState()
                     }
+                    loadEpgByFocusedChannel()
                     startTimerVisibleMenu()
                 }
             }
@@ -132,6 +134,7 @@ class PlayerScreenViewModel(
                         )
                             .updateState()
                     }
+                    loadEpgByFocusedChannel()
                     startTimerVisibleMenu()
                 }
             }
@@ -150,6 +153,10 @@ class PlayerScreenViewModel(
 
             PlayerScreenAction.DeleteLastNumber -> {
                 deleteLastNumber()
+            }
+
+            PlayerScreenAction.GetEpgByFocusedChannelId -> {
+                loadEpgByFocusedChannel()
             }
         }
     }
@@ -375,6 +382,41 @@ class PlayerScreenViewModel(
                         allTvEpg = newEpgs
                     )
                         .updateState()
+                }
+            }
+        }
+    }
+
+    private fun loadEpgByFocusedChannel() {
+        state.value.credintial?.let { credintial ->
+            state.value.focusedChannelId?.let { id ->
+                _state.value.copy(
+                    isLoadingFocusedChannelEpg = true
+                )
+                    .updateState()
+                viewModelScope.launch {
+                    when (val result = remoteRepository.getEpgByChannelId(
+                        username = credintial.username,
+                        password = credintial.password,
+                        limit = CHANNEL_LIMIT,
+                        channelId = id
+                    )) {
+                        is ResultWork.Error -> {
+                            _state.value.copy(
+                                isLoadingFocusedChannelEpg = false,
+                                message = result.error.asUiText()
+                            )
+                                .updateState()
+                        }
+
+                        is ResultWork.Success -> {
+                            _state.value.copy(
+                                isLoadingFocusedChannelEpg = false,
+                                focusedChannelEpg = result.data
+                            )
+                                .updateState()
+                        }
+                    }
                 }
             }
         }

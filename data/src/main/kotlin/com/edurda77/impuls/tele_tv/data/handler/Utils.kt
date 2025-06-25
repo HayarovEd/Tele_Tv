@@ -10,13 +10,12 @@ fun Context.pathToDownloadFile(fileName: String): String =
 fun EpgDataResponse.convertToTvEpg(): List<TvEpg> {
     return epgDtos.map {
         TvEpg(
-            ageRating = if (it.ageRating == -1) null else it.ageRating,
+            ageRating = if (it.ageRating == -1) 0 else it.ageRating,
             channelName = it.channelName,
             channelNumber = it.channelNumber,
             channelUuid = it.channelUuid,
             description = it.description.ifBlank { null },
             eventId = it.eventId,
-            nextEventId = it.nextEventId,
             stop = it.stop,
             title = it.title,
             start = it.start

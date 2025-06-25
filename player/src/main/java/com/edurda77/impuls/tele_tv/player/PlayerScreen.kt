@@ -10,11 +10,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -24,6 +32,9 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +51,7 @@ import androidx.media3.ui.compose.modifiers.resizeWithContentScale
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.edurda77.impuls.tele_tv.domain.model.Credintial
+import com.edurda77.impuls.tele_tv.resources.R
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 import kotlinx.coroutines.delay
 import okhttp3.Credentials
@@ -82,7 +94,9 @@ fun PlayerScreenScreen(
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
     val focusManager = LocalFocusManager.current
-    //var isMenuVisible by remember { mutableStateOf(false) }
+    val configuration = LocalWindowInfo.current.containerSize
+    val screenWidth = configuration.height.dp
+    var isEpgVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(exoPlayer, state.tvChannels, state.selectedChannelId) {
         if (state.tvChannels.isNotEmpty()) {
@@ -181,43 +195,103 @@ fun PlayerScreenScreen(
                 )
             }
         }
-        if (state.isVisibleSideMenu) {
-            ChannelMenu(
+        if (state.isVisibleSideMenu || isEpgVisible) {
+            Row(
                 modifier = modifier
-                    .focusRequester(focusRequester)
-                    .focusable(interactionSource = interactionSource)
-                    /*.onFocusChanged {
-                        Log.d("TELE TV TEST", "isFocused ${it.isFocused}")
-                    }*/
-                    .onKeyEvent {
-                        if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
-                            when (it.nativeKeyEvent.keyCode) {
-                                KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_BACK -> {
-                                    //isMenuVisible = false
-                                    focusManager.moveFocus(FocusDirection.Right)
-                                }
+                    .fillMaxHeight()
+                    .width(if (isEpgVisible) screenWidth else screenWidth / 4)
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = if (isEpgVisible) 0.9f else 0.5f))
+            ) {
+                ChannelMenu(
+                    modifier = modifier
+                        .width(screenWidth / 4)
+                        .focusRequester(focusRequester)
+                        .focusable(interactionSource = interactionSource)
+                        /*.onFocusChanged {
+                            Log.d("TELE TV TEST", "isFocused ${it.isFocused}")
+                        }*/
+                        .onKeyEvent {
+                            if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
+                                when (it.nativeKeyEvent.keyCode) {
+                                    KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_BACK -> {
+                                        focusManager.moveFocus(FocusDirection.Right)
+                                    }
 
-                                KeyEvent.KEYCODE_DPAD_DOWN -> {
-                                    onAction(PlayerScreenAction.IncrimentFocusedIndex)
-                                }
+                                    KeyEvent.KEYCODE_DPAD_DOWN -> {
+                                        onAction(PlayerScreenAction.IncrimentFocusedIndex)
+                                    }
 
-                                KeyEvent.KEYCODE_DPAD_UP -> {
-                                    onAction(PlayerScreenAction.DecrimentFocusedIndex)
-                                }
+                                    KeyEvent.KEYCODE_DPAD_UP -> {
+                                        onAction(PlayerScreenAction.DecrimentFocusedIndex)
+                                    }
 
-                                KeyEvent.KEYCODE_DPAD_CENTER -> {
-                                    onAction(PlayerScreenAction.UpdateSelectedIndex)
+                                    KeyEvent.KEYCODE_DPAD_CENTER -> {
+                                        onAction(PlayerScreenAction.UpdateSelectedIndex)
+                                    }
+
+                                    KeyEvent.KEYCODE_DPAD_LEFT -> {
+                                        onAction(PlayerScreenAction.GetEpgByFocusedChannelId)
+                                        isEpgVisible = true
+                                    }
                                 }
                             }
+                            true
+                        },
+                    channels = state.tvChannels,
+                    selectedIndex = state.selectedIndex,
+                    focusedIndex = state.focusedIndex,
+                    allTvEpg = state.allTvEpg,
+                    currentTime = state.currentTime
+                )
+                if (isEpgVisible) {
+                    if (state.isLoadingFocusedChannelEpg) {
+                        Text(
+                            modifier = modifier
+                                .align(Alignment.CenterVertically)
+                                .fillMaxWidth(),
+                            text = stringResource(R.string.epg_udpating),
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            textAlign = TextAlign.Center
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = modifier
+                                .width(screenWidth * 3 / 4)
+                                //.focusRequester(focusRequester)
+                                //.focusable(interactionSource = interactionSource)
+                                .onKeyEvent {
+                                    if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
+                                        when (it.nativeKeyEvent.keyCode) {
+                                            KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_BACK -> {
+                                                isEpgVisible = false
+                                            }
+
+                                           /* KeyEvent.KEYCODE_DPAD_DOWN -> {
+                                                focusManager.moveFocus(FocusDirection.Down)
+                                            }
+
+                                            KeyEvent.KEYCODE_DPAD_UP -> {
+                                                focusManager.moveFocus(FocusDirection.Up)
+                                            }*/
+
+                                            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                                                focusManager.moveFocus(FocusDirection.Left)
+                                            }
+                                        }
+                                    }
+                                    true
+                                },
+                        ) {
+                            items(state.focusedChannelEpg) {
+                                ItemFullTvEpg(
+                                    tvEpg = it,
+                                )
+                            }
                         }
-                        true
-                    },
-                channels = state.tvChannels,
-                selectedIndex = state.selectedIndex,
-                focusedIndex = state.focusedIndex,
-                allTvEpg = state.allTvEpg,
-                currentTime = state.currentTime
-            )
+                    }
+                }
+            }
         }
         if (state.channelInputQuery.isNotEmpty()) {
             Text(

@@ -1,21 +1,16 @@
 package com.edurda77.impuls.tele_tv.player
 
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,8 +34,6 @@ fun ChannelMenu(
     currentTime: Long,
 ) {
     val scrollState = rememberLazyListState()
-    val configuration = LocalWindowInfo.current.containerSize
-    val screenWidth = configuration.height.dp
     LaunchedEffect(focusedIndex) {
         if (focusedIndex != null && focusedIndex >= 0) {
             val countVisible = scrollState.layoutInfo.visibleItemsInfo.size
@@ -51,13 +44,6 @@ fun ChannelMenu(
             scrollState.scrollToItem(scrolledIndex)
         }
     }
-
-    Box(
-        modifier = modifier
-            .fillMaxHeight()
-            .width(screenWidth / 4)
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-    ) {
         Column(modifier = modifier.padding(16.dp)) {
             Text(
                 text = stringResource(R.string.channels),
@@ -82,7 +68,6 @@ fun ChannelMenu(
                 }
             }
         }
-    }
 }
 
 @Preview
@@ -106,7 +91,6 @@ private fun ChannelMenuView() {
             ageRating = 16,
             description = "Девочка Маша и Медведь — неразлучные друзья. В голову озорной Маши всегда приходят самые невероятные идеи, и поэтому каждый день героев наполнен весельем, приключениями и новыми открытиями.",
             eventId = 464049,
-            nextEventId = 464050,
             start = 1750806000,
             stop = 1750845600,
             title = "Новости на Рифее."

@@ -31,4 +31,5 @@
     <string name="update_downloading">Обновление загружается</string>
     <string name="last_showed">Последние просмотренные</string>
     <string name="channels">Каналы</string>
+    <string name="epg_udpating">Программа загружается</string>
 </resources>

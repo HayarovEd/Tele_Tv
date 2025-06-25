@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
     implementation(libs.kotlinx.coroutines.android)
+    //date-time
+    implementation(libs.kotlinx.datetime)
 }

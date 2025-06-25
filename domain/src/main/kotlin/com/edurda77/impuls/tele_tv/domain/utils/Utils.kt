@@ -1,8 +1,14 @@
 package com.edurda77.impuls.tele_tv.domain.utils
 
-fun Long.calculateHoursMins():Pair<Long, Long> {
-    val durationMin = this/60
-    val hours = durationMin/60
-    val minutes = durationMin%60
-    return Pair(hours, minutes)
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+
+
+fun Long.calculateHoursMins(): String {
+    val instant = Instant.fromEpochSeconds(this)
+    val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${localDateTime.hour.toString().padStart(2, '0')}:${
+        localDateTime.minute.toString().padStart(2, '0')
+    }"
 }

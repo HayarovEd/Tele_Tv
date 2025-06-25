@@ -17,7 +17,9 @@ data class PlayerScreenState(
     val isVisibleSideMenu: Boolean = false,
     val channelInputQuery: String = "",
     val allTvEpg: List<TvEpg> = emptyList(),
-    val currentTime:Long = Clock.System.now().epochSeconds
+    val currentTime:Long = Clock.System.now().epochSeconds,
+    val focusedChannelEpg: List<TvEpg> = emptyList(),
+    val isLoadingFocusedChannelEpg: Boolean = false,
 ) {
     private val selectedChannel =
         if (selectedChannelId != null && tvChannels.isNotEmpty()) tvChannels.first { it.tvgId == selectedChannelId } else null

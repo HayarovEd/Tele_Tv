@@ -10,4 +10,5 @@ sealed interface PlayerScreenAction {
     data object ShowSideMenu:PlayerScreenAction
     class EnterStringNumber(val number: Int):PlayerScreenAction
     data object DeleteLastNumber:PlayerScreenAction
+    data object GetEpgByFocusedChannelId:PlayerScreenAction
 }

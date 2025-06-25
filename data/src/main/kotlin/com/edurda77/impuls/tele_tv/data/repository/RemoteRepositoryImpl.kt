@@ -191,6 +191,7 @@ class RemoteRepositoryImpl(
                         append("dir", dir)
                         append("start", "$start")
                         append("limit", "$limit")
+                        append("channel", channelId)
                     }
                 ) {
                     method = HttpMethod.Post

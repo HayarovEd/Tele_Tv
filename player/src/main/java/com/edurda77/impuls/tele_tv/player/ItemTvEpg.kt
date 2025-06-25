@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.edurda77.impuls.tele_tv.domain.model.TvEpg
-import com.edurda77.impuls.tele_tv.domain.utils.calculateHoursMins
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 
 @Composable
@@ -40,7 +39,6 @@ fun ItemTvEpg(
     val percent =
         if (currentTime > tvEpg.start) (currentTime - tvEpg.start) / tvEpg.duration.toFloat() else 0f
 
-    val duration = tvEpg.duration.calculateHoursMins()
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -113,7 +111,7 @@ fun ItemTvEpg(
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun ItemTvEpgView() {
+private fun ItemTvEpgView() {
     Tele_TvTheme {
         ItemTvEpg(
             tvEpg = TvEpg(
@@ -123,7 +121,6 @@ fun ItemTvEpgView() {
                 ageRating = 16,
                 description = "Девочка Маша и Медведь — неразлучные друзья. В голову озорной Маши всегда приходят самые невероятные идеи, и поэтому каждый день героев наполнен весельем, приключениями и новыми открытиями.",
                 eventId = 464049,
-                nextEventId = 464050,
                 start = 1750806000,
                 stop = 1750845600,
                 title = "Новости на Рифее."
