@@ -33,4 +33,5 @@
     <string name="last_showed">Последние просмотренные</string>
     <string name="channels">Каналы</string>
     <string name="epg_udpating">Программа загружается</string>
+    <string name="channel_temporary_unvailable">Канал временно недоступен</string>
 </resources>

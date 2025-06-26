@@ -17,18 +17,20 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun rememberPlayer(context: Context): ExoPlayer {
-    val player = ExoPlayer.Builder(context)
-        //.setSeekForwardIncrementMs(10)
-        //  .setSeekBackIncrementMs(10)
-        .setMediaSourceFactory(
-            ProgressiveMediaSource.Factory(DefaultDataSource.Factory(context))
-        )
-        .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
-        .build()
-        .apply {
-            playWhenReady = true
-            repeatMode = Player.REPEAT_MODE_OFF
-        }
+    val player = remember {
+        ExoPlayer.Builder(context)
+            //.setSeekForwardIncrementMs(10)
+            //  .setSeekBackIncrementMs(10)
+            .setMediaSourceFactory(
+                ProgressiveMediaSource.Factory(DefaultDataSource.Factory(context))
+            )
+            .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+            .build()
+            .apply {
+                playWhenReady = true
+                repeatMode = Player.REPEAT_MODE_OFF
+            }
+    }
     val lifecycleObserver = rememberMapLifecycleObserver(player)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     DisposableEffect(lifecycle) {
@@ -37,7 +39,7 @@ fun rememberPlayer(context: Context): ExoPlayer {
             lifecycle.removeObserver(lifecycleObserver)
         }
     }
-    return player
+    return  player
 }
 
 @Composable

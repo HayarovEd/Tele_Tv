@@ -2,6 +2,7 @@ package com.edurda77.impuls.tele_tv.player
 
 import android.util.Log
 import android.view.KeyEvent
+import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -89,6 +90,11 @@ fun PlayerScreenScreen(
             val errorCode = error.errorCode
             Log.d("REST TELE TV", "errorCode play $errorCode")
             Log.d("REST TELE TV", "error play $error")
+            Toast.makeText(
+                context,
+                context.getText(R.string.channel_temporary_unvailable),
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
     exoPlayer.addListener(playerListener)
@@ -99,7 +105,7 @@ fun PlayerScreenScreen(
     val screenWidth = configuration.height.dp
     var isEpgVisible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(exoPlayer, state.tvChannels, state.selectedChannelId) {
+    LaunchedEffect(exoPlayer, state.selectedChannelId) {
         if (state.tvChannels.isNotEmpty()) {
             state.credintial?.let {
                 state.selectedIndex?.let {
@@ -281,7 +287,7 @@ fun PlayerScreenScreen(
                                 },
                             verticalArrangement = Arrangement.spacedBy(15.dp)
                         ) {
-                            state.focusedChannelEpg.forEach { entry->
+                            state.focusedChannelEpg.forEach { entry ->
                                 stickyHeader {
                                     Text(
                                         modifier = modifier
