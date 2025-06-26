@@ -105,7 +105,7 @@ fun PlayerScreenScreen(
     val screenWidth = configuration.height.dp
     var isEpgVisible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(exoPlayer, state.selectedChannelId) {
+    LaunchedEffect(exoPlayer, state.tvChannels, state.selectedChannelId) {
         if (state.tvChannels.isNotEmpty()) {
             state.credintial?.let {
                 state.selectedIndex?.let {
