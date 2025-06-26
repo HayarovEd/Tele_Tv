@@ -1,6 +1,7 @@
 <resources>
 
-    <string name="app_name">Tele_Tv</string>
+    <string name="app_name">Теле ТВ для приставки</string>
+    <string name="app_name_tv">Теле ТВ для тв</string>
 
     <string name="server_error">Ошибка сервера</string>
     <string name="unknown_error">Незивестная ошибка</string>
