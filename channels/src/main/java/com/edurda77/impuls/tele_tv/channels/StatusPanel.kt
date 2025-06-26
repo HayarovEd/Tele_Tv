@@ -27,6 +27,7 @@ fun StatusPanel(
     currentTime: LocalTime,
     isEnableUpdate: Boolean,
     onUpdateClick: () -> Unit,
+    onExitClick: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -39,6 +40,12 @@ fun StatusPanel(
             )
             Spacer(modifier = modifier.width(10.dp))
         }
+        UiIconButton(
+            icon = ImageVector.vectorResource(R.drawable.outline_logout_24),
+            onClick = onExitClick,
+            color = MaterialTheme.colorScheme.tertiary
+        )
+        Spacer(modifier = modifier.width(10.dp))
         Text(
             modifier = modifier,
             text = "${currentTime.hour.toString().padStart(2, '0')}:${
@@ -58,7 +65,8 @@ fun StatusPanelView() {
             currentTime = Clock.System.now()
                 .toLocalDateTime(TimeZone.currentSystemDefault()).time,
             isEnableUpdate = true,
-            onUpdateClick = {}
+            onUpdateClick = {},
+            onExitClick = {}
         )
     }
 }

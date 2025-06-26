@@ -44,7 +44,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ChannelsScreenRoot(
     viewModel: ChannelsScreenViewModel = koinViewModel(),
-    onNavigateTopPlayer: () -> Unit
+    onNavigateTopPlayer: () -> Unit,
+    onNavigateToLogin: () -> Unit
 ) {
     BackHandler { }
 
@@ -55,6 +56,10 @@ fun ChannelsScreenRoot(
             when (event) {
                 UiChannelsEvents.PlayerNavigationEvent -> {
                     onNavigateTopPlayer()
+                }
+
+                UiChannelsEvents.LoginNavigationEvent -> {
+                    onNavigateToLogin()
                 }
             }
         }
@@ -134,6 +139,9 @@ private fun ChannelsScreenScreen(
                     isEnableUpdate = state.enableUpdate,
                     onUpdateClick = {
                         onAction(ChannelsScreenAction.DownloadUpdate)
+                    },
+                    onExitClick = {
+                        onAction(ChannelsScreenAction.Logout)
                     }
                 )
             }

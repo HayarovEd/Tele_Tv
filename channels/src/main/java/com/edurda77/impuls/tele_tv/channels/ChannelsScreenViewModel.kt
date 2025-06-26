@@ -69,8 +69,14 @@ class ChannelsScreenViewModel(
             ChannelsScreenAction.DownloadUpdate -> {
                 downloadAndInstall()
             }
+
+            ChannelsScreenAction.Logout -> {
+                logout()
+            }
         }
     }
+
+
 
 
     private fun getInitialData() {
@@ -234,6 +240,13 @@ class ChannelsScreenViewModel(
                 )
                     .updateState()
             }
+        }
+    }
+
+    private fun logout() {
+        viewModelScope.launch {
+            dataStoreRepository.clearCredintial()
+            _eventFlow.emit(UiChannelsEvents.LoginNavigationEvent)
         }
     }
 

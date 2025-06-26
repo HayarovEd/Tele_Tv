@@ -4,4 +4,5 @@ sealed interface ChannelsScreenAction {
     class UpdateFocusedIndex(val id: String) : ChannelsScreenAction
     data object SaveSelectedChannel : ChannelsScreenAction
     data object DownloadUpdate : ChannelsScreenAction
+    data object Logout : ChannelsScreenAction
 }

@@ -6,6 +6,7 @@ import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -87,6 +88,7 @@ class LoginScreenViewModel(
                             password = state.value.password
                         )
                     }
+                    delay(300)
                     _eventFlow.emit(UiLoginEvents.ChannelsNavigationEvent)
                 }
             }

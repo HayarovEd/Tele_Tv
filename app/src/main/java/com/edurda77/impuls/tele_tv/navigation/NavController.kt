@@ -38,6 +38,9 @@ fun NavController(
             ChannelsScreenRoot(
                 onNavigateTopPlayer = {
                     navController.navigate(NavigationRoute.Player)
+                },
+                onNavigateToLogin = {
+                    navController.navigate(NavigationRoute.Login)
                 }
             )
         }
