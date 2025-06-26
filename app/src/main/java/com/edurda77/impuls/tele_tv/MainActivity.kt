@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Tele_TvTheme {
                 NavController(
-                    startDestination = if (isScreenOn) NavigationRoute.Channels else NavigationRoute.Login
+                    startDestination = if (isScreenOn) NavigationRoute.Channels else NavigationRoute.Splash
                 )
             }
         }

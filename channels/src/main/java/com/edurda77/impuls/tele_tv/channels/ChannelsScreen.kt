@@ -4,10 +4,12 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -146,13 +148,19 @@ private fun ChannelsScreenScreen(
                 )
             }
             if (state.isUpdating) {
-                Text(
-                    modifier = modifier.align(Alignment.CenterHorizontally),
-                    text = "${stringResource(R.string.update_downloading)} ${state.percentDownload}%",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    textAlign = TextAlign.Center
-                )
+                Box(
+                    modifier = modifier
+                        .fillMaxHeight()
+                        .align(Alignment.CenterHorizontally),
+                ) {
+                    Text(
+                        modifier = modifier.align(alignment = Alignment.Center),
+                        text = "${stringResource(R.string.update_downloading)} ${state.percentDownload}%",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        textAlign = TextAlign.Center
+                    )
+                }
             } else {
                 Spacer(modifier = modifier.height(15.dp))
                 Text(
@@ -233,7 +241,7 @@ private fun ChannelsScreenScreen(
 private fun Preview() {
     val channels = (1..10).map {
         TvChannel(
-            tvgId = "www",
+            tvgId = "id$it",
             tvgLogo = "",
             tvgChannelNumber = it,
             name = "channel",
@@ -244,7 +252,8 @@ private fun Preview() {
         ChannelsScreenScreen(
             state = ChannelsScreenState(
                 tvChannels = channels,
-                focusedChannelId = "0"
+                focusedChannelId = "id1",
+                lastTvChannels = channels
             ),
             onAction = {}
         )
@@ -256,7 +265,7 @@ private fun Preview() {
 private fun Preview2() {
     val channels = (1..10).map {
         TvChannel(
-            tvgId = "www",
+            tvgId = "id$it",
             tvgLogo = "",
             tvgChannelNumber = it,
             name = "Channel",
@@ -267,8 +276,9 @@ private fun Preview2() {
         ChannelsScreenScreen(
             state = ChannelsScreenState(
                 tvChannels = channels,
-                focusedChannelId = "0",
-                enableUpdate = true
+                focusedChannelId = "id1",
+                enableUpdate = true,
+                lastTvChannels = channels
             ),
             onAction = {}
         )
@@ -280,7 +290,7 @@ private fun Preview2() {
 private fun Preview3() {
     val channels = (1..10).map {
         TvChannel(
-            tvgId = "www",
+            tvgId = "id$it",
             tvgLogo = "",
             tvgChannelNumber = it,
             name = "channel",
@@ -291,9 +301,10 @@ private fun Preview3() {
         ChannelsScreenScreen(
             state = ChannelsScreenState(
                 tvChannels = channels,
-                focusedChannelId = "0",
+                focusedChannelId = "id1",
                 enableUpdate = true,
-                isUpdating = true
+                isUpdating = true,
+                lastTvChannels = channels
             ),
             onAction = {}
         )

@@ -47,6 +47,7 @@ dependencies {
     implementation(project(":login"))
     implementation(project(":player"))
     implementation(project(":channels"))
+    implementation(project(":splash_screen"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

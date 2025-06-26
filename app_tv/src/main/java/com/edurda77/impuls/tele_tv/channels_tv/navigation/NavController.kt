@@ -8,6 +8,7 @@ import com.edurda77.impuls.tele_tv.channels.ChannelsScreenRoot
 import com.edurda77.impuls.tele_tv.login.LoginScreenRoot
 import com.edurda77.impuls.tele_tv.player.PlayerScreenRoot
 import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
+import com.edurda77.impuls.tele_tv.splash.SplashScreenRoot
 
 @Composable
 fun NavController(
@@ -25,7 +26,14 @@ fun NavController(
             )
         }
         composable<NavigationRoute.Splash> {
-
+            SplashScreenRoot(
+                onNavigateToLogin = {
+                    navController.navigate(NavigationRoute.Login)
+                },
+                onNavigateToChannels = {
+                    navController.navigate(NavigationRoute.Channels)
+                }
+            )
         }
         composable<NavigationRoute.Player> {
             PlayerScreenRoot(

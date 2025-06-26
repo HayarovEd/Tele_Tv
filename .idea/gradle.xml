@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/login" />
             <option value="$PROJECT_DIR$/player" />
             <option value="$PROJECT_DIR$/resources" />
+            <option value="$PROJECT_DIR$/splash_screen" />
           </set>
         </option>
       </GradleProjectSettings>
