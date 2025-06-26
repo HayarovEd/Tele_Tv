@@ -208,9 +208,6 @@ fun PlayerScreenScreen(
                         .width(screenWidth / 4)
                         .focusRequester(focusRequester)
                         .focusable(interactionSource = interactionSource)
-                        /*.onFocusChanged {
-                            Log.d("TELE TV TEST", "isFocused ${it.isFocused}")
-                        }*/
                         .onKeyEvent {
                             if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                                 when (it.nativeKeyEvent.keyCode) {
@@ -260,8 +257,6 @@ fun PlayerScreenScreen(
                             modifier = modifier
                                 .width(screenWidth * 3 / 4)
                                 .padding(16.dp)
-                                //.focusRequester(focusRequester)
-                                //.focusable(interactionSource = interactionSource)
                                 .onKeyEvent {
                                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                                         when (it.nativeKeyEvent.keyCode) {
@@ -290,10 +285,11 @@ fun PlayerScreenScreen(
                                 stickyHeader {
                                     Text(
                                         modifier = modifier
-                                            .fillMaxWidth(),
+                                            .fillMaxWidth()
+                                            .background(MaterialTheme.colorScheme.secondary),
                                         text = entry.key.toString(),
                                         style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onBackground,
+                                        color = MaterialTheme.colorScheme.onSecondary,
                                         textAlign = TextAlign.Center
                                     )
                                 }

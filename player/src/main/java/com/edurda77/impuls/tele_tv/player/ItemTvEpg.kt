@@ -2,6 +2,7 @@ package com.edurda77.impuls.tele_tv.player
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,9 +57,11 @@ fun ItemTvEpg(
                 .onGloballyPositioned { coordinates ->
                     columnHeightDp = with(localDensity) { coordinates.size.height.toDp() }
                 }
-                .padding(10.dp)
+                .padding(horizontal = 10.dp, vertical = 2.dp)
         ) {
             Text(
+                modifier = modifier
+                    .basicMarquee(),
                 text = tvEpg.title,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,

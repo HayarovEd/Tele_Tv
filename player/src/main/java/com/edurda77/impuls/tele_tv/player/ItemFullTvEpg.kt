@@ -4,21 +4,20 @@ import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
@@ -58,64 +57,56 @@ fun ItemFullTvEpg(
             )
         )
     ) {
-        Column(
+        Row(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(10.dp)
+                .padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            Text(
+                modifier = modifier.weight(1f),
+                text = "(${tvEpg.start.calculateHoursMins()}-${tvEpg.stop.calculateHoursMins()})",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            Column(
+                modifier = modifier.weight(5f),
             ) {
                 Text(
+                    modifier = modifier
+                        .fillMaxWidth(),
                     text = tvEpg.title,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    textAlign = TextAlign.Center
                 )
-                Spacer(modifier = modifier.width(5.dp))
-                Text(
-                    modifier = modifier,
-                    text = "(${tvEpg.start.calculateHoursMins()}-${tvEpg.stop.calculateHoursMins()})",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-                Spacer(modifier = modifier.weight(1f))
+                tvEpg.description?.let {
+                    Spacer(modifier = modifier.height(5.dp))
+                    Text(
+                        modifier = modifier
+                            .fillMaxWidth(),
+                        text = it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+                }
+            }
+            Box(
+                modifier = modifier
+                    .weight(1f)
+            ) {
                 Text(
                     modifier = modifier
-                        .clip(RoundedCornerShape(50.dp))
-                        .background(MaterialTheme.colorScheme.secondaryContainer)
-                        .padding(4.dp),
+                        .background(
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            shape = CircleShape
+                        )
+                        .padding(10.dp),
                     text = "${tvEpg.ageRating}+",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
             }
-            Spacer(
-                modifier = modifier.height(5.dp)
-            )
-            tvEpg.description?.let {
-                Text(
-                    modifier = modifier
-                        .fillMaxWidth(),
-                    text = it,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-            }
-            /*tvEpg.ageRating?.let {
-                Spacer(
-                    modifier = modifier.height(5.dp)
-                )
-                Text(
-                    modifier = modifier,
-                    text = "${stringResource(R.string.age_rating)}: $it",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-            }*/
         }
     }
 }

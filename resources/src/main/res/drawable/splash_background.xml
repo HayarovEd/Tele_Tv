@@ -11,7 +11,7 @@
     </item>
     <item>
         <bitmap
-            android:gravity="fill_horizontal"
-            android:src="@drawable/logo61" />
+            android:gravity="center"
+            android:src="@drawable/logo62" />
     </item>
 </layer-list>
