@@ -1,28 +1,28 @@
 [versions]
-agp = "8.10.0"
+agp = "8.10.1"
 desugar_jdk_libs = "2.1.5"
-kotlin = "2.1.0"
+kotlin = "2.2.0"
 coreKtx = "1.16.0"
-appcompat = "1.7.0"
-composeBom = "2025.05.00"
+appcompat = "1.7.1"
+composeBom = "2025.06.01"
 tvFoundation = "1.0.0-alpha12"
 tvMaterial = "1.0.0"
-lifecycleRuntimeKtx = "2.9.0"
+lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 
-kotlinxCoroutinesAndroid = "1.10.1"
-datastorePreferences = "1.1.4"
+kotlinxCoroutinesAndroid = "1.10.2"
+datastorePreferences = "1.1.7"
 ktorVersion = "3.1.1"
 navigationCompose = "2.9.0"
-koinVersion = "4.0.2"
+koinVersion = "4.1.0"
 coil-compose = "2.7.0"
 media3 = "1.7.1"
 core-splashscreen = "1.0.1"
-kotlinxDatetime = "0.6.2"
-roomVersion = "2.7.1"
+kotlinxDatetime = "0.7.0"
+roomVersion = "2.7.2"
 
 minSdk = "24"
 compileSdk = "35"
@@ -34,7 +34,7 @@ jvmTarget = "11"
 kotlinCompilerExtensionVersion = "1.5.10"
 material = "1.12.0"
 materialVersion = "1.12.0"
-googleMaterial = "1.10.0"
+googleMaterial = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -80,7 +80,6 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomVersion" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomVersion" }
-material = { group = "com.google.android.material", name = "material", version.ref = "googleMaterial" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -89,5 +88,5 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version = "2.1.0-1.0.29" }
+ksp = { id = "com.google.devtools.ksp", version = "2.2.0-2.0.2" }
 

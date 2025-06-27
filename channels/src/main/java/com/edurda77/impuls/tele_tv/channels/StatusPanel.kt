@@ -13,12 +13,13 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.edurda77.impuls.tele_tv.resources.uikit.UiIconButton
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import com.edurda77.impuls.tele_tv.resources.R
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 
 @Composable
@@ -57,6 +58,7 @@ fun StatusPanel(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Preview(showBackground = true)
 @Composable
 fun StatusPanelView() {

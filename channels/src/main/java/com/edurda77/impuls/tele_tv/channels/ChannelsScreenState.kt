@@ -4,12 +4,13 @@ import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.domain.model.LastVersionApp
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.resources.uikit.UiText
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
-data class ChannelsScreenState(
+data class ChannelsScreenState @OptIn(ExperimentalTime::class) constructor(
     val credintial: Credintial? = null,
     val tvChannels: List<TvChannel> = emptyList(),
     val lastTvChannels: List<TvChannel> = emptyList(),

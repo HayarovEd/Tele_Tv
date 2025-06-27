@@ -2,7 +2,6 @@ package com.edurda77.impuls.tele_tv.player
 
 import android.util.Log
 import android.view.KeyEvent
-import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -124,7 +123,7 @@ fun PlayerScreenScreen(
             focusRequester.requestFocus()
         }
     }
-    Box() {
+    Box {
         PlayerSurface(
             modifier = modifier
                 .resizeWithContentScale(
@@ -213,8 +212,12 @@ fun PlayerScreenScreen(
                         .onKeyEvent {
                             if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                                 when (it.nativeKeyEvent.keyCode) {
-                                    KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_BACK -> {
+                                    KeyEvent.KEYCODE_DPAD_RIGHT -> {
                                         focusManager.moveFocus(FocusDirection.Right)
+                                    }
+
+                                    KeyEvent.KEYCODE_BACK -> {
+                                        isEpgVisible = false
                                     }
 
                                     KeyEvent.KEYCODE_DPAD_DOWN -> {

@@ -22,7 +22,8 @@ import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.model.TvEpg
 import com.edurda77.impuls.tele_tv.resources.R
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun ChannelMenu(
@@ -70,6 +71,7 @@ fun ChannelMenu(
         }
 }
 
+@OptIn(ExperimentalTime::class)
 @Preview
 @Composable
 private fun ChannelMenuView() {

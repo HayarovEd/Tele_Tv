@@ -10,15 +10,18 @@ import com.edurda77.impuls.tele_tv.domain.utils.DataError
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Clock
+
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class LocalRepositoryImpl(
     db: TeleTVDatabase
 ): LocalRepository {
     private val dao = db.channelDao
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun insertLocation(
         tvChannel: TvChannel
     ): ResultWork<Unit, DataError.LocalDateBase> {

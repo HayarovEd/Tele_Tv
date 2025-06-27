@@ -25,9 +25,10 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class ChannelsScreenViewModel(
     savedStateHandle: SavedStateHandle,
@@ -241,6 +242,7 @@ class ChannelsScreenViewModel(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun getCurrentTime() {
         viewModelScope.launch {
             while (true) {

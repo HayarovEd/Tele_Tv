@@ -21,7 +21,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class PlayerScreenViewModel(
     private val remoteRepository: RemoteRepository,
@@ -350,6 +351,7 @@ class PlayerScreenViewModel(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun getCurrentTime() {
         viewModelScope.launch {
             while (true) {

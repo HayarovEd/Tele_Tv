@@ -4,10 +4,11 @@ import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.model.TvEpg
 import com.edurda77.resources.uikit.UiText
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
-data class PlayerScreenState(
+data class PlayerScreenState @OptIn(ExperimentalTime::class) constructor(
     val credintial: Credintial? = null,
     val tvChannels: List<TvChannel> = emptyList(),
     val isLoading: Boolean = false,
