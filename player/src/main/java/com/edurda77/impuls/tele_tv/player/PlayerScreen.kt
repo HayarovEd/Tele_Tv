@@ -90,11 +90,6 @@ fun PlayerScreenScreen(
             val errorCode = error.errorCode
             Log.d("REST TELE TV", "errorCode play $errorCode")
             Log.d("REST TELE TV", "error play $error")
-            Toast.makeText(
-                context,
-                context.getText(R.string.channel_temporary_unvailable),
-                Toast.LENGTH_LONG
-            ).show()
         }
     }
     exoPlayer.addListener(playerListener)
@@ -106,14 +101,9 @@ fun PlayerScreenScreen(
     var isEpgVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(exoPlayer, state.tvChannels, state.selectedChannelId) {
-        Log.d("REST TELE TV", "selectedChannelId ${state.selectedChannelId}")
-        Log.d("REST TELE TV", "credintial ${state.credintial}")
         if (state.tvChannels.isNotEmpty()) {
-            Log.d("REST TELE TV", "tvChannels.isNotEmpty")
             state.credintial?.let {
-                Log.d("REST TELE TV", "credintial not null")
                 state.selectedIndex?.let {
-                    Log.d("REST TELE TV", "selectedIndex not null")
                     exoPlayer.setMediaSource(
                         intoMediaItem(
                             credintial = state.credintial,
@@ -122,7 +112,6 @@ fun PlayerScreenScreen(
                     )
                     exoPlayer.prepare()
                     exoPlayer.playWhenReady = true
-                    Log.d("REST TELE TV", "exoPlayer play")
                 }
             }
         }
