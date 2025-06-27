@@ -78,18 +78,18 @@ class LoginScreenViewModel(
                 }
 
                 is ResultWork.Success -> {
-                    _state.value.copy(
-                        isLoading = false,
-                    )
-                        .updateState()
                     viewModelScope.launch {
                         dataStoreRepository.saveCredintial(
                             username = state.value.username,
                             password = state.value.password
                         )
+                        delay(300)
+                        _state.value.copy(
+                            isLoading = false,
+                        )
+                            .updateState()
+                        _eventFlow.emit(UiLoginEvents.ChannelsNavigationEvent)
                     }
-                    delay(300)
-                    _eventFlow.emit(UiLoginEvents.ChannelsNavigationEvent)
                 }
             }
         }

@@ -8,6 +8,7 @@ const val LABEL_PASSWORD = "label_password"
 const val LAST_CHANNEL = "last_channel"
 const val IS_SCREEN_ON = "SCREEN_ON"
 const val DOWNLOAD_URL = "https://apps.kvadroks.ru/api/links/0c0c0a58-9296-41da-842c-ef939734cbbb/"
+const val DOWNLOAD_TV_URL = "https://apps.kvadroks.ru/api/links/1f68e3ed-3f57-448c-a333-1fb3448d448d/"
 const val APK_EXT = "apk"
 
 

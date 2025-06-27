@@ -106,9 +106,14 @@ fun PlayerScreenScreen(
     var isEpgVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(exoPlayer, state.tvChannels, state.selectedChannelId) {
+        Log.d("REST TELE TV", "selectedChannelId ${state.selectedChannelId}")
+        Log.d("REST TELE TV", "credintial ${state.credintial}")
         if (state.tvChannels.isNotEmpty()) {
+            Log.d("REST TELE TV", "tvChannels.isNotEmpty")
             state.credintial?.let {
+                Log.d("REST TELE TV", "credintial not null")
                 state.selectedIndex?.let {
+                    Log.d("REST TELE TV", "selectedIndex not null")
                     exoPlayer.setMediaSource(
                         intoMediaItem(
                             credintial = state.credintial,
@@ -116,6 +121,8 @@ fun PlayerScreenScreen(
                         )
                     )
                     exoPlayer.prepare()
+                    exoPlayer.playWhenReady = true
+                    Log.d("REST TELE TV", "exoPlayer play")
                 }
             }
         }
@@ -141,11 +148,11 @@ fun PlayerScreenScreen(
                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                         Log.d("REST TELE TV", "action ${it.nativeKeyEvent.keyCode}")
                         when (it.nativeKeyEvent.keyCode) {
-                            KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_PAGE_UP -> {
+                            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> {
                                 onAction(PlayerScreenAction.IncrimentTvChannel)
                             }
 
-                            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_DOWN -> {
+                            KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_PAGE_DOWN -> {
                                 onAction(PlayerScreenAction.DecrimentTvChannel)
                             }
 

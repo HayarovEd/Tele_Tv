@@ -183,6 +183,7 @@ class PlayerScreenViewModel(
                 credintial = credintial,
             )
                 .updateState()
+            delay(300)
             credintial?.let {
                 val resultTvChannelsDiff = async {
                     remoteRepository.getTvChannels(

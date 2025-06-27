@@ -38,7 +38,7 @@ fun NavController(
         composable<NavigationRoute.Player> {
             PlayerScreenRoot(
                 onNavigateToChannels = {
-                    navController.navigate(NavigationRoute.Channels)
+                    navController.navigateUp()
                 }
             )
         }
