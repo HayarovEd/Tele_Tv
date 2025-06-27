@@ -52,7 +52,7 @@ fun rememberMapLifecycleObserver(player: ExoPlayer): LifecycleEventObserver =
                 }
 
                 Lifecycle.Event.ON_RESUME -> {
-                    player.stop()
+                    //player.stop()
                 }
 
                 Lifecycle.Event.ON_START -> {
