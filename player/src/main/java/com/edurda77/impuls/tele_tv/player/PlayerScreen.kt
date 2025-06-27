@@ -201,12 +201,12 @@ fun PlayerScreenScreen(
             Row(
                 modifier = modifier
                     .fillMaxHeight()
-                    .width(if (isEpgVisible) screenWidth else screenWidth / 4)
+                    .width(if (isEpgVisible) screenWidth else screenWidth / 5)
                     .background(MaterialTheme.colorScheme.background.copy(alpha = if (isEpgVisible) 0.9f else 0.5f))
             ) {
                 ChannelMenu(
                     modifier = modifier
-                        .width(screenWidth / 4)
+                        .width(screenWidth / 5)
                         .focusRequester(focusRequester)
                         .focusable(interactionSource = interactionSource)
                         .onKeyEvent {
@@ -260,7 +260,7 @@ fun PlayerScreenScreen(
                     } else {
                         LazyColumn(
                             modifier = modifier
-                                .width(screenWidth * 3 / 4)
+                                .width(screenWidth * 3 / 5)
                                 .padding(16.dp)
                                 .onKeyEvent {
                                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {

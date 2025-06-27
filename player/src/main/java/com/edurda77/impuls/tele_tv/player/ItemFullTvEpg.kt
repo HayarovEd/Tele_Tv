@@ -55,6 +55,9 @@ fun ItemFullTvEpg(
                 ),
                 inset = 2.dp
             )
+        ),
+        scale = ClickableSurfaceDefaults.scale(
+            focusedScale = 1.05f
         )
     ) {
         Row(
@@ -64,7 +67,7 @@ fun ItemFullTvEpg(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = modifier.weight(1f),
+                modifier = modifier.weight(2f),
                 text = "(${tvEpg.start.calculateHoursMins()}-${tvEpg.stop.calculateHoursMins()})",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -97,6 +100,7 @@ fun ItemFullTvEpg(
             ) {
                 Text(
                     modifier = modifier
+                        .align(Alignment.Center)
                         .background(
                             color = MaterialTheme.colorScheme.secondaryContainer,
                             shape = CircleShape
