@@ -13,7 +13,9 @@ sealed class NavigationRoute {
     data object Player : NavigationRoute()
 
     @Serializable
-    data object Channels : NavigationRoute()
+    data class Channels(
+        val downloadUrl: String
+    ) : NavigationRoute()
 
 
 }

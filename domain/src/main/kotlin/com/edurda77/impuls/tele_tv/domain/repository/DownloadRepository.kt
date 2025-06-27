@@ -7,6 +7,12 @@ import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import kotlinx.coroutines.flow.Flow
 
 interface DownloadRepository {
-    suspend fun getLastUpdateVersion(): ResultWork<LastVersionApp, DataError>
-    suspend fun downloadFile(downloadedFileName: String): Flow<DownloadStatus>
+    suspend fun getLastUpdateVersion(
+        downloadUrl: String,
+    ): ResultWork<LastVersionApp, DataError>
+
+    suspend fun downloadFile(
+        downloadUrl: String,
+        downloadedFileName: String
+    ): Flow<DownloadStatus>
 }

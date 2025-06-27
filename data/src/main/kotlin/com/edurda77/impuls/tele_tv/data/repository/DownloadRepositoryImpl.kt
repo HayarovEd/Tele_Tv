@@ -5,7 +5,6 @@ import com.edurda77.impuls.tele_tv.data.handler.pathToDownloadFile
 import com.edurda77.impuls.tele_tv.data.remote.VersionResponse
 import com.edurda77.impuls.tele_tv.domain.model.LastVersionApp
 import com.edurda77.impuls.tele_tv.domain.repository.DownloadRepository
-import com.edurda77.impuls.tele_tv.domain.utils.DOWNLOAD_TV_URL
 import com.edurda77.impuls.tele_tv.domain.utils.DataError
 import com.edurda77.impuls.tele_tv.domain.utils.DownloadStatus
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
@@ -34,10 +33,10 @@ class DownloadRepositoryImpl(
     private val application: Application
 ) : DownloadRepository {
 
-    override suspend fun getLastUpdateVersion(): ResultWork<LastVersionApp, DataError> {
+    override suspend fun getLastUpdateVersion(downloadUrl: String): ResultWork<LastVersionApp, DataError> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = httpClient.get("${DOWNLOAD_TV_URL}version") {
+                val response = httpClient.get("${downloadUrl}version") {
                     contentType(ContentType.Application.Json)
                 }.call
                 if (response.response.status.isSuccess()) {
@@ -77,6 +76,7 @@ class DownloadRepositoryImpl(
     }
 
     override suspend fun downloadFile(
+        downloadUrl: String,
         downloadedFileName: String,
     ): Flow<DownloadStatus> {
         return callbackFlow {
@@ -84,7 +84,7 @@ class DownloadRepositoryImpl(
                 application.pathToDownloadFile(downloadedFileName)
             try {
                 send(DownloadStatus.Started)
-                val response = httpClient.get("${DOWNLOAD_TV_URL}file") {
+                val response = httpClient.get("${downloadUrl}file") {
                     contentType(ContentType.Application.Json)
                     onDownload { bytesSentTotal, contentLength ->
                         contentLength?.let {

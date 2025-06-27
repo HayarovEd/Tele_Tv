@@ -5,6 +5,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.edurda77.impuls.tele_tv.domain.utils.DOWNLOAD_URL
 import com.edurda77.impuls.tele_tv.domain.utils.IS_SCREEN_ON
 import com.edurda77.impuls.tele_tv.navigation.NavController
 import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Tele_TvTheme {
                 NavController(
-                    startDestination = if (isScreenOn) NavigationRoute.Channels else NavigationRoute.Splash
+                    startDestination = if (isScreenOn) NavigationRoute.Channels(DOWNLOAD_URL) else NavigationRoute.Splash
                 )
             }
         }

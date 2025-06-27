@@ -1,7 +1,9 @@
 package com.edurda77.impuls.tele_tv.channels
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.repository.DownloadRepository
 import com.edurda77.impuls.tele_tv.domain.repository.Installer
@@ -12,6 +14,7 @@ import com.edurda77.impuls.tele_tv.domain.utils.APK_EXT
 import com.edurda77.impuls.tele_tv.domain.utils.DELAY_MINUTE
 import com.edurda77.impuls.tele_tv.domain.utils.DownloadStatus
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
+import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,6 +30,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 class ChannelsScreenViewModel(
+    savedStateHandle: SavedStateHandle,
     private val remoteRepository: RemoteRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val downloadRepository: DownloadRepository,
@@ -49,6 +53,7 @@ class ChannelsScreenViewModel(
             initialValue = ChannelsScreenState()
         )
 
+    private val downloadUrl = savedStateHandle.toRoute<NavigationRoute.Channels>().downloadUrl
 
     private val _eventFlow = MutableSharedFlow<UiChannelsEvents>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -75,8 +80,6 @@ class ChannelsScreenViewModel(
             }
         }
     }
-
-
 
 
     private fun getInitialData() {
@@ -117,7 +120,7 @@ class ChannelsScreenViewModel(
                             tvChannels = resultTvChannels.data
                         )
                             .updateState()
-                        if (resultTvChannels.data.isNotEmpty()&& state.value.focusedChannelId == null) {
+                        if (resultTvChannels.data.isNotEmpty() && state.value.focusedChannelId == null) {
                             _state.value.copy(
                                 focusedChannelId = resultTvChannels.data.first().tvgId
                             )
@@ -131,13 +134,14 @@ class ChannelsScreenViewModel(
 
     private fun checkEnableUpdates() {
         viewModelScope.launch {
-            when (val result = downloadRepository.getLastUpdateVersion()) {
+            when (val result = downloadRepository.getLastUpdateVersion(downloadUrl)) {
                 is ResultWork.Error -> {
                     _state.value.copy(
                         message = result.error.asUiText()
                     )
                         .updateState()
                 }
+
                 is ResultWork.Success -> {
                     _state.value.copy(
                         release = result.data
@@ -148,7 +152,7 @@ class ChannelsScreenViewModel(
                     //Log.d("REST TELE TV", "currentVersion $currentVersion")
                     currentVersion?.let {
                         _state.value.copy(
-                            enableUpdate = currentVersion<result.data.lastVersion
+                            enableUpdate = currentVersion < result.data.lastVersion
                         )
                             .updateState()
                     }
@@ -159,9 +163,12 @@ class ChannelsScreenViewModel(
 
     private fun downloadAndInstall() {
         viewModelScope.launch {
-            state.value.release?.let { release->
+            state.value.release?.let { release ->
                 val fileName = "${release.name}-${release.lastVersion}.$APK_EXT"
-                downloadRepository.downloadFile(downloadedFileName = fileName).collect { collector->
+                downloadRepository.downloadFile(
+                    downloadUrl = downloadUrl,
+                    downloadedFileName = fileName
+                ).collect { collector ->
                     when (collector) {
                         is DownloadStatus.Error -> {
                             _state.value.copy(
@@ -170,18 +177,21 @@ class ChannelsScreenViewModel(
                             )
                                 .updateState()
                         }
+
                         is DownloadStatus.InProgress -> {
                             _state.value.copy(
                                 percentDownload = collector.percentage.toInt()
                             )
                                 .updateState()
                         }
+
                         DownloadStatus.Started -> {
                             _state.value.copy(
                                 isUpdating = true
                             )
                                 .updateState()
                         }
+
                         DownloadStatus.Success -> {
                             _state.value.copy(
                                 isUpdating = false,
@@ -200,7 +210,7 @@ class ChannelsScreenViewModel(
         viewModelScope.launch {
             state.value.focusedChannelId?.let {
                 dataStoreRepository.saveLastChannel(it)
-                state.value.scrolledIndex?.let {index->
+                state.value.scrolledIndex?.let { index ->
                     localRepository.insertLocation(state.value.tvChannels[index])
                 }
                 delay(300)
@@ -211,7 +221,7 @@ class ChannelsScreenViewModel(
 
     private fun getLastChannels() {
         viewModelScope.launch {
-            localRepository.getAllChannels().collect { collector->
+            localRepository.getAllChannels().collect { collector ->
                 when (collector) {
                     is ResultWork.Error -> {
                         _state.value.copy(
@@ -219,6 +229,7 @@ class ChannelsScreenViewModel(
                         )
                             .updateState()
                     }
+
                     is ResultWork.Success -> {
                         _state.value.copy(
                             lastTvChannels = collector.data
@@ -235,7 +246,7 @@ class ChannelsScreenViewModel(
             while (true) {
                 delay(DELAY_MINUTE)
                 _state.value.copy(
-                    currentTime =  Clock.System.now()
+                    currentTime = Clock.System.now()
                         .toLocalDateTime(TimeZone.currentSystemDefault()).time
                 )
                     .updateState()
