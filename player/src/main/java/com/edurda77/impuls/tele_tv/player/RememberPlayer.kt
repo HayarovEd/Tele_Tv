@@ -1,6 +1,7 @@
 package com.edurda77.impuls.tele_tv.player
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -48,15 +49,27 @@ fun rememberMapLifecycleObserver(player: ExoPlayer): LifecycleEventObserver =
         LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_STOP -> {
-                    player.release()
+                   // player.release()
+                    Log.d("REST TELE TV", "on stop")
+                }
+
+                Lifecycle.Event.ON_CREATE -> {
+                    Log.d("REST TELE TV", "on create")
                 }
 
                 Lifecycle.Event.ON_RESUME -> {
-                    //player.stop()
+                    player.play()
+                    Log.d("REST TELE TV", "on resume")
                 }
 
                 Lifecycle.Event.ON_START -> {
-                    player.play()
+                    player.prepare()
+                    Log.d("REST TELE TV", "on start")
+                }
+
+                Lifecycle.Event.ON_PAUSE -> {
+                    player.stop()
+                    Log.d("REST TELE TV", "on pause")
                 }
 
                 else -> {}

@@ -58,7 +58,7 @@ fun ChannelItem(
         border = CardDefaults.border(
             border = Border(
                 border = BorderStroke(
-                    color = if (isFocused) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
+                    color = if (isFocused) MaterialTheme.colorScheme.inversePrimary else Color.Transparent,
                     width = 3.dp
                 ),
                 inset = 2.dp
@@ -90,8 +90,16 @@ fun ChannelItem(
                 }
                 Spacer(modifier = modifier.width(15.dp))
                 Text(
+                    modifier = modifier,
+                    text = "${channel.tvgChannelNumber} ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (isCurrent) MaterialTheme.colorScheme.onPrimaryContainer
+                    else MaterialTheme.colorScheme.onSurface,
+                )
+                Spacer(modifier = modifier.width(1.dp))
+                Text(
                     modifier = modifier.basicMarquee(),
-                    text = "${channel.tvgChannelNumber}, ${channel.name}",
+                    text = channel.name,
                     style = MaterialTheme.typography.bodyMedium,
                     color = if (isCurrent) MaterialTheme.colorScheme.onPrimaryContainer
                     else MaterialTheme.colorScheme.onSurface,

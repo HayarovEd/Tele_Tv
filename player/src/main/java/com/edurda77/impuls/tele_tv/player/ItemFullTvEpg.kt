@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -53,7 +55,7 @@ fun ItemFullTvEpg(
                     width = 3.dp,
                     color = MaterialTheme.colorScheme.secondaryContainer
                 ),
-                inset = 2.dp
+                inset = 0.dp
             )
         ),
         scale = ClickableSurfaceDefaults.scale(
@@ -68,7 +70,7 @@ fun ItemFullTvEpg(
         ) {
             Text(
                 modifier = modifier.weight(2f),
-                text = "(${tvEpg.start.calculateHoursMins()}-${tvEpg.stop.calculateHoursMins()})",
+                text = "${tvEpg.start.calculateHoursMins()}-${tvEpg.stop.calculateHoursMins()}",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onBackground,
             )
@@ -98,18 +100,22 @@ fun ItemFullTvEpg(
                 modifier = modifier
                     .weight(1f)
             ) {
-                Text(
+                Box(
                     modifier = modifier
                         .align(Alignment.Center)
+                        .size(40.dp)
+                        .clip(CircleShape)
                         .background(
                             color = MaterialTheme.colorScheme.secondaryContainer,
-                            shape = CircleShape
-                        )
-                        .padding(10.dp),
-                    text = "${tvEpg.ageRating}+",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "${tvEpg.ageRating}+",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    )
+                }
             }
         }
     }
@@ -127,7 +133,7 @@ private fun ItemTvEpgView() {
                 channelName = "Рифей (22)",
                 channelNumber = "22",
                 channelUuid = "bb96aabb80ee7139983ed081a341d148",
-                ageRating = 16,
+                ageRating = 15,
                 description = "Девочка Маша и Медведь — неразлучные друзья. В голову озорной Маши всегда приходят самые невероятные идеи, и поэтому каждый день героев наполнен весельем, приключениями и новыми открытиями.",
                 eventId = 464049,
                 start = 1750806000,

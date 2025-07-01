@@ -11,8 +11,8 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -200,13 +200,12 @@ fun PlayerScreenScreen(
         if (state.isVisibleSideMenu || isEpgVisible) {
             Row(
                 modifier = modifier
-                    .fillMaxHeight()
-                    .width(if (isEpgVisible) screenWidth else screenWidth / 5)
+                    .width(if (isEpgVisible) screenWidth else screenWidth / 4)
                     .background(MaterialTheme.colorScheme.background.copy(alpha = if (isEpgVisible) 0.9f else 0.5f))
             ) {
                 ChannelMenu(
                     modifier = modifier
-                        .width(screenWidth / 5)
+                        .weight(1f)
                         .focusRequester(focusRequester)
                         .focusable(interactionSource = interactionSource)
                         .onKeyEvent {
@@ -248,20 +247,20 @@ fun PlayerScreenScreen(
                 )
                 if (isEpgVisible) {
                     if (state.isLoadingFocusedChannelEpg) {
-                        Text(
-                            modifier = modifier
-                                .align(Alignment.CenterVertically)
-                                .fillMaxWidth(),
-                            text = stringResource(R.string.epg_udpating),
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            textAlign = TextAlign.Center
-                        )
+                        Box(modifier = modifier.weight(3f)) {
+                            Text(
+                                modifier = modifier
+                                    .align(Alignment.Center),
+                                text = stringResource(R.string.epg_udpating),
+                                style = MaterialTheme.typography.headlineMedium,
+                                color = MaterialTheme.colorScheme.tertiary,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     } else {
                         LazyColumn(
                             modifier = modifier
-                                .width(screenWidth * 3 / 5)
-                                .padding(16.dp)
+                                .weight(3f)
                                 .onKeyEvent {
                                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                                         when (it.nativeKeyEvent.keyCode) {
@@ -284,6 +283,7 @@ fun PlayerScreenScreen(
                                     }
                                     true
                                 },
+                            contentPadding = PaddingValues(horizontal = 35.dp, vertical = 15.dp),
                             verticalArrangement = Arrangement.spacedBy(15.dp)
                         ) {
                             state.focusedChannelEpg.forEach { entry ->
