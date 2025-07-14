@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
@@ -18,6 +19,8 @@ import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 
 @Composable
@@ -63,7 +66,10 @@ fun ChannelItem(
             tvChannel.tvgLogo?.let {
                 AsyncImage(
                     modifier = modifier.fillMaxSize(),
-                    model = tvChannel.tvgLogo,
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(it)
+                        .decoderFactory(SvgDecoder.Factory())
+                        .build(),
                     contentDescription = "",
                 )
                 Spacer(modifier = modifier.height(15.dp))

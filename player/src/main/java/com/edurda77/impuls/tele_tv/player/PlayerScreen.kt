@@ -45,6 +45,8 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.dash.DashMediaSource
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
@@ -103,7 +105,16 @@ fun PlayerScreenScreen(
         if (state.tvChannels.isNotEmpty()) {
             state.credintial?.let {
                 state.selectedIndex?.let {
-                    exoPlayer.setMediaSource(
+                   /* val dataSourceFactory = DefaultHttpDataSource.Factory()
+                        *//*.setDefaultRequestProperties(
+                            Collections.singletonMap("Authorization", credentials)
+                        )*//*
+                        .setConnectTimeoutMs(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS)
+                        .setReadTimeoutMs(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS)
+                    val mediaSource: MediaSource =
+                        DashMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri("https://edge1.1internet.tv/dash-live2/streams/1tv-dvr/1tvdash.mpd"))
+                    */exoPlayer.setMediaSource(
+                       // mediaSource
                         intoMediaItem(
                             credintial = state.credintial,
                             uri = state.tvChannels[state.selectedIndex].url

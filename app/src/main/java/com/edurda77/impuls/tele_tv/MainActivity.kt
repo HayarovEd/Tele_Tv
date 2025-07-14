@@ -5,6 +5,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import com.edurda77.impuls.tele_tv.domain.utils.DOWNLOAD_URL
 import com.edurda77.impuls.tele_tv.domain.utils.IS_SCREEN_ON
 import com.edurda77.impuls.tele_tv.navigation.NavController
@@ -19,7 +20,8 @@ class MainActivity : ComponentActivity() {
         screenStateFilter.addAction(Intent.ACTION_SCREEN_ON)
         registerReceiver(UnlockReceiver(), screenStateFilter)
         val isScreenOn = intent.getBooleanExtra(IS_SCREEN_ON, false)
-       // enableEdgeToEdge()
+
+        enableEdgeToEdge()
         setContent {
             Tele_TvTheme {
                 NavController(

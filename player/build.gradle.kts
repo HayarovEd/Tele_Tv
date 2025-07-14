@@ -66,6 +66,11 @@ dependencies {
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
 
+    implementation("io.github.anilbeesetti:nextlib-media3ext:1.7.1-0.9.0")
+    implementation("io.github.anilbeesetti:nextlib-mediainfo:1.7.1-0.9.0")
+
     //date-time
     implementation(libs.kotlinx.datetime)
+
+    implementation("androidx.media3:media3-exoplayer-dash:1.7.1")
 }

@@ -61,6 +61,7 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+    implementation(libs.coil.compose.svg)
 
     //date-time
     implementation(libs.kotlinx.datetime)
