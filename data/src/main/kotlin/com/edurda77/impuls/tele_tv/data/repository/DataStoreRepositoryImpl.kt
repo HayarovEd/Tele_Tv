@@ -8,7 +8,6 @@ import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.utils.LABEL_PASSWORD
 import com.edurda77.impuls.tele_tv.domain.utils.LABEL_USERNAME
-import com.edurda77.impuls.tele_tv.domain.utils.LAST_CHANNEL
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
@@ -44,21 +43,6 @@ class DataStoreRepositoryImpl(
 
     }
 
-    override suspend fun saveLastChannel(
-        uuid: String,
-    ) {
-        dataStore.edit { preferences ->
-            preferences[FIELD_LAST_CHANNEL] = uuid
-        }
-    }
-
-
-    override suspend fun getLastChannel(): String? {
-        return dataStore.data.map { preferences ->
-            preferences[FIELD_LAST_CHANNEL]
-        }.first()
-    }
-
     override suspend fun clearCredintial() {
         dataStore.edit { preferences ->
             preferences.remove(FIELD_LABEL_USERNAME)
@@ -69,6 +53,5 @@ class DataStoreRepositoryImpl(
     companion object {
         val FIELD_LABEL_USERNAME = stringPreferencesKey(LABEL_USERNAME)
         val FIELD_LABEL_PASSWORD = stringPreferencesKey(LABEL_PASSWORD)
-        val FIELD_LAST_CHANNEL = stringPreferencesKey(LAST_CHANNEL)
     }
 }
