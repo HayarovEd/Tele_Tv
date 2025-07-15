@@ -46,6 +46,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.dash.DashMediaSource
+import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.compose.PlayerSurface
@@ -113,12 +114,18 @@ fun PlayerScreenScreen(
                         .setReadTimeoutMs(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS)
                     val mediaSource: MediaSource =
                         DashMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri("https://edge1.1internet.tv/dash-live2/streams/1tv-dvr/1tvdash.mpd"))
-                    */exoPlayer.setMediaSource(
+                    */
+                    val dataSourceFactory = DefaultHttpDataSource.Factory()
+                    val hlsMediaSource =
+                        HlsMediaSource.Factory(dataSourceFactory)
+                            .createMediaSource(MediaItem.fromUri("https://132544.edgevideo.ru/streams/132544_806129/1325441080/index.m3u8"))
+                    exoPlayer.setMediaSource(
+                        hlsMediaSource
                        // mediaSource
-                        intoMediaItem(
+                       /* intoMediaItem(
                             credintial = state.credintial,
                             uri = state.tvChannels[state.selectedIndex].url
-                        )
+                        )*/
                     )
                     exoPlayer.prepare()
                     exoPlayer.playWhenReady = true

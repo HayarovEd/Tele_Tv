@@ -1,8 +1,9 @@
 package com.edurda77.impuls.tele_tv.channels
 
+import com.edurda77.impuls.tele_tv.domain.model.TvChannel
+
 sealed interface ChannelsScreenAction {
-    class UpdateFocusedIndex(val id: String) : ChannelsScreenAction
-    data object SaveSelectedChannel : ChannelsScreenAction
+    class SaveChosenChannel(val channel: TvChannel) : ChannelsScreenAction
     data object DownloadUpdate : ChannelsScreenAction
     data object Logout : ChannelsScreenAction
 }

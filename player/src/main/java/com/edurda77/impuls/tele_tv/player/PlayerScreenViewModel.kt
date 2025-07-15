@@ -1,8 +1,10 @@
 package com.edurda77.impuls.tele_tv.player
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.repository.LocalRepository
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
@@ -11,6 +13,7 @@ import com.edurda77.impuls.tele_tv.domain.utils.DELAY_MINUTE
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.domain.utils.SINGLE_LIMIT
 import com.edurda77.impuls.tele_tv.domain.utils.convertToDate
+import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -25,11 +28,11 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class PlayerScreenViewModel(
+    private val savedStateHandle: SavedStateHandle,
     private val remoteRepository: RemoteRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val localRepository: LocalRepository,
 ) : ViewModel() {
-
 
     private var job: Job? = null
     private var inputJob: Job? = null
@@ -165,19 +168,17 @@ class PlayerScreenViewModel(
 
 
     private fun getInitialData() {
+        val channelId = savedStateHandle.toRoute<NavigationRoute.Player>().channelId
+        Log.d("TEST TELE TV 2", "channelId $channelId")
         _state.value.copy(
             isLoading = true,
         )
             .updateState()
-        viewModelScope.launch {
-            dataStoreRepository.getLastChannel()?.let {
-                _state.value.copy(
-                    selectedChannelId = it,
-                    focusedChannelId = it
-                )
-                    .updateState()
-            }
-        }
+        state.value.copy(
+            selectedChannelId = channelId,
+            focusedChannelId = channelId
+        )
+            .updateState()
         viewModelScope.launch {
             val credintial = dataStoreRepository.getCredintial()
             _state.value.copy(
@@ -342,10 +343,9 @@ class PlayerScreenViewModel(
         viewModelScope.launch {
             delay(300)
             state.value.selectedChannelId?.let {
-                dataStoreRepository.saveLastChannel(it)
                 state.value.selectedIndex?.let { index ->
                     val savedChannel = state.value.tvChannels[index]
-                    localRepository.insertLocation(savedChannel)
+                    localRepository.insertChannel(savedChannel)
                 }
             }
         }

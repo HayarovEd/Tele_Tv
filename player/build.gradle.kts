@@ -73,4 +73,8 @@ dependencies {
     implementation(libs.kotlinx.datetime)
 
     implementation("androidx.media3:media3-exoplayer-dash:1.7.1")
+    implementation("androidx.media3:media3-exoplayer-hls:1.7.1")
+
+    //navigation
+    implementation(libs.androidx.navigation.compose)
 }

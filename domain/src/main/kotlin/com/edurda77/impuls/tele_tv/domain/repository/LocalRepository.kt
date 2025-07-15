@@ -6,7 +6,7 @@ import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import kotlinx.coroutines.flow.Flow
 
 interface LocalRepository {
-    suspend fun insertLocation(
+    suspend fun insertChannel(
         tvChannel: TvChannel
     ): ResultWork<Unit, DataError.LocalDateBase>
 

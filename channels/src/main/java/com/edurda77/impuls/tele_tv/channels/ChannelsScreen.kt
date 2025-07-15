@@ -46,8 +46,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ChannelsScreenRoot(
     viewModel: ChannelsScreenViewModel = koinViewModel(),
-    onNavigateTopPlayer: () -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToPlayer: (String) -> Unit,
+    onNavigateToLogin: () -> Unit,
 ) {
     BackHandler { }
 
@@ -56,12 +56,13 @@ fun ChannelsScreenRoot(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                UiChannelsEvents.PlayerNavigationEvent -> {
-                    onNavigateTopPlayer()
-                }
 
                 UiChannelsEvents.LoginNavigationEvent -> {
                     onNavigateToLogin()
+                }
+
+                is UiChannelsEvents.PlayerNavigationEvent -> {
+                    onNavigateToPlayer(event.channelId)
                 }
             }
         }
@@ -69,7 +70,7 @@ fun ChannelsScreenRoot(
 
     ChannelsScreenScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
     )
 }
 
@@ -80,28 +81,6 @@ private fun ChannelsScreenScreen(
     onAction: (ChannelsScreenAction) -> Unit,
 ) {
     val scrollState = rememberLazyGridState()
-
-    /*LaunchedEffect(state.tvChannels) {
-        if (state.focusedChannelId != null) {
-            *//*val countVisible = scrollState.layoutInfo.visibleItemsInfo.size
-            val scrolledIndex = when (state.focusedChannelId) {
-                in 0..<countVisible/2  -> 0
-                else -> state.focusedChannelId - countVisible/2
-            }*//*
-            state.scrolledIndex?.let { scrollState.scrollToItem(it) }
-        }
-    }*/
-
-    /*LaunchedEffect(state.focusedIndex) {
-        if (state.focusedIndex >= 0) {
-            val countVisible = scrollState.layoutInfo.visibleItemsInfo.size
-            val scrolledIndex = when (state.focusedIndex) {
-                in 0..<countVisible/2  -> 0
-                else -> state.focusedIndex - countVisible/2
-            }
-            scrollState.animateScrollToItem(scrolledIndex)
-        }
-    }*/
 
 
     Surface(
@@ -121,7 +100,7 @@ private fun ChannelsScreenScreen(
                         )
                     )
                 )
-                .padding(15.dp),
+                .padding(25.dp),
         ) {
             Row(
                 modifier = modifier
@@ -177,10 +156,11 @@ private fun ChannelsScreenScreen(
                 ) {
                     items(state.lastTvChannels) { tvChannel ->
                         ChannelItem(
-                            onAction = onAction,
                             modifier = modifier,
                             tvChannel = tvChannel,
-                            state = state
+                            onClickChannel = {
+                                onAction(ChannelsScreenAction.SaveChosenChannel(tvChannel))
+                            }
                         )
                     }
                 }
@@ -199,39 +179,22 @@ private fun ChannelsScreenScreen(
                     contentPadding = PaddingValues(10.dp),
                     columns = GridCells.Fixed(6),
                 ) {
-                    items(state.tvChannels) { tvChannel ->
+                    items(
+                        items = state.tvChannels,
+                        key = {
+                            it.tvgId
+                        }
+                        ) { tvChannel ->
                         ChannelItem(
-                            onAction = onAction,
                             modifier = modifier,
                             tvChannel = tvChannel,
-                            state = state
+                            onClickChannel = {
+                                onAction(ChannelsScreenAction.SaveChosenChannel(tvChannel))
+                            }
                         )
                     }
                 }
             }
-            /* if (state.enableUpdate&&!state.isUpdating) {
-                 Button(
-                     modifier = modifier
-                         .align(Alignment.BottomCenter)
-                         .padding(vertical = 15.dp, horizontal = 100.dp)
-                         .fillMaxWidth(),
-                     colors = ButtonDefaults.colors(
-                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                         disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                     ),
-                     onClick = {
-                         onAction(ChannelsScreenAction.DownloadUpdate)
-                     }
-                 ) {
-                     Text(
-                         modifier = modifier.fillMaxWidth(),
-                         text = stringResource(R.string.enable_update),
-                         style = MaterialTheme.typography.bodyMedium,
-                         color = MaterialTheme.colorScheme.onSecondaryContainer,
-                         textAlign = TextAlign.Center
-                     )
-                 }
-             }*/
         }
     }
 }
@@ -252,10 +215,10 @@ private fun Preview() {
         ChannelsScreenScreen(
             state = ChannelsScreenState(
                 tvChannels = channels,
-                focusedChannelId = "id1",
+                //focusedChannelId = "id1",
                 lastTvChannels = channels
             ),
-            onAction = {}
+            onAction = {},
         )
     }
 }
@@ -276,11 +239,11 @@ private fun Preview2() {
         ChannelsScreenScreen(
             state = ChannelsScreenState(
                 tvChannels = channels,
-                focusedChannelId = "id1",
+                // focusedChannelId = "id1",
                 enableUpdate = true,
                 lastTvChannels = channels
             ),
-            onAction = {}
+            onAction = {},
         )
     }
 }
@@ -301,12 +264,12 @@ private fun Preview3() {
         ChannelsScreenScreen(
             state = ChannelsScreenState(
                 tvChannels = channels,
-                focusedChannelId = "id1",
+                //  focusedChannelId = "id1",
                 enableUpdate = true,
                 isUpdating = true,
                 lastTvChannels = channels
             ),
-            onAction = {}
+            onAction = {},
         )
     }
 }

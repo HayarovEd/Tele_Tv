@@ -52,8 +52,7 @@ private fun SplashScreenScreen(
         Image(
             modifier = modifier
                 .align(Alignment.Center)
-                .fillMaxWidth()
-                .padding(6.dp),
+                .fillMaxWidth(0.85f),
             painter = painterResource(id = R.drawable.logo62),
             contentScale = ContentScale.FillWidth,
             contentDescription = "",

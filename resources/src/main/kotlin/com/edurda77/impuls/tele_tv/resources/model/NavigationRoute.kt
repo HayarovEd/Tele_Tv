@@ -10,7 +10,9 @@ sealed class NavigationRoute {
     data object Splash : NavigationRoute()
 
     @Serializable
-    data object Player : NavigationRoute()
+    data class Player(
+        val channelId: String
+    ) : NavigationRoute()
 
     @Serializable
     data class Channels(

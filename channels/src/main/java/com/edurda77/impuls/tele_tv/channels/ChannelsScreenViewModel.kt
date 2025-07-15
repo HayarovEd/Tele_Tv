@@ -1,10 +1,10 @@
 package com.edurda77.impuls.tele_tv.channels
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.repository.DownloadRepository
 import com.edurda77.impuls.tele_tv.domain.repository.Installer
@@ -62,16 +62,6 @@ class ChannelsScreenViewModel(
 
     fun onAction(action: ChannelsScreenAction) {
         when (action) {
-            is ChannelsScreenAction.UpdateFocusedIndex -> {
-                _state.value.copy(
-                    focusedChannelId = action.id,
-                )
-                    .updateState()
-            }
-
-            ChannelsScreenAction.SaveSelectedChannel -> {
-                saveLastChannel()
-            }
 
             ChannelsScreenAction.DownloadUpdate -> {
                 downloadAndInstall()
@@ -79,6 +69,10 @@ class ChannelsScreenViewModel(
 
             ChannelsScreenAction.Logout -> {
                 logout()
+            }
+
+            is ChannelsScreenAction.SaveChosenChannel -> {
+                saveChannel(action.channel)
             }
         }
     }
@@ -89,14 +83,6 @@ class ChannelsScreenViewModel(
             isLoading = true,
         )
             .updateState()
-        viewModelScope.launch {
-            dataStoreRepository.getLastChannel()?.let {
-                _state.value.copy(
-                    focusedChannelId = it
-                )
-                    .updateState()
-            }
-        }
         viewModelScope.launch {
             val credintial = dataStoreRepository.getCredintial()
             _state.value.copy(
@@ -122,12 +108,6 @@ class ChannelsScreenViewModel(
                             tvChannels = resultTvChannels.data
                         )
                             .updateState()
-                        if (resultTvChannels.data.isNotEmpty() && state.value.focusedChannelId == null) {
-                            _state.value.copy(
-                                focusedChannelId = resultTvChannels.data.first().tvgId
-                            )
-                                .updateState()
-                        }
                     }
                 }
             }
@@ -150,8 +130,6 @@ class ChannelsScreenViewModel(
                     )
                         .updateState()
                     val currentVersion = serviceRepository.getVersionName()
-                    Log.d("REST TELE TV", "release ${result.data.lastVersion}")
-                    Log.d("REST TELE TV", "currentVersion $currentVersion")
                     currentVersion?.let {
                         _state.value.copy(
                             enableUpdate = currentVersion < result.data.lastVersion
@@ -208,19 +186,6 @@ class ChannelsScreenViewModel(
         }
     }
 
-    private fun saveLastChannel() {
-        viewModelScope.launch {
-            state.value.focusedChannelId?.let {
-                dataStoreRepository.saveLastChannel(it)
-                state.value.scrolledIndex?.let { index ->
-                    localRepository.insertLocation(state.value.tvChannels[index])
-                }
-                delay(300)
-                _eventFlow.emit(UiChannelsEvents.PlayerNavigationEvent)
-            }
-        }
-    }
-
     private fun getLastChannels() {
         viewModelScope.launch {
             localRepository.getAllChannels().collect { collector ->
@@ -250,9 +215,25 @@ class ChannelsScreenViewModel(
                 delay(DELAY_MINUTE)
                 _state.value.copy(
                     currentTime = Clock.System.now()
-                        .toLocalDateTime(TimeZone.currentSystemDefault()).time
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
                 )
                     .updateState()
+            }
+        }
+    }
+
+    private fun saveChannel(channel: TvChannel) {
+        viewModelScope.launch {
+            when (val result = localRepository.insertChannel(channel)) {
+                is ResultWork.Error -> {
+                    _state.value.copy(
+                        message = result.error.asUiText(),
+                    )
+                        .updateState()
+                }
+                is ResultWork.Success -> {
+                    _eventFlow.emit(UiChannelsEvents.PlayerNavigationEvent(channel.tvgId))
+                }
             }
         }
     }

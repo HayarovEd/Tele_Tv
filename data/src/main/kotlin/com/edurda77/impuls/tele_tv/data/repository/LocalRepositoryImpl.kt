@@ -22,7 +22,7 @@ class LocalRepositoryImpl(
     private val dao = db.channelDao
 
     @OptIn(ExperimentalTime::class)
-    override suspend fun insertLocation(
+    override suspend fun insertChannel(
         tvChannel: TvChannel
     ): ResultWork<Unit, DataError.LocalDateBase> {
         return handleWriteToDataBase {

@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
@@ -25,38 +23,36 @@ import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 
 @Composable
 fun ChannelItem(
-    onAction: (ChannelsScreenAction) -> Unit,
     modifier: Modifier = Modifier,
     tvChannel: TvChannel,
-    state: ChannelsScreenState
+    onClickChannel: () -> Unit
 ) {
     val configuration = LocalWindowInfo.current.containerSize
     val screenWidth = configuration.height.dp
     Surface(
-        onClick = {
-            onAction(ChannelsScreenAction.SaveSelectedChannel)
-        },
+        onClick = onClickChannel,
         modifier = modifier
             .width(screenWidth / 8)
-            .aspectRatio(16f / 9)
-            .onFocusChanged {
-                if (it.hasFocus) {
-                    onAction(ChannelsScreenAction.UpdateFocusedIndex(tvChannel.tvgId))
-                }
-            },
+            .aspectRatio(16f / 9),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (state.scrolledIndex != null && tvChannel == state.tvChannels[state.scrolledIndex]) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(
+            containerColor = MaterialTheme.colorScheme.primary.copy(
                 alpha = 0.5f
             ),
+            focusedContentColor = MaterialTheme.colorScheme.primary
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(
+            /*border = Border(
                 border = BorderStroke(
                     width = 3.dp,
-                    color = if (state.scrolledIndex != null && tvChannel == state.tvChannels[state.scrolledIndex]) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
+                    color = Color.Transparent
                 ),
                 inset = 4.dp
-            )
+            ),*/
+            focusedBorder =  Border(
+                border = BorderStroke(
+                    width = 3.dp,
+                    color = MaterialTheme.colorScheme.inversePrimary
+                ),)
         )
     ) {
         Box(
@@ -74,17 +70,6 @@ fun ChannelItem(
                 )
                 Spacer(modifier = modifier.height(15.dp))
             }
-            /*Text(
-                modifier = modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .basicMarquee(),
-                text = tvChannel.name,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onPrimary,
-                textAlign = TextAlign.Center,
-                maxLines = 1
-            )*/
         }
     }
 }
