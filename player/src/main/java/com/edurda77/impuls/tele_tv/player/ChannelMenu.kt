@@ -3,6 +3,7 @@ package com.edurda77.impuls.tele_tv.player
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -56,6 +57,7 @@ fun ChannelMenu(
                 state = scrollState,
                 modifier = modifier
                     .fillMaxWidth(),
+                contentPadding = PaddingValues(vertical = 5.dp),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 items(channels) { channel ->
@@ -102,7 +104,7 @@ private fun ChannelMenuView() {
         ChannelMenu(
             channels = channels,
             selectedIndex = 1,
-            focusedIndex = 2,
+            focusedIndex = 0,
             allTvEpg = epgs,
             currentTime = Clock.System.now().epochSeconds,
         )

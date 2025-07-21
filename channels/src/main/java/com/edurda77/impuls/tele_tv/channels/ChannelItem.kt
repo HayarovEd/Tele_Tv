@@ -1,16 +1,16 @@
 package com.edurda77.impuls.tele_tv.channels
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
@@ -35,19 +35,16 @@ fun ChannelItem(
             .width(screenWidth / 8)
             .aspectRatio(16f / 9),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.primary.copy(
-                alpha = 0.5f
-            ),
-            focusedContentColor = MaterialTheme.colorScheme.primary
+            containerColor = Color.Transparent,
+            focusedContentColor = Color.Transparent
         ),
         border = ClickableSurfaceDefaults.border(
-            /*border = Border(
+            border = Border(
                 border = BorderStroke(
-                    width = 3.dp,
+                    width = 0.dp,
                     color = Color.Transparent
                 ),
-                inset = 4.dp
-            ),*/
+            ),
             focusedBorder =  Border(
                 border = BorderStroke(
                     width = 3.dp,
@@ -55,21 +52,34 @@ fun ChannelItem(
                 ),)
         )
     ) {
-        Box(
-            modifier = modifier
-                .fillMaxSize(),
-        ) {
-            tvChannel.tvgLogo?.let {
-                AsyncImage(
-                    modifier = modifier.fillMaxSize(),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(it)
-                        .decoderFactory(SvgDecoder.Factory())
-                        .build(),
-                    contentDescription = "",
-                )
-                Spacer(modifier = modifier.height(15.dp))
-            }
+        tvChannel.tvgLogo?.let {
+            AsyncImage(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(it)
+                    .decoderFactory(SvgDecoder.Factory())
+                    .build(),
+                contentDescription = "",
+                contentScale = ContentScale.Crop
+            )
         }
     }
+}
+
+@Preview
+@Composable
+private fun ChannelItemView(
+) {
+    ChannelItem(
+        tvChannel = TvChannel(
+            tvgId = "222",
+            tvgLogo = "",
+            tvgChannelNumber = 2,
+            name = "channel",
+            url = ""
+        ),
+        onClickChannel = {}
+    )
 }

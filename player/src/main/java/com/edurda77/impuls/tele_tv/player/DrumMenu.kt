@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -63,10 +65,10 @@ fun DrumMenu(
         }
     }
 
-    LazyRow (
+    LazyRow(
         //state = scrollState,
         modifier = modifier
-          //  .background(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
+            //  .background(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
             .fillMaxWidth()
             .padding(16.dp),
         state = scrollState,
@@ -90,16 +92,20 @@ fun DrumMenu(
                 )
             ) {
                 Row(
-                    modifier = modifier.width(screenWidth/6),
+                    modifier = modifier
+                        .width(screenWidth / 6)
+                        .padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     channel.tvgLogo?.let {
                         AsyncImage(
-                            modifier = modifier.size(30.dp),
+                            modifier = modifier
+                                .size(30.dp)
+                                .clip(CircleShape),
                             model = channel.tvgLogo,
                             contentDescription = "",
-                            contentScale = ContentScale.Fit
+                            contentScale = ContentScale.Crop
                         )
                         Spacer(modifier = modifier.width(15.dp))
                     }
@@ -120,7 +126,7 @@ fun DrumMenu(
 }
 
 @Preview(
-  //  showBackground = true
+    //  showBackground = true
 )
 @Composable
 private fun DrumMenuView() {

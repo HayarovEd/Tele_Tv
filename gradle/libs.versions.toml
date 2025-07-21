@@ -5,6 +5,7 @@ kotlin = "2.2.0"
 coreKtx = "1.16.0"
 appcompat = "1.7.1"
 composeBom = "2025.06.01"
+nextlibMedia = "1.7.1-0.9.0"
 tvFoundation = "1.0.0-alpha12"
 tvMaterial = "1.0.0"
 lifecycleRuntimeKtx = "2.9.1"
@@ -81,6 +82,8 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomVersion" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomVersion" }
+nextlib-media3ext = { module = "io.github.anilbeesetti:nextlib-media3ext", version.ref = "nextlibMedia" }
+nextlib-mediainfo = { module = "io.github.anilbeesetti:nextlib-mediainfo", version.ref = "nextlibMedia" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

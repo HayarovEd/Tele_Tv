@@ -10,6 +10,10 @@ const val DOWNLOAD_URL = "https://apps.kvadroks.ru/api/links/0c0c0a58-9296-41da-
 const val DOWNLOAD_TV_URL = "https://apps.kvadroks.ru/api/links/1f68e3ed-3f57-448c-a333-1fb3448d448d/"
 const val APK_EXT = "apk"
 
+const val  VORBIS_MP4_FORMAT = "webtv-h264-vorbis-mp4"//no sound
+const val  AAC_MPEGTS_FORMAT = "webtv-h264-aac-mpegts" //bad sound
+const val  VORBIS_VP8_FORMAT = "webtv-vp8-vorbis-webm"
+const val MATROSHKA_FORMAT  = "webtv-h264-aac-matroska"
 
 const val TB_CHANNEL = "tb_channel"
 const val TB_CHANNEL_ID = "tb_channel_id"

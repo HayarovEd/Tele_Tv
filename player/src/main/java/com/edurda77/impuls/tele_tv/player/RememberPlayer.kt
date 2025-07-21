@@ -10,57 +10,33 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
-import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.exoplayer.RenderersFactory
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
+
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun rememberPlayer(context: Context): ExoPlayer {
     val player = remember {
+        val decoder = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
+        val renderersFactory: RenderersFactory =
+            NextRenderersFactory(context).setEnableDecoderFallback(true)
+                .setExtensionRendererMode(decoder)
+        val audioAttributes =
+            AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build()
         val trackSelector = DefaultTrackSelector(context)
-       /* val decoder = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
-        val renderersFactory = NextRenderersFactory(context)
-            .setEnableDecoderFallback(true)
-            .setExtensionRendererMode(decoder)
-        val audioAttributes = AudioAttributes
-            .Builder()
-            .setUsage(C.USAGE_MEDIA).
-            setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).
-            build()
         ExoPlayer.Builder(context, renderersFactory)
-            //.setSeekForwardIncrementMs(10)
-            //  .setSeekBackIncrementMs(10)
-            // .setTrackSelector(trackSelector)
             .setTrackSelector(trackSelector)
             .setAudioAttributes(audioAttributes,true)
             .setHandleAudioBecomingNoisy(true)
-            .setMediaSourceFactory(
+            /*.setMediaSourceFactory(
                 ProgressiveMediaSource.Factory(DefaultDataSource.Factory(context))
-            )
-            .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
-            .build()
-            .apply {
-                playWhenReady = true
-                repeatMode = Player.REPEAT_MODE_OFF
-            }*/
-        ExoPlayer.Builder(context)
-            //.setSeekForwardIncrementMs(10)
-            //  .setSeekBackIncrementMs(10)
-            // .setTrackSelector(trackSelector)
-            .setTrackSelector(trackSelector)
-            //.setAudioAttributes(audioAttributes,true)
-            .setHandleAudioBecomingNoisy(true)
-            .setMediaSourceFactory(
-                ProgressiveMediaSource.Factory(DefaultDataSource.Factory(context))
-            )
+            )*/
             .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
             .build()
             .apply {

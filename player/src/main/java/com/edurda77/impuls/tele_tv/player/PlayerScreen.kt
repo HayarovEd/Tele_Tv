@@ -45,8 +45,6 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.exoplayer.dash.DashMediaSource
-import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.compose.PlayerSurface
@@ -115,17 +113,17 @@ fun PlayerScreenScreen(
                     val mediaSource: MediaSource =
                         DashMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri("https://edge1.1internet.tv/dash-live2/streams/1tv-dvr/1tvdash.mpd"))
                     */
-                    val dataSourceFactory = DefaultHttpDataSource.Factory()
+                   /* val dataSourceFactory = DefaultHttpDataSource.Factory()
                     val hlsMediaSource =
                         HlsMediaSource.Factory(dataSourceFactory)
-                            .createMediaSource(MediaItem.fromUri("https://132544.edgevideo.ru/streams/132544_806129/1325441080/index.m3u8"))
+                            .createMediaSource(MediaItem.fromUri("https://132544.edgevideo.ru/streams/132544_806129/1325441080/index.m3u8"))*/
                     exoPlayer.setMediaSource(
-                        hlsMediaSource
+                        //hlsMediaSource
                        // mediaSource
-                       /* intoMediaItem(
+                        intoMediaItem(
                             credintial = state.credintial,
                             uri = state.tvChannels[state.selectedIndex].url
-                        )*/
+                        )
                     )
                     exoPlayer.prepare()
                     exoPlayer.playWhenReady = true
@@ -359,8 +357,8 @@ private fun Preview() {
 private fun intoMediaItem(
     credintial: Credintial,
     uri: String
-): ProgressiveMediaSource {
-
+): MediaSource {
+    Log.d("TEST TELE TV", "uri $uri")
     val credentials = Credentials.basic(credintial.username, credintial.password)
     val dataSourceFactory = DefaultHttpDataSource.Factory()
         .setDefaultRequestProperties(
@@ -368,6 +366,9 @@ private fun intoMediaItem(
         )
         .setConnectTimeoutMs(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS)
         .setReadTimeoutMs(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS)
+
+   /* val mediaSource =
+        DashMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(uri))*/
 
     val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
         .createMediaSource(MediaItem.fromUri(uri))

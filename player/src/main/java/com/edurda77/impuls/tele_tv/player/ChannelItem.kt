@@ -44,24 +44,13 @@ fun ChannelItem(
 
     Card(
         modifier = modifier
-            .focusable()
-            /*.onKeyEvent {
-                if (it.nativeKeyEvent.action == android.view.KeyEvent.ACTION_UP) {
-                    when (it.nativeKeyEvent.keyCode) {
-                        android.view.KeyEvent.KEYCODE_ENTER -> {
-                            onSelected()
-                        }
-                    }
-                }
-                true
-            }*/,
+            .focusable(),
         border = CardDefaults.border(
             border = Border(
                 border = BorderStroke(
                     color = if (isFocused) MaterialTheme.colorScheme.inversePrimary else Color.Transparent,
                     width = 3.dp
                 ),
-                inset = 2.dp
             )
         ),
         colors = CardDefaults.colors(
@@ -81,11 +70,11 @@ fun ChannelItem(
                 channel.tvgLogo?.let {
                     AsyncImage(
                         modifier = modifier
-                            .size(30.dp)
+                            .size(40.dp)
                             .clip(CircleShape),
                         model = channel.tvgLogo,
                         contentDescription = "",
-                        contentScale = ContentScale.Fit
+                        contentScale = ContentScale.Crop
                     )
                 }
                 Spacer(modifier = modifier.width(15.dp))

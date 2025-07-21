@@ -63,9 +63,9 @@ fun StatusPanel(
             Text(
                 modifier = modifier,
                 text = "${currentTime.day.toString().padStart(2, '0')}/${
-                    currentTime.year.toString().padStart(2, '0')
-                }/${
                     currentTime.month.number.toString().padStart(2, '0')
+                }/${
+                    currentTime.year.toString().padStart(2, '0')
                 }",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onBackground,
