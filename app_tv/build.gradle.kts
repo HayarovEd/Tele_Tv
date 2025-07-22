@@ -42,13 +42,8 @@ android {
 
 dependencies {
 
-    implementation(project(":domain"))
-    implementation(project(":data"))
+    implementation(project(":base_module"))
     implementation(project(":resources"))
-    implementation(project(":login"))
-    implementation(project(":player"))
-    implementation(project(":channels"))
-    implementation(project(":splash_screen"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -65,12 +60,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    //Koin
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
-
-    //navigation
-    implementation(libs.androidx.navigation.compose)
 
     // SplashScreen
     implementation(libs.androidx.core.splashscreen)

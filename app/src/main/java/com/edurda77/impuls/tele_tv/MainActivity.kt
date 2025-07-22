@@ -6,9 +6,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.edurda77.base_module.navigation.NavController
 import com.edurda77.impuls.tele_tv.domain.utils.DOWNLOAD_URL
 import com.edurda77.impuls.tele_tv.domain.utils.IS_SCREEN_ON
-import com.edurda77.impuls.tele_tv.navigation.NavController
 import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 

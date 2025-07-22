@@ -1,4 +1,4 @@
-package com.edurda77.impuls.tele_tv.di
+package com.edurda77.base_module.di
 
 import com.edurda77.impuls.tele_tv.channels.ChannelsScreenViewModel
 import com.edurda77.impuls.tele_tv.login.LoginScreenViewModel

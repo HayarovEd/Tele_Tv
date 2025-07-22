@@ -1,4 +1,4 @@
-package com.edurda77.impuls.tele_tv.channels_tv.navigation
+package com.edurda77.base_module.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
