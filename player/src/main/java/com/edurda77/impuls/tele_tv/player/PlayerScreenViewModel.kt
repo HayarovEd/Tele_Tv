@@ -165,10 +165,6 @@ class PlayerScreenViewModel(
 
             PlayerScreenAction.DecrimentVolume -> {
                 if (state.value.volume > 0f) {
-                    /* _state.value.copy(
-                         volume = state.value.volume-VOLUME_STEP
-                     )
-                         .updateState()*/
                     viewModelScope.launch {
                         dataStoreRepository.saveVolume(state.value.volume - VOLUME_STEP)
                     }
@@ -178,10 +174,6 @@ class PlayerScreenViewModel(
 
             PlayerScreenAction.IncrimentVolume -> {
                 if (state.value.volume < 1f) {
-                    /* _state.value.copy(
-                         volume = state.value.volume+VOLUME_STEP
-                     )
-                         .updateState()*/
                     viewModelScope.launch {
                         dataStoreRepository.saveVolume(state.value.volume + VOLUME_STEP)
                     }

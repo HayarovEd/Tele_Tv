@@ -44,6 +44,7 @@ dependencies {
 
     implementation(project(":base_module"))
     implementation(project(":resources"))
+    implementation(project(":domain"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
