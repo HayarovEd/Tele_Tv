@@ -34,7 +34,6 @@ class PlayerScreenViewModel(
     private val localRepository: LocalRepository,
 ) : ViewModel() {
 
-    private var job: Job? = null
     private var volumeJob: Job? = null
     private var menuJob: Job? = null
     private var queryJob: Job? = null
@@ -53,8 +52,8 @@ class PlayerScreenViewModel(
 
     fun onAction(action: PlayerScreenAction) {
         when (action) {
-            PlayerScreenAction.OnShowTitle -> {
-                startTimerVisibleMenu()
+            is PlayerScreenAction.OnRestartMenuTimer -> {
+                startTimerVisibleMenu(action.duration)
             }
 
             PlayerScreenAction.DecrimentTvChannel -> {
@@ -73,7 +72,7 @@ class PlayerScreenViewModel(
                             .updateState()
                     }
                     saveLastChannel()
-                    startTimerVisibleMenu()
+                    startTimerVisibleMenu(5)
                     //startTimer()
                 }
             }
@@ -94,7 +93,7 @@ class PlayerScreenViewModel(
                             .updateState()
                     }
                     saveLastChannel()
-                    startTimerVisibleMenu()
+                    startTimerVisibleMenu(5)
                     //startTimer()
                 }
             }
@@ -105,7 +104,7 @@ class PlayerScreenViewModel(
                 )
                     .updateState()
                 saveLastChannel()
-                startTimerVisibleMenu()
+                startTimerVisibleMenu(10)
             }
 
             PlayerScreenAction.DecrimentFocusedIndex -> {
@@ -123,7 +122,7 @@ class PlayerScreenViewModel(
                             .updateState()
                     }
                     loadEpgByFocusedChannel()
-                    startTimerVisibleMenu()
+                    startTimerVisibleMenu(10)
                 }
             }
 
@@ -142,12 +141,12 @@ class PlayerScreenViewModel(
                             .updateState()
                     }
                     loadEpgByFocusedChannel()
-                    startTimerVisibleMenu()
+                    startTimerVisibleMenu(10)
                 }
             }
 
             PlayerScreenAction.ShowSideMenu -> {
-                startTimerVisibleMenu()
+                startTimerVisibleMenu(10)
             }
 
             is PlayerScreenAction.EnterStringNumber -> {
@@ -179,6 +178,14 @@ class PlayerScreenViewModel(
                         .updateState()
                 }
                 timerVisibleVolumeProgress()
+            }
+
+            PlayerScreenAction.OnResetMenuTimer -> {
+                menuJob?.cancel()
+                _state.value.copy(
+                    isVisibleSideMenu = false
+                )
+                    .updateState()
             }
         }
     }
@@ -260,24 +267,6 @@ class PlayerScreenViewModel(
         }
     }
 
-    private fun startTimer() {
-        job?.cancel()
-        job = viewModelScope.launch {
-            _state.value.copy(
-                isVisibleTitle = true
-            )
-                .updateState()
-            (4 downTo 0).forEach { _ ->
-                delay(1000)
-            }
-            _state.value.copy(
-                isVisibleTitle = false
-            )
-                .updateState()
-        }
-        job?.start()
-    }
-
     private fun timerVisibleVolumeProgress() {
         volumeJob?.cancel()
         _state.value.copy(
@@ -296,14 +285,14 @@ class PlayerScreenViewModel(
         volumeJob?.start()
     }
 
-    private fun startTimerVisibleMenu() {
+    private fun startTimerVisibleMenu(duration: Int) {
         _state.value.copy(
             isVisibleSideMenu = true
         )
             .updateState()
         menuJob?.cancel()
         menuJob = viewModelScope.launch {
-            (2 downTo 0).forEach { _ ->
+            (duration downTo 0).forEach { _ ->
                 delay(1000)
             }
             _state.value.copy(
@@ -338,7 +327,6 @@ class PlayerScreenViewModel(
             (3 downTo 0).forEach { _ ->
                 delay(1000)
             }
-            Log.d("REST TELE TV", "channelInputQuery ${state.value.channelInputQuery}")
             processSwitchChannel()
         }
         queryJob?.start()
@@ -473,7 +461,6 @@ class PlayerScreenViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        job?.cancel()
         volumeJob?.cancel()
         menuJob?.cancel()
         queryJob?.cancel()

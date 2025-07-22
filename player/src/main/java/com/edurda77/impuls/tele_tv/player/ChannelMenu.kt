@@ -61,7 +61,7 @@ fun ChannelMenu(
                 modifier = modifier
                     .fillMaxWidth(),
                 contentPadding = PaddingValues(vertical = 5.dp),
-                verticalArrangement = Arrangement.spacedBy(15.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(channels) { channel ->
                     ChannelItem(

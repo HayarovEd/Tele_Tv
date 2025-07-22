@@ -157,10 +157,6 @@ fun PlayerScreenScreen(
                                 onAction(PlayerScreenAction.DecrimentTvChannel)
                             }
 
-                            KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                                onAction(PlayerScreenAction.OnShowTitle)
-                            }
-
                             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_ENTER -> {
                                 onAction(PlayerScreenAction.ShowSideMenu)
                                 focusManager.moveFocus(FocusDirection.Left)
@@ -206,19 +202,6 @@ fun PlayerScreenScreen(
             player = exoPlayer,
             surfaceType = SURFACE_TYPE_TEXTURE_VIEW,
         )
-        /*AnimatedVisibility(
-            visible = state.isVisibleTitle,
-            modifier = modifier.align(Alignment.BottomCenter),
-            enter = slideInVertically { it },
-            exit = slideOutVertically { it }
-        ) {
-            state.selectedIndex?.let {
-                DrumMenu(
-                    channels = state.tvChannels,
-                    selectedIndex = state.selectedIndex
-                )
-            }
-        }*/
         if (state.isVisibleSideMenu || isEpgVisible) {
             Row(
                 modifier = modifier
@@ -234,11 +217,17 @@ fun PlayerScreenScreen(
                             if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                                 when (it.nativeKeyEvent.keyCode) {
                                     KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                                        focusManager.moveFocus(FocusDirection.Right)
+                                        if (isEpgVisible) {
+                                            focusManager.moveFocus(FocusDirection.Right)
+                                        } else {
+                                            onAction(PlayerScreenAction.GetEpgByFocusedChannelId)
+                                            isEpgVisible = true
+                                        }
                                     }
 
                                     KeyEvent.KEYCODE_BACK -> {
                                         isEpgVisible = false
+                                        onAction(PlayerScreenAction.OnResetMenuTimer)
                                     }
 
                                     KeyEvent.KEYCODE_DPAD_DOWN -> {
@@ -252,10 +241,11 @@ fun PlayerScreenScreen(
                                     KeyEvent.KEYCODE_DPAD_CENTER -> {
                                         onAction(PlayerScreenAction.UpdateSelectedIndex)
                                     }
-
                                     KeyEvent.KEYCODE_DPAD_LEFT -> {
-                                        onAction(PlayerScreenAction.GetEpgByFocusedChannelId)
-                                        isEpgVisible = true
+                                        if (isEpgVisible) {
+                                            onAction(PlayerScreenAction.OnRestartMenuTimer(10))
+                                        }
+                                        isEpgVisible = false
                                     }
                                 }
                             }
@@ -286,8 +276,9 @@ fun PlayerScreenScreen(
                                 .onKeyEvent {
                                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                                         when (it.nativeKeyEvent.keyCode) {
-                                            KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_BACK -> {
+                                            KeyEvent.KEYCODE_BACK -> {
                                                 isEpgVisible = false
+                                                onAction(PlayerScreenAction.OnResetMenuTimer)
                                             }
 
                                             KeyEvent.KEYCODE_DPAD_DOWN -> {
@@ -300,6 +291,7 @@ fun PlayerScreenScreen(
 
                                             KeyEvent.KEYCODE_DPAD_LEFT -> {
                                                 focusManager.moveFocus(FocusDirection.Left)
+                                                onAction(PlayerScreenAction.OnRestartMenuTimer(10))
                                             }
                                         }
                                     }
@@ -354,8 +346,8 @@ fun PlayerScreenScreen(
         ) {
             TvVolumeProgress(
                 modifier = modifier.align(Alignment.CenterEnd),
-                progressHeight = screenHeight/3,
-                progressWidth = screenWidth/60,
+                progressHeight = screenHeight / 3,
+                progressWidth = screenWidth / 60,
                 volume = state.volume
             )
         }
@@ -389,8 +381,8 @@ private fun intoMediaItem(
         .setConnectTimeoutMs(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS)
         .setReadTimeoutMs(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS)
 
-   /* val mediaSource =
-        DashMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(uri))*/
+    /* val mediaSource =
+         DashMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(uri))*/
 
     val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
         .createMediaSource(MediaItem.fromUri(uri))
