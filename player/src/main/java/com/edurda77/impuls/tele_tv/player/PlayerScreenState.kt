@@ -22,6 +22,8 @@ data class PlayerScreenState @OptIn(ExperimentalTime::class) constructor(
     val currentTime: Long = Clock.System.now().epochSeconds,
     val focusedChannelEpg: Map<LocalDate, List<TvEpg>> = emptyMap(),
     val isLoadingFocusedChannelEpg: Boolean = false,
+    val volume: Float = 0.5f,
+    val isVisibleVolumeProgress: Boolean = false,
 ) {
     private val selectedChannel =
         if (selectedChannelId != null && tvChannels.isNotEmpty()) tvChannels.first { it.tvgId == selectedChannelId } else null

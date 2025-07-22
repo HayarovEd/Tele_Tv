@@ -11,4 +11,6 @@ sealed interface PlayerScreenAction {
     class EnterStringNumber(val number: Int):PlayerScreenAction
     data object DeleteLastNumber:PlayerScreenAction
     data object GetEpgByFocusedChannelId:PlayerScreenAction
+    data object DecrimentVolume:PlayerScreenAction
+    data object IncrimentVolume:PlayerScreenAction
 }

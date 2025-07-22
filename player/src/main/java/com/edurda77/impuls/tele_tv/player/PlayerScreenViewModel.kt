@@ -35,7 +35,7 @@ class PlayerScreenViewModel(
 ) : ViewModel() {
 
     private var job: Job? = null
-    private var inputJob: Job? = null
+    private var volumeJob: Job? = null
     private var menuJob: Job? = null
     private var queryJob: Job? = null
 
@@ -163,6 +163,25 @@ class PlayerScreenViewModel(
             PlayerScreenAction.GetEpgByFocusedChannelId -> {
                 loadEpgByFocusedChannel()
             }
+
+            PlayerScreenAction.DecrimentVolume -> {
+                if (state.value.volume>0f) {
+                    _state.value.copy(
+                        volume = state.value.volume-0.1f
+                    )
+                        .updateState()
+                }
+                timerVisibleVolumeProgress()
+            }
+            PlayerScreenAction.IncrimentVolume -> {
+                if (state.value.volume<1f) {
+                    _state.value.copy(
+                        volume = state.value.volume+0.1f
+                    )
+                        .updateState()
+                }
+                timerVisibleVolumeProgress()
+            }
         }
     }
 
@@ -261,6 +280,24 @@ class PlayerScreenViewModel(
                 .updateState()
         }
         job?.start()
+    }
+
+    private fun timerVisibleVolumeProgress() {
+        volumeJob?.cancel()
+        _state.value.copy(
+            isVisibleVolumeProgress = true
+        )
+            .updateState()
+        volumeJob = viewModelScope.launch {
+            (2 downTo 0).forEach { _ ->
+                delay(1000)
+            }
+            _state.value.copy(
+                isVisibleVolumeProgress = false
+            )
+                .updateState()
+        }
+        volumeJob?.start()
     }
 
     private fun startTimerVisibleMenu() {
@@ -438,7 +475,7 @@ class PlayerScreenViewModel(
     override fun onCleared() {
         super.onCleared()
         job?.cancel()
-        inputJob?.cancel()
+        volumeJob?.cancel()
         menuJob?.cancel()
         queryJob?.cancel()
     }

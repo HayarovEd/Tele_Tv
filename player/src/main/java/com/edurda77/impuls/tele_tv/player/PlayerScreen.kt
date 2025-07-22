@@ -4,7 +4,9 @@ import android.util.Log
 import android.view.KeyEvent
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -92,34 +94,24 @@ fun PlayerScreenScreen(
             Log.d("REST TELE TV", "error play $error")
         }
     }
+
+
     exoPlayer.addListener(playerListener)
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
     val focusManager = LocalFocusManager.current
     val configuration = LocalWindowInfo.current.containerSize
-    val screenWidth = configuration.height.dp
+    val screenHeight = configuration.height.dp
+    val screenWidth = configuration.width.dp
     var isEpgVisible by remember { mutableStateOf(false) }
 
+
     LaunchedEffect(exoPlayer, state.tvChannels, state.selectedChannelId) {
+
         if (state.tvChannels.isNotEmpty()) {
             state.credintial?.let {
                 state.selectedIndex?.let {
-                   /* val dataSourceFactory = DefaultHttpDataSource.Factory()
-                        *//*.setDefaultRequestProperties(
-                            Collections.singletonMap("Authorization", credentials)
-                        )*//*
-                        .setConnectTimeoutMs(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS)
-                        .setReadTimeoutMs(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS)
-                    val mediaSource: MediaSource =
-                        DashMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri("https://edge1.1internet.tv/dash-live2/streams/1tv-dvr/1tvdash.mpd"))
-                    */
-                   /* val dataSourceFactory = DefaultHttpDataSource.Factory()
-                    val hlsMediaSource =
-                        HlsMediaSource.Factory(dataSourceFactory)
-                            .createMediaSource(MediaItem.fromUri("https://132544.edgevideo.ru/streams/132544_806129/1325441080/index.m3u8"))*/
                     exoPlayer.setMediaSource(
-                        //hlsMediaSource
-                       // mediaSource
                         intoMediaItem(
                             credintial = state.credintial,
                             uri = state.tvChannels[state.selectedIndex].url
@@ -130,6 +122,10 @@ fun PlayerScreenScreen(
                 }
             }
         }
+    }
+
+    LaunchedEffect(state.volume) {
+        exoPlayer.volume = state.volume
     }
 
     LaunchedEffect(state.isVisibleSideMenu) {
@@ -193,6 +189,12 @@ fun PlayerScreenScreen(
                             KeyEvent.KEYCODE_DEL -> {
                                 onAction(PlayerScreenAction.DeleteLastNumber)
                             }
+                            KeyEvent.KEYCODE_VOLUME_UP -> {
+                                onAction(PlayerScreenAction.IncrimentVolume)
+                            }
+                            KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                                onAction(PlayerScreenAction.DecrimentVolume)
+                            }
                         }
                     }
                     true
@@ -216,7 +218,7 @@ fun PlayerScreenScreen(
         if (state.isVisibleSideMenu || isEpgVisible) {
             Row(
                 modifier = modifier
-                    .width(if (isEpgVisible) screenWidth else screenWidth / 4)
+                    .width(if (isEpgVisible) screenHeight else screenHeight / 4)
                     .background(MaterialTheme.colorScheme.background.copy(alpha = if (isEpgVisible) 0.9f else 0.5f))
             ) {
                 ChannelMenu(
@@ -336,6 +338,21 @@ fun PlayerScreenScreen(
                 fontSize = 30.sp,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.errorContainer,
+            )
+        }
+        AnimatedVisibility(
+            visible = state.isVisibleVolumeProgress,
+            modifier = modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = screenWidth/30),
+            enter = slideInHorizontally { it },
+            exit = slideOutHorizontally { it }
+        ) {
+            TvVolumeProgress(
+                modifier = modifier.align(Alignment.CenterEnd),
+                progressHeight = screenHeight/3,
+                progressWidth = screenWidth/60,
+                volume = state.volume
             )
         }
     }
