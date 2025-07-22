@@ -14,6 +14,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Tele_TvTheme {
                 NavController(
+                    isTv = true,
                     startDestination = NavigationRoute.Splash
                 )
             }

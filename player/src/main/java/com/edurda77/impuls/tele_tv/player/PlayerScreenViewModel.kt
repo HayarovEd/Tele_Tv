@@ -54,7 +54,7 @@ class PlayerScreenViewModel(
     fun onAction(action: PlayerScreenAction) {
         when (action) {
             PlayerScreenAction.OnShowTitle -> {
-                startTimer()
+                startTimerVisibleMenu()
             }
 
             PlayerScreenAction.DecrimentTvChannel -> {
@@ -73,7 +73,8 @@ class PlayerScreenViewModel(
                             .updateState()
                     }
                     saveLastChannel()
-                    startTimer()
+                    startTimerVisibleMenu()
+                    //startTimer()
                 }
             }
 
@@ -93,7 +94,8 @@ class PlayerScreenViewModel(
                             .updateState()
                     }
                     saveLastChannel()
-                    startTimer()
+                    startTimerVisibleMenu()
+                    //startTimer()
                 }
             }
 
@@ -145,10 +147,6 @@ class PlayerScreenViewModel(
             }
 
             PlayerScreenAction.ShowSideMenu -> {
-                _state.value.copy(
-                    isVisibleSideMenu = true
-                )
-                    .updateState()
                 startTimerVisibleMenu()
             }
 
@@ -238,8 +236,6 @@ class PlayerScreenViewModel(
                                 focusedChannelId = resultTvChannels.data.first().tvgId,
                             )
                                 .updateState()
-
-                            startTimer()
                         }
                     }
                 }
@@ -301,6 +297,10 @@ class PlayerScreenViewModel(
     }
 
     private fun startTimerVisibleMenu() {
+        _state.value.copy(
+            isVisibleSideMenu = true
+        )
+            .updateState()
         menuJob?.cancel()
         menuJob = viewModelScope.launch {
             (2 downTo 0).forEach { _ ->
@@ -355,7 +355,6 @@ class PlayerScreenViewModel(
                 )
                     .updateState()
                 saveLastChannel()
-                startTimer()
             } else {
                 _state.value.copy(
                     channelInputQuery = ""

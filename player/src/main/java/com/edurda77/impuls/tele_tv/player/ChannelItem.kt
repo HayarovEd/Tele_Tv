@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
@@ -26,6 +29,8 @@ import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.model.TvEpg
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
@@ -41,7 +46,9 @@ fun ChannelItem(
     currentTime: Long,
     modifier: Modifier = Modifier
 ) {
-
+    val configuration = LocalWindowInfo.current.containerSize
+    val screenWidth = configuration.width.dp
+    val height = screenWidth/30
     Card(
         modifier = modifier
             .focusable(),
@@ -51,7 +58,11 @@ fun ChannelItem(
                     color = if (isFocused) MaterialTheme.colorScheme.inversePrimary else Color.Transparent,
                     width = 3.dp
                 ),
-            )
+                shape = RoundedCornerShape(topStart = height, bottomStart = height)
+            ),
+        ),
+        shape = CardDefaults.shape(
+            shape = RoundedCornerShape(topStart = height, bottomStart = height)
         ),
         colors = CardDefaults.colors(
             containerColor = if (isCurrent) MaterialTheme.colorScheme.primaryContainer
@@ -59,47 +70,51 @@ fun ChannelItem(
         ),
         onClick = {  }
     ) {
-        Column (
+        Row(
             modifier = modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-        ){
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                channel.tvgLogo?.let {
-                    AsyncImage(
-                        modifier = modifier
-                            .size(40.dp)
-                            .clip(CircleShape),
-                        model = channel.tvgLogo,
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop
-                    )
-                }
-                Spacer(modifier = modifier.width(15.dp))
-                Text(
-                    modifier = modifier,
-                    text = "${channel.tvgChannelNumber} ",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (isCurrent) MaterialTheme.colorScheme.onPrimaryContainer
-                    else MaterialTheme.colorScheme.onSurface,
-                )
-                Spacer(modifier = modifier.width(1.dp))
-                Text(
-                    modifier = modifier.basicMarquee(),
-                    text = channel.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (isCurrent) MaterialTheme.colorScheme.onPrimaryContainer
-                    else MaterialTheme.colorScheme.onSurface,
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            channel.tvgLogo?.let {
+                AsyncImage(
+                    modifier = modifier
+                        .size(height)
+                        .clip(CircleShape),
+                    model =  ImageRequest.Builder(LocalContext.current)
+                        .data(it)
+                        .decoderFactory(SvgDecoder.Factory())
+                        .build(),
+                    contentDescription = "",
+                    contentScale = ContentScale.FillBounds
                 )
             }
-            Spacer(modifier = modifier.height(5.dp))
-            tvEpg?.let { epg->
-                ItemTvEpg(
-                    tvEpg = epg,
-                    currentTime = currentTime
-                )
+            Column(
+                modifier = modifier.padding(8.dp)
+            ) {
+                Row {
+                    Text(
+                        modifier = modifier,
+                        text = "${channel.tvgChannelNumber} ",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (isCurrent) MaterialTheme.colorScheme.onPrimaryContainer
+                        else MaterialTheme.colorScheme.onSurface,
+                    )
+                    Spacer(modifier = modifier.width(1.dp))
+                    Text(
+                        modifier = modifier.basicMarquee(),
+                        text = channel.name,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (isCurrent) MaterialTheme.colorScheme.onPrimaryContainer
+                        else MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+                Spacer(modifier = modifier.height(5.dp))
+                tvEpg?.let { epg->
+                    ItemTvEpg(
+                        tvEpg = epg,
+                        currentTime = currentTime
+                    )
+                }
             }
         }
     }

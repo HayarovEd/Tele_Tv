@@ -5,9 +5,7 @@ import android.view.KeyEvent
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -65,6 +63,7 @@ import java.util.Collections
 @Composable
 fun PlayerScreenRoot(
     viewModel: PlayerScreenViewModel = koinViewModel(),
+    isTv: Boolean,
     onNavigateToChannels: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -72,6 +71,7 @@ fun PlayerScreenRoot(
     PlayerScreenScreen(
         state = state,
         onAction = viewModel::onAction,
+        isTv = isTv,
         onNavigateToChannels = onNavigateToChannels
     )
 }
@@ -81,6 +81,7 @@ fun PlayerScreenRoot(
 fun PlayerScreenScreen(
     modifier: Modifier = Modifier,
     state: PlayerScreenState,
+    isTv: Boolean,
     onAction: (PlayerScreenAction) -> Unit,
     onNavigateToChannels: () -> Unit
 ) {
@@ -161,11 +162,8 @@ fun PlayerScreenScreen(
                             }
 
                             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_ENTER -> {
-                                // isMenuVisible = true
                                 onAction(PlayerScreenAction.ShowSideMenu)
                                 focusManager.moveFocus(FocusDirection.Left)
-                                // onAction(PlayerScreenAction.ShowSideMenu)
-                                // onChangeFocus(FocusDirection.Exit)
                             }
 
                             KeyEvent.KEYCODE_BACK -> {
@@ -189,11 +187,17 @@ fun PlayerScreenScreen(
                             KeyEvent.KEYCODE_DEL -> {
                                 onAction(PlayerScreenAction.DeleteLastNumber)
                             }
+
                             KeyEvent.KEYCODE_VOLUME_UP -> {
-                                onAction(PlayerScreenAction.IncrimentVolume)
+                                if (!isTv) {
+                                    onAction(PlayerScreenAction.IncrimentVolume)
+                                }
                             }
+
                             KeyEvent.KEYCODE_VOLUME_DOWN -> {
-                                onAction(PlayerScreenAction.DecrimentVolume)
+                                if (!isTv) {
+                                    onAction(PlayerScreenAction.DecrimentVolume)
+                                }
                             }
                         }
                     }
@@ -202,7 +206,7 @@ fun PlayerScreenScreen(
             player = exoPlayer,
             surfaceType = SURFACE_TYPE_TEXTURE_VIEW,
         )
-        AnimatedVisibility(
+        /*AnimatedVisibility(
             visible = state.isVisibleTitle,
             modifier = modifier.align(Alignment.BottomCenter),
             enter = slideInVertically { it },
@@ -214,7 +218,7 @@ fun PlayerScreenScreen(
                     selectedIndex = state.selectedIndex
                 )
             }
-        }
+        }*/
         if (state.isVisibleSideMenu || isEpgVisible) {
             Row(
                 modifier = modifier
@@ -344,7 +348,7 @@ fun PlayerScreenScreen(
             visible = state.isVisibleVolumeProgress,
             modifier = modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = screenWidth/30),
+                .padding(end = screenWidth / 30),
             enter = slideInHorizontally { it },
             exit = slideOutHorizontally { it }
         ) {
@@ -364,6 +368,7 @@ private fun Preview() {
     Tele_TvTheme {
         PlayerScreenScreen(
             state = PlayerScreenState(),
+            isTv = false,
             onAction = {},
             onNavigateToChannels = {}
         )

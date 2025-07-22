@@ -14,6 +14,7 @@ import com.edurda77.impuls.tele_tv.splash.SplashScreenRoot
 @Composable
 fun NavController(
     startDestination: NavigationRoute,
+    isTv: Boolean,
 ) {
     val navController = rememberNavController()
 
@@ -38,6 +39,7 @@ fun NavController(
         }
         composable<NavigationRoute.Player> {
             PlayerScreenRoot(
+                isTv = isTv,
                 onNavigateToChannels = {
                     navController.navigateUp()
                 }
