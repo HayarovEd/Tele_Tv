@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-09T04:45:22.857130Z">
+        <DropdownSelection timestamp="2025-07-22T09:31:17.371209400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=RS55USTOP7VSP7JF" />
+              <DeviceId pluginId="Default" identifier="serial=10.222.222.205:5555;connection=bf020a2a" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -21,7 +21,7 @@
       </SelectionState>
       <SelectionState runConfigName="app_tv">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-02T10:19:39.916489800Z">
+        <DropdownSelection timestamp="2025-07-22T08:20:21.822774700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=18554281353114" />
