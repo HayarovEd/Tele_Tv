@@ -5,6 +5,7 @@ const val BASE_URL = "http://77.236.66.174:9981/"
 const val CHANNEL_URL_PREFIX = "stream/channel/"
 const val LABEL_USERNAME = "label_username"
 const val LABEL_PASSWORD = "label_password"
+const val LABEL_VOLUME= "label_volume"
 const val IS_SCREEN_ON = "SCREEN_ON"
 const val DOWNLOAD_URL = "https://apps.kvadroks.ru/api/links/0c0c0a58-9296-41da-842c-ef939734cbbb/"
 const val DOWNLOAD_TV_URL = "https://apps.kvadroks.ru/api/links/1f68e3ed-3f57-448c-a333-1fb3448d448d/"
@@ -31,3 +32,5 @@ const val CHANNEL_LIMIT = 500
 const val SINGLE_LIMIT = 1
 const val START_POSITION = 0
 const val DELAY_MINUTE = 60_000L
+
+const val VOLUME_STEP = 0.05f

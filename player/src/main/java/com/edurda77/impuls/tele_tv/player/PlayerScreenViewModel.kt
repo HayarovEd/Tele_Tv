@@ -12,6 +12,7 @@ import com.edurda77.impuls.tele_tv.domain.utils.CHANNEL_LIMIT
 import com.edurda77.impuls.tele_tv.domain.utils.DELAY_MINUTE
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.domain.utils.SINGLE_LIMIT
+import com.edurda77.impuls.tele_tv.domain.utils.VOLUME_STEP
 import com.edurda77.impuls.tele_tv.domain.utils.convertToDate
 import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
@@ -43,6 +44,7 @@ class PlayerScreenViewModel(
         .onStart {
             getInitialData()
             getCurrentTime()
+            getCurrentVolume()
         }
         .stateIn(
             scope = viewModelScope,
@@ -162,20 +164,27 @@ class PlayerScreenViewModel(
             }
 
             PlayerScreenAction.DecrimentVolume -> {
-                if (state.value.volume>0f) {
-                    _state.value.copy(
-                        volume = state.value.volume-0.1f
-                    )
-                        .updateState()
+                if (state.value.volume > 0f) {
+                    /* _state.value.copy(
+                         volume = state.value.volume-VOLUME_STEP
+                     )
+                         .updateState()*/
+                    viewModelScope.launch {
+                        dataStoreRepository.saveVolume(state.value.volume - VOLUME_STEP)
+                    }
                 }
                 timerVisibleVolumeProgress()
             }
+
             PlayerScreenAction.IncrimentVolume -> {
-                if (state.value.volume<1f) {
-                    _state.value.copy(
-                        volume = state.value.volume+0.1f
-                    )
-                        .updateState()
+                if (state.value.volume < 1f) {
+                    /* _state.value.copy(
+                         volume = state.value.volume+VOLUME_STEP
+                     )
+                         .updateState()*/
+                    viewModelScope.launch {
+                        dataStoreRepository.saveVolume(state.value.volume + VOLUME_STEP)
+                    }
                 }
                 timerVisibleVolumeProgress()
             }
@@ -411,6 +420,17 @@ class PlayerScreenViewModel(
                     )
                         .updateState()
                 }
+            }
+        }
+    }
+
+    private fun getCurrentVolume() {
+        viewModelScope.launch {
+            dataStoreRepository.getFlowVolume().collect {
+                _state.value.copy(
+                    volume = it
+                )
+                    .updateState()
             }
         }
     }

@@ -3,11 +3,14 @@ package com.edurda77.impuls.tele_tv.data.repository
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.utils.LABEL_PASSWORD
 import com.edurda77.impuls.tele_tv.domain.utils.LABEL_USERNAME
+import com.edurda77.impuls.tele_tv.domain.utils.LABEL_VOLUME
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
@@ -50,8 +53,24 @@ class DataStoreRepositoryImpl(
         }
     }
 
+    override suspend fun saveVolume(
+        volume: Float
+    ) {
+        dataStore.edit { preferences ->
+            preferences[FIELD_LABEL_VOLUME] = volume
+        }
+    }
+
+
+    override fun getFlowVolume(): Flow<Float> {
+        return dataStore.data.map { preferences ->
+            preferences[FIELD_LABEL_VOLUME] ?: 0.5f
+        }
+    }
+
     companion object {
         val FIELD_LABEL_USERNAME = stringPreferencesKey(LABEL_USERNAME)
         val FIELD_LABEL_PASSWORD = stringPreferencesKey(LABEL_PASSWORD)
+        val FIELD_LABEL_VOLUME = floatPreferencesKey(LABEL_VOLUME)
     }
 }
