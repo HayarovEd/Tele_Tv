@@ -88,6 +88,7 @@ fun PlayerScreenScreen(
     val context = LocalContext.current
     val exoPlayer = rememberPlayer(context)
     val playerListener = object : Player.Listener {
+
         override fun onPlayerError(error: PlaybackException) {
             super.onPlayerError(error)
             val errorCode = error.errorCode
@@ -244,6 +245,8 @@ fun PlayerScreenScreen(
                                     KeyEvent.KEYCODE_DPAD_LEFT -> {
                                         if (isEpgVisible) {
                                             onAction(PlayerScreenAction.OnRestartMenuTimer(10))
+                                        } else {
+                                            onAction(PlayerScreenAction.OnResetMenuTimer)
                                         }
                                         isEpgVisible = false
                                     }

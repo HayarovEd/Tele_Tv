@@ -47,33 +47,37 @@ fun ChannelMenu(
             scrollState.scrollToItem(scrolledIndex)
         }
     }
-        Column(modifier = modifier.padding(16.dp)) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.channels),
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-            LazyColumn(
-                state = scrollState,
-                modifier = modifier
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(vertical = 5.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items(channels) { channel ->
-                    ChannelItem(
-                        channel = channel,
-                        isCurrent = selectedIndex != null && channel == channels[selectedIndex],
-                        isFocused = focusedIndex != null && channel == channels[focusedIndex],
-                        tvEpg = allTvEpg.firstOrNull { it.channelUuid == channel.tvgId },
-                        currentTime = currentTime
-                    )
-                }
+    Column(modifier = modifier.padding(16.dp)) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.channels),
+            color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        LazyColumn(
+            state = scrollState,
+            modifier = modifier
+                .fillMaxWidth(),
+            contentPadding = PaddingValues(vertical = 5.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            items(
+                items = channels,
+                key = {
+                    it.tvgId
+                }) { channel ->
+                ChannelItem(
+                    channel = channel,
+                    isCurrent = selectedIndex != null && channel == channels[selectedIndex],
+                    isFocused = focusedIndex != null && channel == channels[focusedIndex],
+                    tvEpg = allTvEpg.firstOrNull { it.channelUuid == channel.tvgId },
+                    currentTime = currentTime
+                )
             }
         }
+    }
 }
 
 @OptIn(ExperimentalTime::class)
