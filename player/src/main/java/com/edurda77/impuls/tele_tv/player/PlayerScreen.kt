@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -87,6 +88,7 @@ fun PlayerScreenScreen(
 ) {
     val context = LocalContext.current
     val exoPlayer = rememberPlayer(context)
+    var isLoadingChannel by remember { mutableStateOf(true) }
     val playerListener = object : Player.Listener {
 
         override fun onPlayerError(error: PlaybackException) {
@@ -94,6 +96,13 @@ fun PlayerScreenScreen(
             val errorCode = error.errorCode
             Log.d("REST TELE TV", "errorCode play $errorCode")
             Log.d("REST TELE TV", "error play $error")
+        }
+
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            super.onIsPlayingChanged(isPlaying)
+            Log.d("REST TELE TV", "isPlaying $isPlaying")
+            isLoadingChannel = !isPlaying
         }
     }
 
@@ -201,8 +210,15 @@ fun PlayerScreenScreen(
                     true
                 },
             player = exoPlayer,
-            surfaceType = SURFACE_TYPE_TEXTURE_VIEW,
+            surfaceType = SURFACE_TYPE_TEXTURE_VIEW
         )
+        if (isLoadingChannel) {
+            TvCustomCircularProgressIndicator(
+                modifier = modifier
+                    .align (Alignment.Center)
+                    .size(screenHeight/7)
+            )
+        }
         if (state.isVisibleSideMenu || isEpgVisible) {
             Row(
                 modifier = modifier
@@ -350,7 +366,6 @@ fun PlayerScreenScreen(
             TvVolumeProgress(
                 modifier = modifier.align(Alignment.CenterEnd),
                 progressHeight = screenHeight / 3,
-                progressWidth = screenWidth / 60,
                 volume = state.volume
             )
         }

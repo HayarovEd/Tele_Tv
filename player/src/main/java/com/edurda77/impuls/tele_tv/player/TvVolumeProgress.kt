@@ -18,10 +18,10 @@ import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 fun TvVolumeProgress(
     modifier: Modifier = Modifier,
     progressHeight: Dp,
-    progressWidth: Dp = 20.dp,
+    progressWidth: Dp = 6.dp,
     volume: Float,
-    lineColor: Color = MaterialTheme.colorScheme.inversePrimary,
-    backgroundColor: Color = MaterialTheme.colorScheme.onBackground,
+    lineColor: Color = MaterialTheme.colorScheme.primary,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
 ) {
     Canvas(
         modifier = modifier
