@@ -86,6 +86,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 nextlib-media3ext = { module = "io.github.anilbeesetti:nextlib-media3ext", version.ref = "nextlibMedia" }
 nextlib-mediainfo = { module = "io.github.anilbeesetti:nextlib-mediainfo", version.ref = "nextlibMedia" }
 material = { group = "com.google.android.material", name = "material", version.ref = "googleMaterialVersion" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

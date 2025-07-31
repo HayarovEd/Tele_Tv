@@ -2,6 +2,7 @@
 
     <string name="app_name">Теле ТВ для приставки</string>
     <string name="app_name_tv">Теле ТВ для тв</string>
+    <string name="app_name_mobile">Теле ТВ для мобильных</string>
 
     <string name="server_error">Ошибка сервера</string>
     <string name="unknown_error">Незивестная ошибка</string>
