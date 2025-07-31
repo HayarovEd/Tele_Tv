@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
             Tele_TvTheme {
                 NavController(
                     isTv = false,
-                    startDestination = if (isScreenOn) NavigationRoute.Channels(DOWNLOAD_URL) else NavigationRoute.Splash,
+                    startDestination = if (isScreenOn) NavigationRoute.Channels(DOWNLOAD_URL) else NavigationRoute.Splash(false),
                     downloadUrl = DOWNLOAD_URL
                 )
             }

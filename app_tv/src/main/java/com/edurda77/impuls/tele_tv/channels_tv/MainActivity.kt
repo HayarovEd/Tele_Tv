@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
             Tele_TvTheme {
                 NavController(
                     isTv = true,
-                    startDestination = NavigationRoute.Splash,
+                    startDestination = NavigationRoute.Splash(false),
                     downloadUrl = DOWNLOAD_TV_URL
                 )
             }

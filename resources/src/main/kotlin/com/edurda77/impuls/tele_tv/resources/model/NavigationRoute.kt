@@ -7,7 +7,9 @@ sealed class NavigationRoute {
 
 
     @Serializable
-    data object Splash : NavigationRoute()
+    data class Splash(
+        val isMobile: Boolean
+    ) : NavigationRoute()
 
     @Serializable
     data class Player(
@@ -19,5 +21,16 @@ sealed class NavigationRoute {
         val downloadUrl: String
     ) : NavigationRoute()
 
+    @Serializable
+    data object LoginMobile : NavigationRoute()
 
+    @Serializable
+    data class PlayerMobile(
+        val channelId: String
+    ) : NavigationRoute()
+
+    @Serializable
+    data class ChannelsMobile(
+        val downloadUrl: String
+    ) : NavigationRoute()
 }

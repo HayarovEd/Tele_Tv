@@ -20,8 +20,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.Card
@@ -43,12 +43,10 @@ fun ChannelItem(
     isCurrent: Boolean,
     isFocused: Boolean,
     tvEpg: TvEpg?,
+    height: Dp,
     currentTime: Long,
     modifier: Modifier = Modifier
 ) {
-    val configuration = LocalWindowInfo.current.containerSize
-    val screenWidth = configuration.width.dp
-    val height = screenWidth/30
     Card(
         modifier = modifier
             .focusable(),
@@ -136,6 +134,7 @@ private fun ChannelItemView() {
             isCurrent = true,
             isFocused = false,
             currentTime = Clock.System.now().epochSeconds,
+            height = 40.dp,
             tvEpg = TvEpg(
                 channelName = "Рифей (22)",
                 channelNumber = "22",
@@ -165,6 +164,7 @@ private fun ChannelItemView2() {
                 url = ""
             ),
             isCurrent = false,
+            height = 40.dp,
             isFocused = true,
             currentTime = Clock.System.now().epochSeconds,
             tvEpg = TvEpg(

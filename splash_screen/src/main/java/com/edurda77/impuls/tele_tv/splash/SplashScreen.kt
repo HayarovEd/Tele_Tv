@@ -18,13 +18,17 @@ import org.koin.androidx.compose.koinViewModel
 fun SplashScreenRoot(
     viewModel: SplashScreenViewModel = koinViewModel(),
     onNavigateToChannels: () -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToChannelsMobile: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    onNavigateToLoginMobile: () -> Unit
 ) {
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 UiSplashEvents.ChannelsNavigationEvent -> onNavigateToChannels()
                 UiSplashEvents.LoginNavigationEvent -> onNavigateToLogin()
+                UiSplashEvents.ChannelsMobileNavigationEvent -> onNavigateToChannelsMobile()
+                UiSplashEvents.LoginMobileNavigationEvent -> onNavigateToLoginMobile()
             }
         }
     }

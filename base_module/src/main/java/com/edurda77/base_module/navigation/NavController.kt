@@ -34,6 +34,12 @@ fun NavController(
                 },
                 onNavigateToChannels = {
                     navController.navigate(NavigationRoute.Channels(downloadUrl))
+                },
+                onNavigateToLoginMobile = {
+                    navController.navigate(NavigationRoute.LoginMobile)
+                },
+                onNavigateToChannelsMobile = {
+                    navController.navigate(NavigationRoute.ChannelsMobile(downloadUrl))
                 }
             )
         }

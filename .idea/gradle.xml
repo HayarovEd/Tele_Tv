@@ -15,9 +15,11 @@
             <option value="$PROJECT_DIR$/app_tv" />
             <option value="$PROJECT_DIR$/base_module" />
             <option value="$PROJECT_DIR$/channels" />
+            <option value="$PROJECT_DIR$/channels_mobile" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/domain" />
             <option value="$PROJECT_DIR$/login" />
+            <option value="$PROJECT_DIR$/login_mobile" />
             <option value="$PROJECT_DIR$/player" />
             <option value="$PROJECT_DIR$/resources" />
             <option value="$PROJECT_DIR$/splash_screen" />

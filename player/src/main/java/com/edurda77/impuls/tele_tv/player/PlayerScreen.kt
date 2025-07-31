@@ -274,7 +274,8 @@ fun PlayerScreenScreen(
                     selectedIndex = state.selectedIndex,
                     focusedIndex = state.focusedIndex,
                     allTvEpg = state.allTvEpg,
-                    currentTime = state.currentTime
+                    currentTime = state.currentTime,
+                    heightItem = screenWidth/30,
                 )
                 if (isEpgVisible) {
                     if (state.isLoadingFocusedChannelEpg) {
@@ -331,7 +332,10 @@ fun PlayerScreenScreen(
                                         textAlign = TextAlign.Center
                                     )
                                 }
-                                items(entry.value) {
+                                items(items = entry.value,
+                                    key = {
+                                        it.eventId
+                                    }) {
                                     ItemFullTvEpg(
                                         tvEpg = it,
                                     )

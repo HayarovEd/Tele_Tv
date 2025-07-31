@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.edurda77.impuls.tele_tv.splash"
+    namespace = "com.edurda77.impuls.tele_tv.login_mobile"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -29,42 +29,29 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = libs.versions.jvmTarget.get()
-    }
-
-    buildFeatures {
-        compose = true
+        jvmTarget = "11"
     }
 }
 
 dependencies {
 
     implementation(project(":domain"))
+    implementation(project(":data"))
     implementation(project(":resources"))
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.tv.foundation)
-    implementation(libs.androidx.tv.material)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+
     //Koin
     implementation(libs.koin.androidx.compose)
-
-    // Coil
-    implementation(libs.coil.compose)
-
-    //date-time
-    implementation(libs.kotlinx.datetime)
-
-    //navigation
-    implementation(libs.androidx.navigation.compose)
 }

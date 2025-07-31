@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.MaterialTheme
@@ -33,10 +34,12 @@ fun ChannelMenu(
     allTvEpg: List<TvEpg>,
     selectedIndex: Int?,
     modifier: Modifier = Modifier,
+    heightItem: Dp,
     focusedIndex: Int?,
     currentTime: Long,
 ) {
     val scrollState = rememberLazyListState()
+
     LaunchedEffect(focusedIndex) {
         if (focusedIndex != null && focusedIndex >= 0) {
             val countVisible = scrollState.layoutInfo.visibleItemsInfo.size
@@ -73,7 +76,8 @@ fun ChannelMenu(
                     isCurrent = selectedIndex != null && channel == channels[selectedIndex],
                     isFocused = focusedIndex != null && channel == channels[focusedIndex],
                     tvEpg = allTvEpg.firstOrNull { it.channelUuid == channel.tvgId },
-                    currentTime = currentTime
+                    currentTime = currentTime,
+                    height = heightItem
                 )
             }
         }
@@ -113,6 +117,7 @@ private fun ChannelMenuView() {
             selectedIndex = 1,
             focusedIndex = 0,
             allTvEpg = epgs,
+            heightItem = 40.dp,
             currentTime = Clock.System.now().epochSeconds,
         )
     }
