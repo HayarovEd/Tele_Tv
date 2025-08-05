@@ -9,6 +9,8 @@ const val LABEL_VOLUME= "label_volume"
 const val IS_SCREEN_ON = "SCREEN_ON"
 const val DOWNLOAD_URL = "https://apps.kvadroks.ru/api/links/0c0c0a58-9296-41da-842c-ef939734cbbb/"
 const val DOWNLOAD_TV_URL = "https://apps.kvadroks.ru/api/links/1f68e3ed-3f57-448c-a333-1fb3448d448d/"
+const val DOWNLOAD_PTK_URL = "https://apps.kvadroks.ru/api/links/e0819c86-370d-4ea3-8cbb-2d84ee49e602/"
+const val DOWNLOAD_PTK_TV_URL = "https://apps.kvadroks.ru/api/links/59000495-5b7c-46f4-88c1-23b275e4dc53/"
 const val APK_EXT = "apk"
 
 const val  VORBIS_MP4_FORMAT = "webtv-h264-vorbis-mp4"//no sound

@@ -4,6 +4,9 @@
     <string name="app_name_tv">Теле ТВ для тв</string>
     <string name="app_name_mobile">Теле ТВ для мобильных</string>
 
+    <string name="app_name_ptk">ПТК для приставки</string>
+    <string name="app_name_ptk_tv">ПТК для ТВ</string>
+
     <string name="server_error">Ошибка сервера</string>
     <string name="unknown_error">Незивестная ошибка</string>
     <string name="email_empty">Email не может быть пустым</string>

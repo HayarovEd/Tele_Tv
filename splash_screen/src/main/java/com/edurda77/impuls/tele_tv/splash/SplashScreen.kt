@@ -10,12 +10,14 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import com.edurda77.impuls.tele_tv.resources.R
+import com.edurda77.impuls.tele_tv.resources.model.TypeFactory
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SplashScreenRoot(
+    typeFactory: TypeFactory,
     viewModel: SplashScreenViewModel = koinViewModel(),
     onNavigateToChannels: () -> Unit,
     onNavigateToChannelsMobile: () -> Unit,
@@ -33,12 +35,15 @@ fun SplashScreenRoot(
         }
     }
 
-    SplashScreenScreen()
+    SplashScreenScreen(
+        typeFactory = typeFactory
+    )
 }
 
 @Composable
 private fun SplashScreenScreen(
     modifier: Modifier = Modifier,
+    typeFactory: TypeFactory,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         AndroidView(
@@ -46,33 +51,33 @@ private fun SplashScreenScreen(
                 .fillMaxSize(),
             factory = { context ->
                 ImageView(context).apply {
-                    setImageResource(R.drawable.splash_background)
+                    when (typeFactory) {
+                        TypeFactory.TELE -> setImageResource(R.drawable.tele_splash_background)
+                        TypeFactory.PTK -> setImageResource(R.drawable.ptk_splash_background)
+                    }
                     scaleType = ImageView.ScaleType.FIT_XY
                 }
             },
         )
-        /*Image(
-            modifier = modifier
-                .fillMaxSize(),
-            painter = painterResource(id = R.drawable.splash_background),
-            contentScale = ContentScale.FillBounds,
-            contentDescription = "",
-        )*/
-        /*Image(
-            modifier = modifier
-                .align(Alignment.Center)
-                .fillMaxWidth(0.85f),
-            painter = painterResource(id = R.drawable.logo62),
-            contentScale = ContentScale.FillWidth,
-            contentDescription = "",
-        )*/
     }
 }
 
 @Preview(device = Devices.AUTOMOTIVE_1024p, widthDp = 1280, heightDp = 720)
 @Composable
-private fun Preview() {
+private fun PreviewTele() {
     Tele_TvTheme {
-        SplashScreenScreen()
+        SplashScreenScreen(
+            typeFactory = TypeFactory.TELE
+        )
+    }
+}
+
+@Preview(device = Devices.AUTOMOTIVE_1024p, widthDp = 1280, heightDp = 720)
+@Composable
+private fun PreviewPTK() {
+    Tele_TvTheme {
+        SplashScreenScreen(
+            typeFactory = TypeFactory.PTK
+        )
     }
 }

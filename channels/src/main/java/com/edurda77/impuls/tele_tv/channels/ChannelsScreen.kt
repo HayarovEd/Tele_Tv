@@ -39,6 +39,7 @@ import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.resources.R
+import com.edurda77.impuls.tele_tv.resources.model.TypeFactory
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -46,6 +47,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ChannelsScreenRoot(
     viewModel: ChannelsScreenViewModel = koinViewModel(),
+    typeFactory: TypeFactory,
     onNavigateToPlayer: (String) -> Unit,
     onNavigateToLogin: () -> Unit,
 ) {
@@ -70,6 +72,7 @@ fun ChannelsScreenRoot(
 
     ChannelsScreenScreen(
         state = state,
+        typeFactory = typeFactory,
         onAction = viewModel::onAction,
     )
 }
@@ -77,6 +80,7 @@ fun ChannelsScreenRoot(
 @Composable
 private fun ChannelsScreenScreen(
     modifier: Modifier = Modifier,
+    typeFactory: TypeFactory,
     state: ChannelsScreenState,
     onAction: (ChannelsScreenAction) -> Unit,
 ) {
@@ -109,7 +113,10 @@ private fun ChannelsScreenScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo61),
+                    painter = when (typeFactory) {
+                        TypeFactory.TELE -> painterResource(id = R.drawable.logo61)
+                        TypeFactory.PTK -> painterResource(id = R.drawable.ptk_logo)
+                    },
                     contentDescription = "",
                     contentScale = ContentScale.FillHeight,
                     modifier = modifier
@@ -219,6 +226,7 @@ private fun Preview() {
                 lastTvChannels = channels
             ),
             onAction = {},
+            typeFactory = TypeFactory.TELE
         )
     }
 }
@@ -244,6 +252,7 @@ private fun Preview2() {
                 lastTvChannels = channels
             ),
             onAction = {},
+            typeFactory = TypeFactory.PTK
         )
     }
 }
@@ -270,6 +279,7 @@ private fun Preview3() {
                 lastTvChannels = channels
             ),
             onAction = {},
+            typeFactory = TypeFactory.TELE
         )
     }
 }

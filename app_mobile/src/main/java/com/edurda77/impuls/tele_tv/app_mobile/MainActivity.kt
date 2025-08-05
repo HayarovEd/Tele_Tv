@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import com.edurda77.base_module.navigation.NavController
 import com.edurda77.impuls.tele_tv.domain.utils.DOWNLOAD_TV_URL
 import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
+import com.edurda77.impuls.tele_tv.resources.model.TypeFactory
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +20,8 @@ class MainActivity : ComponentActivity() {
                     NavController(
                         isTv = true,
                         startDestination = NavigationRoute.Splash(true),
-                        downloadUrl = DOWNLOAD_TV_URL
+                        downloadUrl = DOWNLOAD_TV_URL,
+                        typeFactory = TypeFactory.TELE
                     )
                 }
             }

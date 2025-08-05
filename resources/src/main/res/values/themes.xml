@@ -1,11 +1,15 @@
 <resources>
 
     <style name="Theme.Tele_Tv" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:windowBackground">@drawable/tele_splash_background</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+    <style name="Theme.PTK_Tv" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/ptk_splash_background</item>
         <item name="android:windowFullscreen">true</item>
     </style>
     <style name="Theme.App.Starting" parent="Theme.SplashScreen.IconBackground">
-        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:windowBackground">@drawable/tele_splash_background</item>
         <item name="android:windowFullscreen">true</item>
         <item name="postSplashScreenTheme">@style/Theme.Tele_Tv</item>
     </style>

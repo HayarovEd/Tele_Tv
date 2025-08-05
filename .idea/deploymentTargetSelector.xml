@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-22T09:31:17.371209400Z">
+        <DropdownSelection timestamp="2025-07-31T10:58:27.640167400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="Default" identifier="serial=10.222.222.205:5555;connection=bf020a2a" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=18554281353114" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -21,16 +21,19 @@
       </SelectionState>
       <SelectionState runConfigName="app_tv">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-22T08:20:21.822774700Z">
+        <DropdownSelection timestamp="2025-07-31T09:36:32.916430700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=18554281353114" />
+              <DeviceId pluginId="Default" identifier="serial=10.222.222.205:5555;connection=da4e0ae0" />
             </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="app_mobile">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="ptk">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

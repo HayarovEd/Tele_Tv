@@ -45,6 +45,7 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
 import com.edurda77.impuls.tele_tv.resources.R
+import com.edurda77.impuls.tele_tv.resources.model.TypeFactory
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 import com.edurda77.impuls.tele_tv.resources.uikit.UiTextField
 import kotlinx.coroutines.flow.collectLatest
@@ -53,6 +54,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LoginScreenRoot(
     viewModel: LoginScreenViewModel = koinViewModel(),
+    typeFactory: TypeFactory,
     onNavigateToChannels: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -71,6 +73,7 @@ fun LoginScreenRoot(
 
     LoginScreenScreen(
         state = state,
+        typeFactory = typeFactory,
         onAction = viewModel::onAction
     )
 }
@@ -78,6 +81,7 @@ fun LoginScreenRoot(
 @Composable
 fun LoginScreenScreen(
     modifier: Modifier = Modifier,
+    typeFactory: TypeFactory,
     state: LoginScreenState,
     onAction: (LoginScreenAction) -> Unit,
 ) {
@@ -120,7 +124,10 @@ fun LoginScreenScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo61),
+                    painter = when (typeFactory) {
+                        TypeFactory.TELE -> painterResource(id = R.drawable.logo61)
+                        TypeFactory.PTK -> painterResource(id = R.drawable.ptk_logo)
+                    },
                     contentDescription = "",
                     contentScale = ContentScale.FillWidth,
                     modifier = modifier.padding(horizontal = 25.dp)
@@ -228,7 +235,8 @@ private fun Preview() {
     Tele_TvTheme {
         LoginScreenScreen(
             state = LoginScreenState(),
-            onAction = {}
+            onAction = {},
+            typeFactory = TypeFactory.PTK
         )
     }
 }
