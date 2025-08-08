@@ -115,7 +115,7 @@ private fun ChannelsScreenScreen(
                 Image(
                     painter = when (typeFactory) {
                         TypeFactory.TELE -> painterResource(id = R.drawable.logo61)
-                        TypeFactory.PTK -> painterResource(id = R.drawable.ptk_logo)
+                        TypeFactory.PTK -> painterResource(id = R.drawable.ptk_logo_crop)
                     },
                     contentDescription = "",
                     contentScale = ContentScale.FillHeight,

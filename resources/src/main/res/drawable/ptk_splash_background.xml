@@ -12,6 +12,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/ptk_logo" />
+            android:src="@drawable/ptk_logo_crop" />
     </item>
 </layer-list>
