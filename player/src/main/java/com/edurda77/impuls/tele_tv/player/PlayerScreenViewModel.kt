@@ -58,7 +58,7 @@ class PlayerScreenViewModel(
                 startTimerVisibleMenu(action.duration)
             }
 
-            PlayerScreenAction.DecrimentTvChannel -> {
+            PlayerScreenAction.DecrementTvChannel -> {
                 state.value.selectedIndex?.let { selectedIndex ->
                     if (state.value.tvChannels[selectedIndex] == state.value.tvChannels.first()) {
                         _state.value.copy(
@@ -79,7 +79,7 @@ class PlayerScreenViewModel(
                 }
             }
 
-            PlayerScreenAction.IncrimentTvChannel -> {
+            PlayerScreenAction.IncrementTvChannel -> {
                 state.value.selectedIndex?.let { selectedIndex ->
                     if (state.value.tvChannels[selectedIndex] == state.value.tvChannels.last()) {
                         _state.value.copy(
@@ -109,7 +109,7 @@ class PlayerScreenViewModel(
                 startTimerVisibleMenu(10)
             }
 
-            PlayerScreenAction.DecrimentFocusedIndex -> {
+            PlayerScreenAction.DecrementFocusedIndex -> {
                 state.value.focusedIndex?.let { focusedIndex ->
                     Log.d("REST TELE TV", "focusedIndex vm increment $focusedIndex")
                     if (state.value.tvChannels[focusedIndex] == state.value.tvChannels.first()) {
@@ -128,7 +128,7 @@ class PlayerScreenViewModel(
                 }
             }
 
-            PlayerScreenAction.IncrimentFocusedIndex -> {
+            PlayerScreenAction.IncrementFocusedIndex -> {
                 state.value.focusedIndex?.let { focusedIndex ->
                     Log.d("REST TELE TV", "focusedIndex vm decrement $focusedIndex")
                     if (state.value.tvChannels[focusedIndex] == state.value.tvChannels.last()) {

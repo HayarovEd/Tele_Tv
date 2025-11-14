@@ -12,9 +12,11 @@ import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.RenderersFactory
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 
@@ -23,7 +25,7 @@ import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 @Composable
 fun rememberPlayer(context: Context): ExoPlayer {
     val player = remember {
-        val decoder = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
+        val decoder = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
         val renderersFactory: RenderersFactory =
             NextRenderersFactory(context).setEnableDecoderFallback(true)
                 .setExtensionRendererMode(decoder)
@@ -34,9 +36,9 @@ fun rememberPlayer(context: Context): ExoPlayer {
             .setTrackSelector(trackSelector)
             .setAudioAttributes(audioAttributes,true)
             .setHandleAudioBecomingNoisy(true)
-            /*.setMediaSourceFactory(
+            .setMediaSourceFactory(
                 ProgressiveMediaSource.Factory(DefaultDataSource.Factory(context))
-            )*/
+            )
             .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
             .build()
             .apply {

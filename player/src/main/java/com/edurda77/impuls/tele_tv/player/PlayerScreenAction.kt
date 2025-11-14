@@ -4,10 +4,10 @@ package com.edurda77.impuls.tele_tv.player
 sealed interface PlayerScreenAction {
     class OnRestartMenuTimer(val duration: Int):PlayerScreenAction
     data object OnResetMenuTimer:PlayerScreenAction
-    data object DecrimentTvChannel:PlayerScreenAction
-    data object IncrimentTvChannel:PlayerScreenAction
-    data object DecrimentFocusedIndex:PlayerScreenAction
-    data object IncrimentFocusedIndex:PlayerScreenAction
+    data object DecrementTvChannel:PlayerScreenAction
+    data object IncrementTvChannel:PlayerScreenAction
+    data object DecrementFocusedIndex:PlayerScreenAction
+    data object IncrementFocusedIndex:PlayerScreenAction
     data object UpdateSelectedIndex:PlayerScreenAction
     data object ShowSideMenu:PlayerScreenAction
     class EnterStringNumber(val number: Int):PlayerScreenAction

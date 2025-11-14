@@ -160,11 +160,11 @@ fun PlayerScreenScreen(
                         Log.d("REST TELE TV", "action ${it.nativeKeyEvent.keyCode}")
                         when (it.nativeKeyEvent.keyCode) {
                             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> {
-                                onAction(PlayerScreenAction.IncrimentTvChannel)
+                                onAction(PlayerScreenAction.DecrementTvChannel)
                             }
 
                             KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_PAGE_DOWN -> {
-                                onAction(PlayerScreenAction.DecrimentTvChannel)
+                                onAction(PlayerScreenAction.IncrementTvChannel)
                             }
 
                             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_ENTER -> {
@@ -248,11 +248,11 @@ fun PlayerScreenScreen(
                                     }
 
                                     KeyEvent.KEYCODE_DPAD_DOWN -> {
-                                        onAction(PlayerScreenAction.IncrimentFocusedIndex)
+                                        onAction(PlayerScreenAction.IncrementFocusedIndex)
                                     }
 
                                     KeyEvent.KEYCODE_DPAD_UP -> {
-                                        onAction(PlayerScreenAction.DecrimentFocusedIndex)
+                                        onAction(PlayerScreenAction.DecrementFocusedIndex)
                                     }
 
                                     KeyEvent.KEYCODE_DPAD_CENTER -> {
