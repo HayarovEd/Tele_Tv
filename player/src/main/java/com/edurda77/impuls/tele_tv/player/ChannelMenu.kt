@@ -25,13 +25,15 @@ import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.model.TvEpg
 import com.edurda77.impuls.tele_tv.resources.R
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @Composable
 fun ChannelMenu(
-    channels: List<TvChannel>,
-    allTvEpg: List<TvEpg>,
+    channels: ImmutableList<TvChannel>,
+    allTvEpg: Map<String, TvEpg>,
     selectedIndex: Int?,
     modifier: Modifier = Modifier,
     heightItem: Dp,
@@ -69,13 +71,13 @@ fun ChannelMenu(
             items(
                 items = channels,
                 key = {
-                    it.tvgId
+                    it.tvgChannelNumber
                 }) { channel ->
                 ChannelItem(
                     channel = channel,
                     isCurrent = selectedIndex != null && channel == channels[selectedIndex],
                     isFocused = focusedIndex != null && channel == channels[focusedIndex],
-                    tvEpg = allTvEpg.firstOrNull { it.channelUuid == channel.tvgId },
+                    tvEpg = allTvEpg[channel.tvgId],
                     currentTime = currentTime,
                     height = heightItem
                 )
@@ -113,10 +115,10 @@ private fun ChannelMenuView() {
     }
     Tele_TvTheme {
         ChannelMenu(
-            channels = channels,
+            channels = channels.toImmutableList(),
             selectedIndex = 1,
             focusedIndex = 0,
-            allTvEpg = epgs,
+            allTvEpg = epgs.associateBy { it.channelUuid },
             heightItem = 40.dp,
             currentTime = Clock.System.now().epochSeconds,
         )

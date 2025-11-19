@@ -77,4 +77,6 @@ dependencies {
 
     //navigation
     implementation(libs.androidx.navigation.compose)
+
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
 }

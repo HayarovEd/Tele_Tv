@@ -1,16 +1,19 @@
 package com.edurda77.impuls.tele_tv.player
 
+
 import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.model.TvEpg
 import com.edurda77.resources.uikit.UiText
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.datetime.LocalDate
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 data class PlayerScreenState @OptIn(ExperimentalTime::class) constructor(
     val credintial: Credintial? = null,
-    val tvChannels: List<TvChannel> = emptyList(),
+    val tvChannels: ImmutableList<TvChannel> = persistentListOf(),
     val isLoading: Boolean = false,
     val message: UiText? = null,
     val selectedChannelId: String? = null,
@@ -31,4 +34,7 @@ data class PlayerScreenState @OptIn(ExperimentalTime::class) constructor(
     private val focusedChannel =
         if (focusedChannelId != null && tvChannels.isNotEmpty()) tvChannels.first { it.tvgId == focusedChannelId } else null
     val focusedIndex = if (focusedChannel != null) tvChannels.indexOf(focusedChannel) else null
+
+    val grouppedEpg = allTvEpg.associateBy { it.channelUuid }
+
 }

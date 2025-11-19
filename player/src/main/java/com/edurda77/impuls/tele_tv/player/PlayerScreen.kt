@@ -49,6 +49,7 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.compose.PlayerSurface
+import androidx.media3.ui.compose.SURFACE_TYPE_SURFACE_VIEW
 import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
 import androidx.tv.material3.MaterialTheme
@@ -101,7 +102,7 @@ fun PlayerScreenScreen(
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
-            Log.d("REST TELE TV", "isPlaying $isPlaying")
+          //  Log.d("REST TELE TV", "isPlaying $isPlaying")
             isLoadingChannel = !isPlaying
         }
     }
@@ -153,8 +154,8 @@ fun PlayerScreenScreen(
                     contentScale = ContentScale.Fit,
                     sourceSizeDp = null
                 )
-                .focusRequester(focusRequester)
-                .focusable(interactionSource = interactionSource)
+                //.focusRequester(focusRequester)
+                .focusable()
                 .onKeyEvent {
                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                         Log.d("REST TELE TV", "action ${it.nativeKeyEvent.keyCode}")
@@ -210,7 +211,7 @@ fun PlayerScreenScreen(
                     true
                 },
             player = exoPlayer,
-            surfaceType = SURFACE_TYPE_TEXTURE_VIEW
+            surfaceType = SURFACE_TYPE_SURFACE_VIEW
         )
         if (isLoadingChannel) {
             TvCustomCircularProgressIndicator(
@@ -273,7 +274,7 @@ fun PlayerScreenScreen(
                     channels = state.tvChannels,
                     selectedIndex = state.selectedIndex,
                     focusedIndex = state.focusedIndex,
-                    allTvEpg = state.allTvEpg,
+                    allTvEpg = state.grouppedEpg,
                     currentTime = state.currentTime,
                     heightItem = screenWidth/30,
                 )

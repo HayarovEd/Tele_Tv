@@ -16,6 +16,7 @@ import com.edurda77.impuls.tele_tv.domain.utils.VOLUME_STEP
 import com.edurda77.impuls.tele_tv.domain.utils.convertToDate
 import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -235,7 +236,7 @@ class PlayerScreenViewModel(
 
                     is ResultWork.Success -> {
                         _state.value.copy(
-                            tvChannels = resultTvChannels.data
+                            tvChannels = resultTvChannels.data.toImmutableList()
                         )
                             .updateState()
                         if (resultTvChannels.data.isNotEmpty() && state.value.selectedChannelId == null) {
