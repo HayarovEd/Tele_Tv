@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-11-19T04:19:47.376948100Z">
+        <DropdownSelection timestamp="2025-11-19T10:17:50.465257700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="Default" identifier="serial=10.222.222.212:5555;connection=63680347" />
@@ -36,6 +36,17 @@
       <SelectionState runConfigName="ptk">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2025-11-14T06:18:10.222873900Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Impuls\.android\avd\Television_1080p.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="ptk_tv">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-11-19T11:07:43.080369700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Impuls\.android\avd\Television_1080p.avd" />
