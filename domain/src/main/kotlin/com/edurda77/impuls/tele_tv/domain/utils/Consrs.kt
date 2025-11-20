@@ -1,7 +1,7 @@
 package com.edurda77.impuls.tele_tv.domain.utils
 
 const val APP_PREFERENCES = "auth_settings"
-const val BASE_URL = "http://77.236.66.174:9981/"
+const val BASE_URL = "http://iptv.teletvperm.ru:9981/"//"http://77.236.66.174:9981/"
 const val CHANNEL_URL_PREFIX = "stream/channel/"
 const val LABEL_USERNAME = "label_username"
 const val LABEL_PASSWORD = "label_password"
