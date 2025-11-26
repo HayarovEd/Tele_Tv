@@ -102,7 +102,7 @@ fun PlayerScreenScreen(
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
-          //  Log.d("REST TELE TV", "isPlaying $isPlaying")
+            //  Log.d("REST TELE TV", "isPlaying $isPlaying")
             isLoadingChannel = !isPlaying
         }
     }
@@ -117,6 +117,7 @@ fun PlayerScreenScreen(
     val screenWidth = configuration.width.dp
     var isEpgVisible by remember { mutableStateOf(false) }
 
+    KeepScreenOn()
 
     LaunchedEffect(exoPlayer, state.tvChannels, state.selectedChannelId) {
 
@@ -216,8 +217,8 @@ fun PlayerScreenScreen(
         if (isLoadingChannel) {
             TvCustomCircularProgressIndicator(
                 modifier = modifier
-                    .align (Alignment.Center)
-                    .size(screenHeight/7)
+                    .align(Alignment.Center)
+                    .size(screenHeight / 7)
             )
         }
         if (state.isVisibleSideMenu || isEpgVisible) {
@@ -259,6 +260,7 @@ fun PlayerScreenScreen(
                                     KeyEvent.KEYCODE_DPAD_CENTER -> {
                                         onAction(PlayerScreenAction.UpdateSelectedIndex)
                                     }
+
                                     KeyEvent.KEYCODE_DPAD_LEFT -> {
                                         if (isEpgVisible) {
                                             onAction(PlayerScreenAction.OnRestartMenuTimer(10))
@@ -276,7 +278,7 @@ fun PlayerScreenScreen(
                     focusedIndex = state.focusedIndex,
                     allTvEpg = state.grouppedEpg,
                     currentTime = state.currentTime,
-                    heightItem = screenWidth/30,
+                    heightItem = screenWidth / 30,
                 )
                 if (isEpgVisible) {
                     if (state.isLoadingFocusedChannelEpg) {
@@ -333,7 +335,8 @@ fun PlayerScreenScreen(
                                         textAlign = TextAlign.Center
                                     )
                                 }
-                                items(items = entry.value,
+                                items(
+                                    items = entry.value,
                                     key = {
                                         it.eventId
                                     }) {
