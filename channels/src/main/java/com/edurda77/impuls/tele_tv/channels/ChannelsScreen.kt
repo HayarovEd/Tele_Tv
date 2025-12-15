@@ -215,7 +215,8 @@ private fun Preview() {
             tvgLogo = "",
             tvgChannelNumber = it,
             name = "channel",
-            url = ""
+            url = "",
+            categoryIds = listOf("33")
         )
     }
     Tele_TvTheme {
@@ -240,7 +241,8 @@ private fun Preview2() {
             tvgLogo = "",
             tvgChannelNumber = it,
             name = "Channel",
-            url = ""
+            url = "",
+            categoryIds = listOf("33")
         )
     }
     Tele_TvTheme {
@@ -266,7 +268,8 @@ private fun Preview3() {
             tvgLogo = "",
             tvgChannelNumber = it,
             name = "channel",
-            url = ""
+            url = "",
+            categoryIds = listOf("33")
         )
     }
     Tele_TvTheme {

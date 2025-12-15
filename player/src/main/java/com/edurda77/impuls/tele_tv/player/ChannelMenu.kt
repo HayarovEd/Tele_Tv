@@ -97,7 +97,8 @@ private fun ChannelMenuView() {
             tvgLogo = "",
             tvgChannelNumber = it,
             name = "channel",
-            url = ""
+            url = "",
+            categoryIds = listOf("33")
         )
     }
     val epgs = (1..10).map {

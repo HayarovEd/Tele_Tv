@@ -1,5 +1,6 @@
 package com.edurda77.impuls.tele_tv.domain.repository
 
+import com.edurda77.impuls.tele_tv.domain.model.Category
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.model.TvEpg
 import com.edurda77.impuls.tele_tv.domain.utils.ASC
@@ -27,4 +28,9 @@ interface RemoteRepository {
         limit: Int,
         channelId: String
     ): ResultWork<List<TvEpg>, DataError>
+
+    suspend fun getCategories(
+        username: String,
+        password: String
+    ): ResultWork<List<Category>, DataError>
 }

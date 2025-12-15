@@ -1,5 +1,6 @@
 package com.edurda77.impuls.tele_tv.channels
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +18,7 @@ import com.edurda77.impuls.tele_tv.domain.utils.DownloadStatus
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -90,10 +92,15 @@ class ChannelsScreenViewModel(
             )
                 .updateState()
             credintial?.let {
-                when (val resultTvChannels = remoteRepository.getTvChannels(
+                val channelsDiff = async { remoteRepository.getTvChannels(
                     username = credintial.username,
                     password = credintial.password
-                )) {
+                ) }
+                val categoriesDiff = async { remoteRepository.getCategories(
+                    username = credintial.username,
+                    password = credintial.password
+                ) }
+                when (val resultTvChannels = channelsDiff.await()) {
                     is ResultWork.Error -> {
                         _state.value.copy(
                             isLoading = false,
@@ -103,11 +110,26 @@ class ChannelsScreenViewModel(
                     }
 
                     is ResultWork.Success -> {
+
                         _state.value.copy(
                             isLoading = false,
                             tvChannels = resultTvChannels.data
                         )
                             .updateState()
+                    }
+                }
+                when (val resultCategories = categoriesDiff.await()) {
+                    is ResultWork.Error -> {
+                        _state.value.copy(
+                            message = resultCategories.error.asUiText()
+                        )
+                            .updateState()
+                    }
+
+                    is ResultWork.Success -> {
+                        resultCategories.data.forEach {
+                            Log.d("TEST WORK CATEGORIES", "category $it")
+                        }
                     }
                 }
             }

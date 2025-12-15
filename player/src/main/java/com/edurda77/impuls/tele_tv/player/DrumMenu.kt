@@ -136,7 +136,8 @@ private fun DrumMenuView() {
             tvgLogo = "",
             tvgChannelNumber = it,
             name = "channel",
-            url = ""
+            url = "",
+            categoryIds = listOf("33")
         )
     }
     Tele_TvTheme {

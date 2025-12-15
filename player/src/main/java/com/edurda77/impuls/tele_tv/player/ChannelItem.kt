@@ -129,7 +129,8 @@ private fun ChannelItemView() {
                 tvgLogo = "",
                 tvgChannelNumber = 1,
                 name = "First",
-                url = ""
+                url = "",
+                categoryIds = listOf("33")
             ),
             isCurrent = true,
             isFocused = false,
@@ -161,7 +162,8 @@ private fun ChannelItemView2() {
                 tvgLogo = "",
                 tvgChannelNumber = 1,
                 name = "First",
-                url = ""
+                url = "",
+                categoryIds = listOf("33")
             ),
             isCurrent = false,
             height = 40.dp,
