@@ -1,5 +1,6 @@
 package com.edurda77.impuls.tele_tv.channels
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -85,7 +86,13 @@ private fun ChannelsScreenScreen(
     onAction: (ChannelsScreenAction) -> Unit,
 ) {
     val scrollState = rememberLazyGridState()
-
+    state.groupedTvChannels.forEach {
+        Log.d("TEST WORK CATEGORIES", "category ${it.key.name}")
+        it.value.forEach { ch->
+            Log.d("TEST WORK CATEGORIES", "channel ${ch.name}")
+        }
+        Log.d("TEST WORK CATEGORIES", "---------------------------------------------")
+    }
 
     Surface(
         modifier = modifier.fillMaxSize(),
