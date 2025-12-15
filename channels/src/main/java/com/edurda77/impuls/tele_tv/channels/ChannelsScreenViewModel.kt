@@ -76,6 +76,13 @@ class ChannelsScreenViewModel(
             is ChannelsScreenAction.SaveChosenChannel -> {
                 saveChannel(action.channel)
             }
+
+            is ChannelsScreenAction.UpdateSelectedTabIndex -> {
+                _state.value.copy(
+                    selectedTabIndex = action.category,
+                )
+                    .updateState()
+            }
         }
     }
 

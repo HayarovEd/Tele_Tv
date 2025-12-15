@@ -1,9 +1,11 @@
 package com.edurda77.impuls.tele_tv.channels
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -100,6 +102,8 @@ private fun ChannelsScreenScreen(
     onAction: (ChannelsScreenAction) -> Unit,
 ) {
     val scrollState = rememberLazyGridState()
+   /* var currentTopBarSelectedTabIndex by remember { (mutableIntStateOf(state.groupedTvChannels.keys.toList().indexOf(state.selectedTabIndex) )) }
+    Log.d("TEST WORK CATEGORIES1", "currentTopBarSelectedTabIndex $currentTopBarSelectedTabIndex")*/
     Surface(
         modifier = modifier.fillMaxSize(),
         colors = SurfaceDefaults.colors(
@@ -196,13 +200,12 @@ private fun ChannelsScreenScreen(
                     modifier = modifier
                         .fillMaxWidth()
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    var currentTopBarSelectedTabIndex by remember { (mutableIntStateOf(state.groupedTvChannels.keys.toList().indexOf(state.selectedTabIndex) )) }
                     TabRow(
                         modifier = modifier
                             .widthIn(max = 5000.dp),
-                        selectedTabIndex = currentTopBarSelectedTabIndex
+                        selectedTabIndex = -1
                     ) {
                         state.groupedTvChannels.keys.forEach {
                             val interactionSource = remember { MutableInteractionSource() }
@@ -210,12 +213,17 @@ private fun ChannelsScreenScreen(
                             Tab(
                                 modifier = modifier
                                     .padding(horizontal = 8.dp)
+                                    .border(
+                                        width = 1.dp,
+                                        color = if (state.selectedTabIndex == it ) MaterialTheme.colorScheme.onBackground else Color.Transparent,
+                                        shape = MaterialTheme.shapes.extraLarge
+                                    )
                                     .background(
                                         color = when {
                                             isFocused -> MaterialTheme.colorScheme.inverseSurface
-                                            state.selectedTabIndex == it -> MaterialTheme.colorScheme.surfaceVariant.copy(
+                                            /*state.selectedTabIndex == it -> MaterialTheme.colorScheme.surfaceVariant.copy(
                                                 alpha = 0.5f
-                                            )
+                                            )*/
 
                                             else -> Color.Transparent
                                         },
@@ -231,7 +239,9 @@ private fun ChannelsScreenScreen(
                                 onClick = {
 
                                 },
-                                onFocus = {}
+                                onFocus = {
+                                    onAction(ChannelsScreenAction.UpdateSelectedTabIndex(it))
+                                }
                             ) {
 
                                 Text(
@@ -257,7 +267,7 @@ private fun ChannelsScreenScreen(
                     columns = GridCells.Fixed(6),
                 ) {
                     items(
-                        items = state.tvChannels,
+                        items = state.groupedTvChannels[state.selectedTabIndex]?:emptyList(),
                         key = {
                             it.tvgId
                         }
