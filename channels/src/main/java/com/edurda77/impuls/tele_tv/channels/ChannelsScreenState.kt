@@ -24,6 +24,7 @@ data class ChannelsScreenState @OptIn(ExperimentalTime::class) constructor(
     val isUpdating: Boolean = false,
     val release: LastVersionApp? = null,
     val percentDownload: Int = 0,
-    val currentTime: LocalDateTime = Clock.System.now()
+    val selectedTabIndex: Category? = null,
+     val currentTime: LocalDateTime = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault())
 )

@@ -134,6 +134,7 @@ class ChannelsScreenViewModel(
                             categories = resultCategories.data,
                             tvChannels = resultTvChannels.data,
                             groupedTvChannels = groupedMap,
+                            selectedTabIndex = groupedMap.keys.first(),
                             isLoading = false,
                             message = null
                         )

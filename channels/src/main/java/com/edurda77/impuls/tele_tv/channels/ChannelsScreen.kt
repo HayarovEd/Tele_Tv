@@ -1,9 +1,12 @@
 package com.edurda77.impuls.tele_tv.channels
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,18 +18,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,8 +46,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
+import androidx.tv.material3.Tab
+import androidx.tv.material3.TabDefaults
+import androidx.tv.material3.TabRow
 import androidx.tv.material3.Text
+import com.edurda77.impuls.tele_tv.domain.model.Category
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
+import com.edurda77.impuls.tele_tv.domain.utils.createCategoryChannelMap
 import com.edurda77.impuls.tele_tv.resources.R
 import com.edurda77.impuls.tele_tv.resources.model.TypeFactory
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
@@ -86,14 +100,6 @@ private fun ChannelsScreenScreen(
     onAction: (ChannelsScreenAction) -> Unit,
 ) {
     val scrollState = rememberLazyGridState()
-    state.groupedTvChannels.forEach {
-        Log.d("TEST WORK CATEGORIES", "category ${it.key.name}")
-        it.value.forEach { ch->
-            Log.d("TEST WORK CATEGORIES", "channel ${ch.name}")
-        }
-        Log.d("TEST WORK CATEGORIES", "---------------------------------------------")
-    }
-
     Surface(
         modifier = modifier.fillMaxSize(),
         colors = SurfaceDefaults.colors(
@@ -185,6 +191,63 @@ private fun ChannelsScreenScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                 )
+                Spacer(modifier = modifier.height(5.dp))
+                Row(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    var currentTopBarSelectedTabIndex by remember { (mutableIntStateOf(state.groupedTvChannels.keys.toList().indexOf(state.selectedTabIndex) )) }
+                    TabRow(
+                        modifier = modifier
+                            .widthIn(max = 5000.dp),
+                        selectedTabIndex = currentTopBarSelectedTabIndex
+                    ) {
+                        state.groupedTvChannels.keys.forEach {
+                            val interactionSource = remember { MutableInteractionSource() }
+                            val isFocused by interactionSource.collectIsFocusedAsState()
+                            Tab(
+                                modifier = modifier
+                                    .padding(horizontal = 8.dp)
+                                    .background(
+                                        color = when {
+                                            isFocused -> MaterialTheme.colorScheme.inverseSurface
+                                            state.selectedTabIndex == it -> MaterialTheme.colorScheme.surfaceVariant.copy(
+                                                alpha = 0.5f
+                                            )
+
+                                            else -> Color.Transparent
+                                        },
+                                        shape = MaterialTheme.shapes.extraLarge
+                                    )
+                                    .padding(3.dp),
+                                selected = state.selectedTabIndex == it,
+                                colors = TabDefaults.pillIndicatorTabColors(
+                                    selectedContentColor = MaterialTheme.colorScheme.onSurface,
+                                    focusedContentColor = MaterialTheme.colorScheme.surface,
+                                ),
+                                interactionSource = interactionSource,
+                                onClick = {
+
+                                },
+                                onFocus = {}
+                            ) {
+
+                                Text(
+                                    modifier = modifier
+                                        .basicMarquee(),
+                                    text = it.name,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = when {
+                                        isFocused -> MaterialTheme.colorScheme.inverseOnSurface
+                                        else -> MaterialTheme.colorScheme.tertiary
+                                    },
+                                )
+                            }
+                        }
+                    }
+                }
                 Spacer(modifier = modifier.height(15.dp))
                 LazyVerticalGrid(
                     state = scrollState,
@@ -198,7 +261,7 @@ private fun ChannelsScreenScreen(
                         key = {
                             it.tvgId
                         }
-                        ) { tvChannel ->
+                    ) { tvChannel ->
                         ChannelItem(
                             modifier = modifier,
                             tvChannel = tvChannel,
@@ -216,22 +279,34 @@ private fun ChannelsScreenScreen(
 @Preview
 @Composable
 private fun Preview() {
+    val categories = (1..5).map {
+        Category(
+            key = "it",
+            name = "category $it"
+        )
+    }
     val channels = (1..10).map {
+        val ct = categories[it % categories.size].key
         TvChannel(
             tvgId = "id$it",
             tvgLogo = "",
             tvgChannelNumber = it,
             name = "channel",
             url = "",
-            categoryIds = listOf("33")
+            categoryIds = listOf(ct)
         )
     }
     Tele_TvTheme {
         ChannelsScreenScreen(
             state = ChannelsScreenState(
                 tvChannels = channels,
-                //focusedChannelId = "id1",
-                lastTvChannels = channels
+                categories = categories,
+                groupedTvChannels = createCategoryChannelMap(
+                    categories = categories,
+                    channels = channels
+                ),
+                lastTvChannels = channels,
+                selectedTabIndex = categories.first()
             ),
             onAction = {},
             typeFactory = TypeFactory.TELE
