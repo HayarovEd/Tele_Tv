@@ -158,8 +158,9 @@ fun PlayerScreenScreen(
                 //.focusRequester(focusRequester)
                 .focusable()
                 .onKeyEvent {
+                    Log.d("DeviceInfo TELE TV", "action ${it.nativeKeyEvent.keyCode}")
                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
-                        Log.d("DeviceInfo TELE TV", "action ${it.nativeKeyEvent.keyCode}")
+                        Log.d("DeviceInfo TELE TV", "action up ${it.nativeKeyEvent.keyCode}")
                         when (it.nativeKeyEvent.keyCode) {
                             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> {
                                 onAction(PlayerScreenAction.DecrementTvChannel)
@@ -234,6 +235,7 @@ fun PlayerScreenScreen(
                         .focusable(interactionSource = interactionSource)
                         .onKeyEvent {
                             if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
+                                Log.d("DeviceInfo TELE TV", "action 2 ${it.nativeKeyEvent.keyCode}")
                                 when (it.nativeKeyEvent.keyCode) {
                                     KeyEvent.KEYCODE_DPAD_RIGHT -> {
                                         if (isEpgVisible) {

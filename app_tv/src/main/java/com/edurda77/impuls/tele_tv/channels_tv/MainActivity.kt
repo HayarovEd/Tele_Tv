@@ -46,4 +46,7 @@ class MainActivity : ComponentActivity() {
             manufacturer = Build.MANUFACTURER
         )
     }
+    /*Бренд: BBK
+    Модель: 50LEX_8158_UTS2C
+    Производитель: Realtek*/
 }
