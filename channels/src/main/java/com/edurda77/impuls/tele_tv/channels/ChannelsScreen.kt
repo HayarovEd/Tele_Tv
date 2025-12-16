@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -39,11 +40,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
@@ -102,8 +105,9 @@ private fun ChannelsScreenScreen(
     onAction: (ChannelsScreenAction) -> Unit,
 ) {
     val scrollState = rememberLazyGridState()
-   /* var currentTopBarSelectedTabIndex by remember { (mutableIntStateOf(state.groupedTvChannels.keys.toList().indexOf(state.selectedTabIndex) )) }
-    Log.d("TEST WORK CATEGORIES1", "currentTopBarSelectedTabIndex $currentTopBarSelectedTabIndex")*/
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val screenHeight = configuration.screenHeightDp.dp
     Surface(
         modifier = modifier.fillMaxSize(),
         colors = SurfaceDefaults.colors(
@@ -189,22 +193,15 @@ private fun ChannelsScreenScreen(
                     }
                 }
                 Spacer(modifier = modifier.height(15.dp))
-                Text(
-                    modifier = modifier,
-                    text = stringResource(R.string.channels),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.tertiary,
-                )
-                Spacer(modifier = modifier.height(5.dp))
                 Row(
                     modifier = modifier
                         .fillMaxWidth()
                         .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.Start
                 ) {
                     TabRow(
                         modifier = modifier
-                            .widthIn(max = 5000.dp),
+                            .width(screenWidth-30.dp),
                         selectedTabIndex = -1
                     ) {
                         state.groupedTvChannels.keys.forEach {
@@ -214,7 +211,7 @@ private fun ChannelsScreenScreen(
                                 modifier = modifier
                                     .padding(horizontal = 8.dp)
                                     .border(
-                                        width = 1.dp,
+                                        width = if (isFocused) 3.dp else 1.dp,
                                         color = if (state.selectedTabIndex == it ) MaterialTheme.colorScheme.onBackground else Color.Transparent,
                                         shape = MaterialTheme.shapes.extraLarge
                                     )
@@ -229,7 +226,7 @@ private fun ChannelsScreenScreen(
                                         },
                                         shape = MaterialTheme.shapes.extraLarge
                                     )
-                                    .padding(3.dp),
+                                    .padding(horizontal = 10.dp, vertical = 5.dp),
                                 selected = state.selectedTabIndex == it,
                                 colors = TabDefaults.pillIndicatorTabColors(
                                     selectedContentColor = MaterialTheme.colorScheme.onSurface,
@@ -248,7 +245,9 @@ private fun ChannelsScreenScreen(
                                     modifier = modifier
                                         .basicMarquee(),
                                     text = it.name,
-                                    style = MaterialTheme.typography.bodyMedium,
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontSize = if (isFocused) 25.sp else 22.sp
+                                    ),
                                     color = when {
                                         isFocused -> MaterialTheme.colorScheme.inverseOnSurface
                                         else -> MaterialTheme.colorScheme.tertiary
@@ -291,7 +290,7 @@ private fun ChannelsScreenScreen(
 private fun Preview() {
     val categories = (1..5).map {
         Category(
-            key = "it",
+            key = "$it",
             name = "category $it"
         )
     }

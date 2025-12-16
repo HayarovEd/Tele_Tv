@@ -1,8 +1,6 @@
 package com.edurda77.impuls.tele_tv.channels_tv
 
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.edurda77.base_module.navigation.NavController
@@ -14,12 +12,7 @@ import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val deviceInfo = getDeviceInfo()
 
-        // Вывод в Logcat
-        Log.d("DeviceInfo TELE TV", "Бренд: ${deviceInfo.brand}")
-        Log.d("DeviceInfo TELE TV", "Модель: ${deviceInfo.model}")
-        Log.d("DeviceInfo TELE TV", "Производитель: ${deviceInfo.manufacturer}")
 
         setContent {
             Tele_TvTheme {
@@ -33,19 +26,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    data class DeviceInfo(
-        val brand: String,
-        val model: String,
-        val manufacturer: String
-    )
-
-    private fun getDeviceInfo(): DeviceInfo {
-        return DeviceInfo(
-            brand = Build.BRAND,
-            model = Build.MODEL,
-            manufacturer = Build.MANUFACTURER
-        )
-    }
     /*Бренд: BBK
     Модель: 50LEX_8158_UTS2C
     Производитель: Realtek*/
