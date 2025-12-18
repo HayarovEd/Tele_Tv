@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.edurda77.impuls.tele_tv.player"
+    namespace = "com.edurda77.impuls.radio"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -29,19 +29,23 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = libs.versions.jvmTarget.get()
+        jvmTarget = "11"
     }
-
     buildFeatures {
         compose = true
     }
 }
 
 dependencies {
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(project(":domain"))
     implementation(project(":resources"))
-    implementation(project(":radio"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -57,9 +61,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    //Koin
-    implementation(libs.koin.androidx.compose)
-
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.coil.compose.svg)
@@ -71,13 +72,6 @@ dependencies {
     implementation(libs.nextlib.media3ext)
     implementation(libs.nextlib.mediainfo)
 
-    //date-time
-    implementation(libs.kotlinx.datetime)
-
-
-
-    //navigation
-    implementation(libs.androidx.navigation.compose)
-
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
+    //vis
+    implementation(libs.audiovisualizer)
 }

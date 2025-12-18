@@ -53,6 +53,7 @@ import androidx.media3.ui.compose.SURFACE_TYPE_SURFACE_VIEW
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import com.edurda77.impuls.radio.RadioContent
 import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.resources.R
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
@@ -214,6 +215,16 @@ fun PlayerScreenScreen(
             player = exoPlayer,
             surfaceType = SURFACE_TYPE_SURFACE_VIEW
         )
+        state.selectedIndex?.let {
+            val radio = state.tvChannels[state.selectedIndex]
+            if (radio.isRadio) {
+                RadioContent(
+                    modifier = modifier.fillMaxWidth(),
+                    radio = radio,
+                    audioSession = exoPlayer.audioSessionId
+                )
+            }
+        }
         if (isLoadingChannel) {
             TvCustomCircularProgressIndicator(
                 modifier = modifier
