@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.edurda77.impuls.tele_tv.domain.model.Category
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.repository.DownloadRepository
@@ -16,6 +17,8 @@ import com.edurda77.impuls.tele_tv.domain.utils.DELAY_MINUTE
 import com.edurda77.impuls.tele_tv.domain.utils.DownloadStatus
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.domain.utils.createCategoryChannelMap
+import com.edurda77.impuls.tele_tv.domain.utils.radioCh
+import com.edurda77.impuls.tele_tv.domain.utils.radioCt
 import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
 import kotlinx.coroutines.async
@@ -137,10 +140,13 @@ class ChannelsScreenViewModel(
                             channels = resultTvChannels.data
                         )
 
+                        val radio = mapOf(
+                            radioCt to listOf(radioCh)
+                        )
                         _state.value = _state.value.copy(
                             categories = resultCategories.data,
                             tvChannels = resultTvChannels.data,
-                            groupedTvChannels = groupedMap,
+                            groupedTvChannels = groupedMap + radio,
                             selectedTabIndex = groupedMap.keys.first(),
                             isLoading = false,
                             message = null
@@ -279,7 +285,7 @@ class ChannelsScreenViewModel(
 
     private fun logout() {
         viewModelScope.launch {
-            dataStoreRepository.clearCredintial()
+            //  dataStoreRepository.clearCredintial()
             _eventFlow.emit(UiChannelsEvents.LoginNavigationEvent)
         }
     }

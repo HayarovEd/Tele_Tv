@@ -50,7 +50,6 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_SURFACE_VIEW
-import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
@@ -222,10 +221,11 @@ fun PlayerScreenScreen(
                     .size(screenHeight / 7)
             )
         }
+        val sChannel = state.tvChannels.find { it.tvgId == state.focusedChannelId }
         if (state.isVisibleSideMenu || isEpgVisible) {
             Row(
                 modifier = modifier
-                    .width(if (isEpgVisible) screenHeight else screenHeight / 4)
+                    .width(if (isEpgVisible && sChannel?.isRadio == false) screenHeight else screenHeight / 4)
                     .background(MaterialTheme.colorScheme.background.copy(alpha = if (isEpgVisible) 0.9f else 0.5f))
             ) {
                 ChannelMenu(
@@ -235,7 +235,6 @@ fun PlayerScreenScreen(
                         .focusable(interactionSource = interactionSource)
                         .onKeyEvent {
                             if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
-                                Log.d("DeviceInfo TELE TV", "action 2 ${it.nativeKeyEvent.keyCode}")
                                 when (it.nativeKeyEvent.keyCode) {
                                     KeyEvent.KEYCODE_DPAD_RIGHT -> {
                                         if (isEpgVisible) {
@@ -282,7 +281,7 @@ fun PlayerScreenScreen(
                     currentTime = state.currentTime,
                     heightItem = screenWidth / 30,
                 )
-                if (isEpgVisible) {
+                if (isEpgVisible && sChannel?.isRadio == false) {
                     if (state.isLoadingFocusedChannelEpg) {
                         Box(modifier = modifier.weight(3f)) {
                             Text(

@@ -14,6 +14,7 @@ import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
 import com.edurda77.impuls.tele_tv.domain.utils.SINGLE_LIMIT
 import com.edurda77.impuls.tele_tv.domain.utils.VOLUME_STEP
 import com.edurda77.impuls.tele_tv.domain.utils.convertToDate
+import com.edurda77.impuls.tele_tv.domain.utils.radioCh
 import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
 import kotlinx.collections.immutable.toImmutableList
@@ -112,7 +113,6 @@ class PlayerScreenViewModel(
 
             PlayerScreenAction.DecrementFocusedIndex -> {
                 state.value.focusedIndex?.let { focusedIndex ->
-                    Log.d("REST TELE TV", "focusedIndex vm increment $focusedIndex")
                     if (state.value.tvChannels[focusedIndex] == state.value.tvChannels.first()) {
                         _state.value.copy(
                             focusedChannelId = state.value.tvChannels.last().tvgId
@@ -131,7 +131,6 @@ class PlayerScreenViewModel(
 
             PlayerScreenAction.IncrementFocusedIndex -> {
                 state.value.focusedIndex?.let { focusedIndex ->
-                    Log.d("REST TELE TV", "focusedIndex vm decrement $focusedIndex")
                     if (state.value.tvChannels[focusedIndex] == state.value.tvChannels.last()) {
                         _state.value.copy(
                             focusedChannelId = state.value.tvChannels.first().tvgId
@@ -195,7 +194,6 @@ class PlayerScreenViewModel(
 
     private fun getInitialData() {
         val channelId = savedStateHandle.toRoute<NavigationRoute.Player>().channelId
-        Log.d("TEST TELE TV 2", "channelId $channelId")
         _state.value.copy(
             isLoading = true,
         )
@@ -236,7 +234,7 @@ class PlayerScreenViewModel(
 
                     is ResultWork.Success -> {
                         _state.value.copy(
-                            tvChannels = resultTvChannels.data.toImmutableList()
+                            tvChannels = (resultTvChannels.data + radioCh).toImmutableList()
                         )
                             .updateState()
                         if (resultTvChannels.data.isNotEmpty() && state.value.selectedChannelId == null) {
