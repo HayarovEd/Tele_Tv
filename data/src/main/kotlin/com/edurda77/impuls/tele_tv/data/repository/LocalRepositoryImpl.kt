@@ -49,7 +49,8 @@ class LocalRepositoryImpl(
                         tvgLogo = it.tvgLogo,
                         tvgChannelNumber = it.tvgChno,
                         name = it.name,
-                        url = it.url
+                        url = it.url,
+                        categoryIds = listOf()//TODO
                     )
                 }
             }

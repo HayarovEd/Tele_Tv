@@ -50,10 +50,10 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_SURFACE_VIEW
-import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import androidx.media3.ui.compose.modifiers.resizeWithContentScale
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import com.edurda77.impuls.radio.RadioContent
 import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.resources.R
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
@@ -102,7 +102,7 @@ fun PlayerScreenScreen(
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
-          //  Log.d("REST TELE TV", "isPlaying $isPlaying")
+            //  Log.d("REST TELE TV", "isPlaying $isPlaying")
             isLoadingChannel = !isPlaying
         }
     }
@@ -117,6 +117,7 @@ fun PlayerScreenScreen(
     val screenWidth = configuration.width.dp
     var isEpgVisible by remember { mutableStateOf(false) }
 
+    KeepScreenOn()
 
     LaunchedEffect(exoPlayer, state.tvChannels, state.selectedChannelId) {
 
@@ -157,8 +158,9 @@ fun PlayerScreenScreen(
                 //.focusRequester(focusRequester)
                 .focusable()
                 .onKeyEvent {
+                    Log.d("DeviceInfo TELE TV", "action ${it.nativeKeyEvent.keyCode}")
                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
-                        Log.d("REST TELE TV", "action ${it.nativeKeyEvent.keyCode}")
+                        Log.d("DeviceInfo TELE TV", "action up ${it.nativeKeyEvent.keyCode}")
                         when (it.nativeKeyEvent.keyCode) {
                             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> {
                                 onAction(PlayerScreenAction.DecrementTvChannel)
@@ -213,17 +215,28 @@ fun PlayerScreenScreen(
             player = exoPlayer,
             surfaceType = SURFACE_TYPE_SURFACE_VIEW
         )
+        state.selectedIndex?.let {
+            val radio = state.tvChannels[state.selectedIndex]
+            if (radio.isRadio) {
+                RadioContent(
+                    modifier = modifier.fillMaxWidth(),
+                    radio = radio,
+                    audioSession = exoPlayer.audioSessionId
+                )
+            }
+        }
         if (isLoadingChannel) {
             TvCustomCircularProgressIndicator(
                 modifier = modifier
-                    .align (Alignment.Center)
-                    .size(screenHeight/7)
+                    .align(Alignment.Center)
+                    .size(screenHeight / 7)
             )
         }
+        val sChannel = state.tvChannels.find { it.tvgId == state.focusedChannelId }
         if (state.isVisibleSideMenu || isEpgVisible) {
             Row(
                 modifier = modifier
-                    .width(if (isEpgVisible) screenHeight else screenHeight / 4)
+                    .width(if (isEpgVisible && sChannel?.isRadio == false) screenHeight else screenHeight / 4)
                     .background(MaterialTheme.colorScheme.background.copy(alpha = if (isEpgVisible) 0.9f else 0.5f))
             ) {
                 ChannelMenu(
@@ -259,6 +272,7 @@ fun PlayerScreenScreen(
                                     KeyEvent.KEYCODE_DPAD_CENTER -> {
                                         onAction(PlayerScreenAction.UpdateSelectedIndex)
                                     }
+
                                     KeyEvent.KEYCODE_DPAD_LEFT -> {
                                         if (isEpgVisible) {
                                             onAction(PlayerScreenAction.OnRestartMenuTimer(10))
@@ -276,9 +290,9 @@ fun PlayerScreenScreen(
                     focusedIndex = state.focusedIndex,
                     allTvEpg = state.grouppedEpg,
                     currentTime = state.currentTime,
-                    heightItem = screenWidth/30,
+                    heightItem = screenWidth / 30,
                 )
-                if (isEpgVisible) {
+                if (isEpgVisible && sChannel?.isRadio == false) {
                     if (state.isLoadingFocusedChannelEpg) {
                         Box(modifier = modifier.weight(3f)) {
                             Text(
@@ -333,7 +347,8 @@ fun PlayerScreenScreen(
                                         textAlign = TextAlign.Center
                                     )
                                 }
-                                items(items = entry.value,
+                                items(
+                                    items = entry.value,
                                     key = {
                                         it.eventId
                                     }) {

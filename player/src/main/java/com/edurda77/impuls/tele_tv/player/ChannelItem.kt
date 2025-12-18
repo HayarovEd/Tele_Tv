@@ -1,6 +1,7 @@
 package com.edurda77.impuls.tele_tv.player
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -36,6 +38,7 @@ import com.edurda77.impuls.tele_tv.domain.model.TvEpg
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import com.edurda77.impuls.tele_tv.resources.R
 
 @Composable
 fun ChannelItem(
@@ -78,7 +81,7 @@ fun ChannelItem(
                     modifier = modifier
                         .size(height)
                         .clip(CircleShape),
-                    model =  ImageRequest.Builder(LocalContext.current)
+                    model = ImageRequest.Builder(LocalContext.current)
                         .data(it)
                         .decoderFactory(SvgDecoder.Factory())
                         .build(),
@@ -129,7 +132,8 @@ private fun ChannelItemView() {
                 tvgLogo = "",
                 tvgChannelNumber = 1,
                 name = "First",
-                url = ""
+                url = "",
+                categoryIds = listOf("33")
             ),
             isCurrent = true,
             isFocused = false,
@@ -161,7 +165,8 @@ private fun ChannelItemView2() {
                 tvgLogo = "",
                 tvgChannelNumber = 1,
                 name = "First",
-                url = ""
+                url = "",
+                categoryIds = listOf("33")
             ),
             isCurrent = false,
             height = 40.dp,

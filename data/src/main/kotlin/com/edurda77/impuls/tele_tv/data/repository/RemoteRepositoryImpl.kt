@@ -1,8 +1,10 @@
 package com.edurda77.impuls.tele_tv.data.repository
 
 import com.edurda77.impuls.tele_tv.data.handler.convertToTvEpg
+import com.edurda77.impuls.tele_tv.data.remote.CategoryResponse
 import com.edurda77.impuls.tele_tv.data.remote.ChannelListResponse
 import com.edurda77.impuls.tele_tv.data.remote.EpgDataResponse
+import com.edurda77.impuls.tele_tv.domain.model.Category
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.model.TvEpg
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
@@ -76,7 +78,7 @@ class RemoteRepositoryImpl(
     ): ResultWork<List<TvChannel>, DataError> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = httpClient.submitForm (
+                val response = httpClient.submitForm(
                     url = "api/channel/grid",
                     formParameters = parameters {
                         append("limit", "500")
@@ -97,7 +99,8 @@ class RemoteRepositoryImpl(
                             name = it.name,
                             url = "$BASE_URL$CHANNEL_URL_PREFIX${it.uuid}",
                             tvgLogo = it.iconPublicUrl,
-                            tvgId = it.uuid
+                            tvgId = it.uuid,
+                            categoryIds = it.tags
                         )
                     }
                     ResultWork.Success(channels)
@@ -134,7 +137,7 @@ class RemoteRepositoryImpl(
     ): ResultWork<List<TvEpg>, DataError> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = httpClient.submitForm (
+                val response = httpClient.submitForm(
                     url = "api/epg/events/grid",
                     formParameters = parameters {
                         append("dir", dir)
@@ -185,7 +188,7 @@ class RemoteRepositoryImpl(
     ): ResultWork<List<TvEpg>, DataError> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = httpClient.submitForm (
+                val response = httpClient.submitForm(
                     url = "api/epg/events/grid",
                     formParameters = parameters {
                         append("dir", dir)
@@ -203,6 +206,56 @@ class RemoteRepositoryImpl(
                 if (response.response.status.isSuccess()) {
                     val successResponse = response.response.body<EpgDataResponse>()
                     ResultWork.Success(successResponse.convertToTvEpg())
+                } else {
+                    ResultWork.Error(DataError.Network.UNAUTHORIZED)
+                }
+            } catch (e: ClientRequestException) {
+                when (e.response.status.value) {
+                    403 -> ResultWork.Error(DataError.Network.UNAUTHORIZED)
+                    else -> ResultWork.Error(DataError.Network.UNKNOWN)
+                }
+            } catch (e: ServerResponseException) {
+                e.printStackTrace()
+                ResultWork.Error(DataError.Network.SERVER_ERROR)
+            } catch (e: HttpRequestTimeoutException) {
+                e.printStackTrace()
+                ResultWork.Error(DataError.Network.REQUEST_TIMEOUT)
+            } catch (e: JsonConvertException) {
+                e.printStackTrace()
+                ResultWork.Error(DataError.SerializationError.FORMAT_ERROR)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                ResultWork.Error(DataError.Network.UNKNOWN)
+            }
+        }
+    }
+
+    override suspend fun getCategories(
+        username: String,
+        password: String,
+    ): ResultWork<List<Category>, DataError> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = httpClient.get(("api/channeltag/list")) {
+                    basicAuth(
+                        username = username,
+                        password = password
+                    )
+                }.call
+                if (response.response.status.isSuccess()) {
+                    val successResponse = response.response.body<CategoryResponse>()
+                    ResultWork.Success(
+                        successResponse.entries
+                            .filter {
+                                it.valX !in listOf("TV channels", "SDTV")
+                            }
+                            .map {
+                                Category(
+                                    key = it.key,
+                                    name = it.valX
+                                )
+                            }
+                    )
                 } else {
                     ResultWork.Error(DataError.Network.UNAUTHORIZED)
                 }

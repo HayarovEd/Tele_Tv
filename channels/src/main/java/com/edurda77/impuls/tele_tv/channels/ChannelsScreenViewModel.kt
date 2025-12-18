@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.edurda77.impuls.tele_tv.domain.model.Category
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.repository.DownloadRepository
@@ -15,8 +16,12 @@ import com.edurda77.impuls.tele_tv.domain.utils.APK_EXT
 import com.edurda77.impuls.tele_tv.domain.utils.DELAY_MINUTE
 import com.edurda77.impuls.tele_tv.domain.utils.DownloadStatus
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
+import com.edurda77.impuls.tele_tv.domain.utils.createCategoryChannelMap
+import com.edurda77.impuls.tele_tv.domain.utils.radioCh
+import com.edurda77.impuls.tele_tv.domain.utils.radioCt
 import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
 import com.edurda77.impuls.tele_tv.resources.uikit.asUiText
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,6 +79,13 @@ class ChannelsScreenViewModel(
             is ChannelsScreenAction.SaveChosenChannel -> {
                 saveChannel(action.channel)
             }
+
+            is ChannelsScreenAction.UpdateSelectedTabIndex -> {
+                _state.value.copy(
+                    selectedTabIndex = action.category,
+                )
+                    .updateState()
+            }
         }
     }
 
@@ -90,27 +102,59 @@ class ChannelsScreenViewModel(
             )
                 .updateState()
             credintial?.let {
-                when (val resultTvChannels = remoteRepository.getTvChannels(
-                    username = credintial.username,
-                    password = credintial.password
-                )) {
-                    is ResultWork.Error -> {
-                        _state.value.copy(
-                            isLoading = false,
-                            message = resultTvChannels.error.asUiText()
+                val channelsDiff = async {
+                    remoteRepository.getTvChannels(
+                        username = credintial.username,
+                        password = credintial.password
+                    )
+                }
+                val categoriesDiff = async {
+                    remoteRepository.getCategories(
+                        username = credintial.username,
+                        password = credintial.password
+                    )
+                }
+                val resultTvChannels = channelsDiff.await()
+                val resultCategories = categoriesDiff.await()
+                when {
+                    resultTvChannels is ResultWork.Error -> {
+                        _state.value = _state.value.copy(
+                            message = resultTvChannels.error.asUiText(),
+                            isLoading = false
                         )
-                            .updateState()
+                        return@launch
                     }
 
-                    is ResultWork.Success -> {
-                        _state.value.copy(
-                            isLoading = false,
-                            tvChannels = resultTvChannels.data
+                    resultCategories is ResultWork.Error -> {
+                        _state.value = _state.value.copy(
+                            message = resultCategories.error.asUiText(),
+                            isLoading = false
                         )
-                            .updateState()
+                        return@launch
+                    }
+
+                    resultTvChannels is ResultWork.Success && resultCategories is ResultWork.Success -> {
+
+                        val groupedMap = createCategoryChannelMap(
+                            categories = resultCategories.data,
+                            channels = resultTvChannels.data
+                        )
+
+                        val radio = mapOf(
+                            radioCt to listOf(radioCh)
+                        )
+                        _state.value = _state.value.copy(
+                            categories = resultCategories.data,
+                            tvChannels = resultTvChannels.data,
+                            groupedTvChannels = groupedMap + radio,
+                            selectedTabIndex = groupedMap.keys.first(),
+                            isLoading = false,
+                            message = null
+                        )
                     }
                 }
             }
+
         }
     }
 
@@ -231,6 +275,7 @@ class ChannelsScreenViewModel(
                     )
                         .updateState()
                 }
+
                 is ResultWork.Success -> {
                     _eventFlow.emit(UiChannelsEvents.PlayerNavigationEvent(channel.tvgId))
                 }
@@ -240,7 +285,7 @@ class ChannelsScreenViewModel(
 
     private fun logout() {
         viewModelScope.launch {
-            dataStoreRepository.clearCredintial()
+            //  dataStoreRepository.clearCredintial()
             _eventFlow.emit(UiChannelsEvents.LoginNavigationEvent)
         }
     }

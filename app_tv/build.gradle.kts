@@ -1,8 +1,18 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+}
+
+val debugKeystoreProperties = Properties().apply {
+    val propertiesFile = rootProject.file("keystore/debug.properties")
+    if (propertiesFile.exists()) {
+        load(FileInputStream(propertiesFile))
+    }
 }
 
 android {
@@ -19,6 +29,16 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("debugProject") {
+            val keystorePath = debugKeystoreProperties.getProperty("storeFile", "debug.keystore")
+            storeFile = rootProject.file("keystore/$keystorePath")
+            storePassword = debugKeystoreProperties.getProperty("storePassword", "android")
+            keyAlias = debugKeystoreProperties.getProperty("keyAlias", "androiddebugkey")
+            keyPassword = debugKeystoreProperties.getProperty("keyPassword", "android")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -27,8 +47,12 @@ android {
                 "proguard-rules.pro"
             )
         }
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("debugProject")
+        }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -60,6 +84,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    coreLibraryDesugaring (libs.desugar.jdk.libs)
 
 
     // SplashScreen

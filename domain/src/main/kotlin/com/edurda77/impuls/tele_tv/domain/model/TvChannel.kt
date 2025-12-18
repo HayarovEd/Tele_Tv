@@ -5,5 +5,7 @@ data class TvChannel(
     val tvgLogo: String?,
     val tvgChannelNumber: Int,
     val name: String,
-    val url: String
+    val url: String,
+    val categoryIds: List<String>,
+    val isRadio: Boolean = false
 )

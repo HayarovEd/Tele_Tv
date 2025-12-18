@@ -1,5 +1,8 @@
 package com.edurda77.impuls.tele_tv.domain.utils
 
+import com.edurda77.impuls.tele_tv.domain.model.Category
+import com.edurda77.impuls.tele_tv.domain.model.TvChannel
+
 const val APP_PREFERENCES = "auth_settings"
 const val BASE_URL = "http://iptv.teletvperm.ru:9981/"//"http://77.236.66.174:9981/"
 const val CHANNEL_URL_PREFIX = "stream/channel/"
@@ -36,3 +39,23 @@ const val START_POSITION = 0
 const val DELAY_MINUTE = 60_000L
 
 const val VOLUME_STEP = 0.05f
+
+const val RADIO_URL = "https://impulsfm.ru/impuls" //TODO temp
+const val RADIO_NAME = "Радио Импульс"//TODO temp
+const val RADIO_CATEGORY = "Радио"//TODO temp
+const val RADIO_IMAGE_URL = "https://radio.impulsfm.ru/images/logo3.svg" //TODO temp
+
+val radioCt = Category(
+    key = "-1",
+    name = RADIO_CATEGORY
+)
+val radioCh =
+    TvChannel(
+        name = RADIO_NAME,
+        tvgId = "-1",
+        tvgLogo = RADIO_IMAGE_URL,
+        tvgChannelNumber = 1000,
+        url = RADIO_URL,
+        categoryIds = listOf(),
+        isRadio = true
+    )

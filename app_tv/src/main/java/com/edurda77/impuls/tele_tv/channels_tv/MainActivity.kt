@@ -12,6 +12,8 @@ import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         setContent {
             Tele_TvTheme {
                 NavController(
@@ -23,4 +25,8 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    /*Бренд: BBK
+    Модель: 50LEX_8158_UTS2C
+    Производитель: Realtek*/
 }

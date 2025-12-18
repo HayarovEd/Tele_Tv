@@ -78,7 +78,8 @@ private fun ChannelItemView(
             tvgLogo = "",
             tvgChannelNumber = 2,
             name = "channel",
-            url = ""
+            url = "",
+            categoryIds = listOf("33")
         ),
         onClickChannel = {}
     )

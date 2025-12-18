@@ -41,6 +41,7 @@ dependencies {
 
     implementation(project(":domain"))
     implementation(project(":resources"))
+    implementation(project(":radio"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
