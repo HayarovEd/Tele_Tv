@@ -1,18 +1,11 @@
 package com.edurda77.impuls.radio
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,7 +25,6 @@ import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
-import com.chibde.visualizer.CircleBarVisualizer
 import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.domain.utils.RADIO_CATEGORY
 import com.edurda77.impuls.tele_tv.domain.utils.RADIO_IMAGE_URL
@@ -47,20 +39,17 @@ fun RadioContent(
     audioSession: Int
 ) {
     var track by remember { mutableStateOf("") }
-    val context = LocalContext.current
+
     /*val circleBarVisualizer = remember {  CircleBarVisualizer(context) }.apply {
         setColor(MaterialTheme.colorScheme.primary.toArgb())
         setPlayer(audioSession)
     }*/
 
-    val customVis = remember {  CustomVisualisation(context) }.apply {
-        setColor(MaterialTheme.colorScheme.primary.toArgb())
-        setPlayer(audioSession)
-    }
+
 
     LaunchedEffect(true) {
         while (true) {
-            track = RadioMetadataParser().getCurrentTrack(radio.url)?:""
+            track = RadioMetadataParser().getCurrentTrack(radio.url) ?: ""
             delay(5000)
         }
     }
@@ -70,6 +59,19 @@ fun RadioContent(
             .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
+        WithPermission {
+            val context = LocalContext.current
+            val customVis = remember { CustomVisualisation(context) }.apply {
+                setColor(MaterialTheme.colorScheme.primary.toArgb())
+                setPlayer(audioSession)
+            }
+            AndroidView(
+                modifier = Modifier
+                    .fillMaxSize(),
+                factory = {
+                    customVis
+                })
+        }
         /*AndroidView(
             modifier = Modifier
                 .fillMaxHeight(0.7f)
@@ -77,12 +79,6 @@ fun RadioContent(
             factory = {
                 circleBarVisualizer
             })*/
-        AndroidView(
-            modifier = Modifier
-                .fillMaxSize(),
-            factory = {
-                customVis
-            })
         AsyncImage(
             modifier = Modifier
                 .fillMaxHeight(0.5f)

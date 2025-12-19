@@ -1,5 +1,6 @@
 package com.edurda77.impuls.tele_tv.channels
 
+import android.health.connect.datatypes.Device
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -44,6 +45,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -145,6 +147,7 @@ private fun ChannelsScreenScreen(
                 )
                 StatusPanel(
                     currentTime = state.currentTime,
+                    user = state.credintial?.username?:"",
                     isEnableUpdate = state.enableUpdate,
                     onUpdateClick = {
                         onAction(ChannelsScreenAction.DownloadUpdate)
@@ -285,7 +288,9 @@ private fun ChannelsScreenScreen(
     }
 }
 
-@Preview
+@Preview(
+    device = Devices.TV_1080p
+)
 @Composable
 private fun Preview() {
     val categories = (1..5).map {
@@ -323,7 +328,9 @@ private fun Preview() {
     }
 }
 
-@Preview()
+@Preview(
+    device = Devices.TV_1080p
+)
 @Composable
 private fun Preview2() {
     val channels = (1..10).map {
@@ -350,7 +357,9 @@ private fun Preview2() {
     }
 }
 
-@Preview()
+@Preview(
+    device = Devices.TV_1080p
+)
 @Composable
 private fun Preview3() {
     val channels = (1..10).map {

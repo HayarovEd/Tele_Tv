@@ -28,6 +28,7 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun StatusPanel(
     modifier: Modifier = Modifier,
+    user: String,
     currentTime: LocalDateTime,
     isEnableUpdate: Boolean,
     onUpdateClick: () -> Unit,
@@ -36,6 +37,13 @@ fun StatusPanel(
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Text(
+            modifier = modifier,
+            text = user,
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+        Spacer(modifier = modifier.width(5.dp))
         if (isEnableUpdate) {
             UiIconButton(
                 icon = ImageVector.vectorResource(R.drawable.baseline_update_24),
@@ -86,6 +94,7 @@ fun StatusPanel(
 fun StatusPanelView() {
     Tele_TvTheme {
         StatusPanel(
+            user = "user",
             currentTime = Clock.System.now()
                 .toLocalDateTime(TimeZone.currentSystemDefault()),
             isEnableUpdate = true,

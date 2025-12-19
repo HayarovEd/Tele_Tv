@@ -111,6 +111,7 @@ fun PlayerScreenScreen(
 
     exoPlayer.addListener(playerListener)
     val focusRequester = remember { FocusRequester() }
+    var shouldRequestFocus by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val focusManager = LocalFocusManager.current
     val configuration = LocalWindowInfo.current.containerSize
@@ -149,6 +150,8 @@ fun PlayerScreenScreen(
             focusRequester.requestFocus()
         }
     }
+
+
     Box {
         PlayerSurface(
             modifier = modifier
@@ -165,13 +168,16 @@ fun PlayerScreenScreen(
                         when (it.nativeKeyEvent.keyCode) {
                             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> {
                                 onAction(PlayerScreenAction.DecrementTvChannel)
+                                shouldRequestFocus = false
                             }
 
                             KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_PAGE_DOWN -> {
                                 onAction(PlayerScreenAction.IncrementTvChannel)
+                                shouldRequestFocus = false
                             }
 
                             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_ENTER -> {
+                                shouldRequestFocus = true
                                 onAction(PlayerScreenAction.ShowSideMenu)
                                 focusManager.moveFocus(FocusDirection.Left)
                             }
@@ -234,6 +240,10 @@ fun PlayerScreenScreen(
             )
         }
         val sChannel = state.tvChannels.find { it.tvgId == state.focusedChannelId }
+        var md by remember { mutableStateOf(modifier) }
+        LaunchedEffect(shouldRequestFocus) {
+            md = if (shouldRequestFocus) modifier.focusRequester(focusRequester) else modifier
+        }
         if (state.isVisibleSideMenu || isEpgVisible) {
             Row(
                 modifier = modifier
@@ -241,9 +251,9 @@ fun PlayerScreenScreen(
                     .background(MaterialTheme.colorScheme.background.copy(alpha = if (isEpgVisible) 0.9f else 0.5f))
             ) {
                 ChannelMenu(
-                    modifier = modifier
+                    modifier = md
                         .weight(1f)
-                        .focusRequester(focusRequester)
+                       // .focusRequester(focusRequester)
                         .focusable(interactionSource = interactionSource)
                         .onKeyEvent {
                             if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
