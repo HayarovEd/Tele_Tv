@@ -43,7 +43,7 @@ fun rememberPlayer(context: Context): ExoPlayer {
             .setMediaSourceFactory(
                 ProgressiveMediaSource.Factory(DefaultDataSource.Factory(context))
             )
-            .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+            .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT)
             .build()
             .apply {
                 playWhenReady = true
@@ -115,4 +115,6 @@ fun Context.findActivity(): Activity? {
     }
     return null
 }
+
+
 

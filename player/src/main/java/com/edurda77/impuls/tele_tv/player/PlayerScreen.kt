@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -151,14 +152,14 @@ fun PlayerScreenScreen(
     Box {
         PlayerSurface(
             modifier = modifier
-                .resizeWithContentScale(
+                /*.resizeWithContentScale(
                     contentScale = ContentScale.Fit,
                     sourceSizeDp = null
-                )
+                )*/
+                .aspectRatio(16/9f)
                 //.focusRequester(focusRequester)
                 .focusable()
                 .onKeyEvent {
-                    Log.d("DeviceInfo TELE TV", "action ${it.nativeKeyEvent.keyCode}")
                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                         Log.d("DeviceInfo TELE TV", "action up ${it.nativeKeyEvent.keyCode}")
                         when (it.nativeKeyEvent.keyCode) {

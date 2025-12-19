@@ -51,12 +51,12 @@ fun RadioContent(
     /*val circleBarVisualizer = remember {  CircleBarVisualizer(context) }.apply {
         setColor(MaterialTheme.colorScheme.primary.toArgb())
         setPlayer(audioSession)
-    }
+    }*/
 
-    val customVis = remember {  CustomVis(context) }.apply {
+    val customVis = remember {  CustomVisualisation(context) }.apply {
         setColor(MaterialTheme.colorScheme.primary.toArgb())
         setPlayer(audioSession)
-    }*/
+    }
 
     LaunchedEffect(true) {
         while (true) {
@@ -77,12 +77,12 @@ fun RadioContent(
             factory = {
                 circleBarVisualizer
             })*/
-      /*  AndroidView(
+        AndroidView(
             modifier = Modifier
                 .fillMaxSize(),
             factory = {
                 customVis
-            })*/
+            })
         AsyncImage(
             modifier = Modifier
                 .fillMaxHeight(0.5f)
