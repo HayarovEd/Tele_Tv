@@ -1,5 +1,6 @@
 package com.edurda77.impuls.tele_tv.data.repository
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.os.PowerManager
@@ -19,10 +20,12 @@ class ServiceRepositoryImpl(
         ).versionName?.toDoubleOrNull()
     }
 
+    @SuppressLint("Wakelock")
     override fun setWakeLock() {
         val powerManager = application.getSystemService(Context.POWER_SERVICE) as PowerManager
         wakeLock = powerManager.newWakeLock(
             PowerManager.PARTIAL_WAKE_LOCK or
+                    PowerManager.ACQUIRE_CAUSES_WAKEUP or
                     PowerManager.ON_AFTER_RELEASE,
             "YourApp::PlayerWakeLock"
         )

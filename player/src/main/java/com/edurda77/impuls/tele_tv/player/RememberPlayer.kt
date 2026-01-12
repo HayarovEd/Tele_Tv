@@ -3,6 +3,7 @@ package com.edurda77.impuls.tele_tv.player
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.media.session.MediaSession
 import android.util.Log
 import android.view.WindowManager
 import androidx.compose.runtime.Composable
@@ -38,7 +39,10 @@ fun rememberPlayer(
             NextRenderersFactory(context).setEnableDecoderFallback(true)
                 .setExtensionRendererMode(decoder)
         val audioAttributes =
-            AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build()
+            AudioAttributes.Builder()
+                .setUsage(C.USAGE_MEDIA)
+                .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
+                .build()
         val trackSelector = DefaultTrackSelector(context)
         ExoPlayer.Builder(context, renderersFactory)
             .setTrackSelector(trackSelector)
@@ -111,26 +115,6 @@ fun rememberMapLifecycleObserver(
         }
     }
 
-@Composable
-fun KeepScreenOn() {
-    val context = LocalContext.current
-    DisposableEffect(Unit) {
-        val window = context.findActivity()?.window
-        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        onDispose {
-            window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        }
-    }
-}
-
-fun Context.findActivity(): Activity? {
-    var context = this
-    while (context is ContextWrapper) {
-        if (context is Activity) return context
-        context = context.baseContext
-    }
-    return null
-}
 
 
 

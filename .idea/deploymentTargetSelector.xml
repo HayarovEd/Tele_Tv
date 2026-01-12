@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-12-19T06:10:42.668285300Z">
+        <DropdownSelection timestamp="2026-01-12T08:07:18.040599800Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Impuls\.android\avd\Pixel_7_API_34.avd" />
+              <DeviceId pluginId="Default" identifier="serial=10.222.222.214:5555;connection=3f94380c" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -15,10 +15,10 @@
       </SelectionState>
       <SelectionState runConfigName="app_tv">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-12-16T11:20:07.536144200Z">
+        <DropdownSelection timestamp="2026-01-12T08:03:35.179017Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="Default" identifier="serial=10.222.222.214:5555;connection=d81f00ec" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=RS55USTOP7VSP7JF" />
             </handle>
           </Target>
         </DropdownSelection>

@@ -2,6 +2,7 @@ package com.edurda77.impuls.tele_tv.player
 
 import android.util.Log
 import android.view.KeyEvent
+import android.view.SurfaceView
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
@@ -33,6 +34,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.keepScreenOn
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -42,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -61,6 +64,7 @@ import com.edurda77.impuls.radio.RadioContent
 import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.resources.R
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
+import com.edurda77.impuls.tele_tv.resources.uikit.KeepScreenOn
 import kotlinx.coroutines.delay
 import okhttp3.Credentials
 import org.koin.androidx.compose.koinViewModel
@@ -175,18 +179,22 @@ fun PlayerScreenScreen(
             focusRequester.requestFocus()
         }
     }
-
-
     Box {
+       /* AndroidView(
+            factory = {
+                sf
+            }
+        )*/
         PlayerSurface(
             modifier = modifier
-              /*  .resizeWithContentScale(
+                .keepScreenOn()
+                .resizeWithContentScale(
                     contentScale = ContentScale.FillHeight,
                     sourceSizeDp = null
-                )*/
+                )
                 //.aspectRatio(16/9f)
                 //.focusRequester(focusRequester)
-                .fillMaxHeight()
+              //  .fillMaxHeight()
                 .focusable()
                 .onKeyEvent {
                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {

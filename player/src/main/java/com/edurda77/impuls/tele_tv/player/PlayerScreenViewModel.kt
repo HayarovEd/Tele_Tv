@@ -189,7 +189,6 @@ class PlayerScreenViewModel(
                 )
                     .updateState()
             }
-
             PlayerScreenAction.OnReleaseWakeLock -> serviceRepository.releaseWakeLock()
             PlayerScreenAction.OnSetWakeLock -> acquireWakeLock()
         }
