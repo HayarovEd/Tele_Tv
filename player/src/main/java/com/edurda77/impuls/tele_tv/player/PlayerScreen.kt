@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -47,6 +48,8 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.audio.AudioSink
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.compose.PlayerSurface
@@ -89,7 +92,15 @@ fun PlayerScreenScreen(
     onNavigateToChannels: () -> Unit
 ) {
     val context = LocalContext.current
-    val exoPlayer = rememberPlayer(context)
+    val exoPlayer = rememberPlayer(
+        context = context,
+        setWakeLock = {
+            onAction(PlayerScreenAction.OnSetWakeLock)
+        },
+        releaseWakeLock = {
+            onAction(PlayerScreenAction.OnReleaseWakeLock)
+        }
+    )
     var isLoadingChannel by remember { mutableStateOf(true) }
     val playerListener = object : Player.Listener {
 
@@ -98,8 +109,22 @@ fun PlayerScreenScreen(
             val errorCode = error.errorCode
             Log.d("REST TELE TV", "errorCode play $errorCode")
             Log.d("REST TELE TV", "error play $error")
+            if (error.cause is AudioSink.UnexpectedDiscontinuityException) {
+                exoPlayer.prepare()
+                exoPlayer.play()
+            }
         }
 
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            when (playbackState) {
+                ExoPlayer.STATE_READY, ExoPlayer.STATE_BUFFERING -> {
+                    onAction(PlayerScreenAction.OnSetWakeLock)
+                }
+                ExoPlayer.STATE_ENDED, ExoPlayer.STATE_IDLE -> {
+                    onAction(PlayerScreenAction.OnReleaseWakeLock)
+                }
+            }
+        }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
@@ -155,12 +180,13 @@ fun PlayerScreenScreen(
     Box {
         PlayerSurface(
             modifier = modifier
-                /*.resizeWithContentScale(
-                    contentScale = ContentScale.Fit,
+              /*  .resizeWithContentScale(
+                    contentScale = ContentScale.FillHeight,
                     sourceSizeDp = null
                 )*/
-                .aspectRatio(16/9f)
+                //.aspectRatio(16/9f)
                 //.focusRequester(focusRequester)
+                .fillMaxHeight()
                 .focusable()
                 .onKeyEvent {
                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
@@ -253,7 +279,7 @@ fun PlayerScreenScreen(
                 ChannelMenu(
                     modifier = md
                         .weight(1f)
-                       // .focusRequester(focusRequester)
+                        // .focusRequester(focusRequester)
                         .focusable(interactionSource = interactionSource)
                         .onKeyEvent {
                             if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
@@ -416,7 +442,6 @@ private fun Preview() {
     }
 }
 
-@OptIn(UnstableApi::class)
 private fun intoMediaItem(
     credintial: Credintial,
     uri: String
@@ -438,3 +463,5 @@ private fun intoMediaItem(
 
     return mediaSource
 }
+
+

@@ -27,7 +27,11 @@ import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-fun rememberPlayer(context: Context): ExoPlayer {
+fun rememberPlayer(
+    context: Context,
+    setWakeLock: () -> Unit,
+    releaseWakeLock: () -> Unit,
+): ExoPlayer {
     val player = remember {
         val decoder = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
         val renderersFactory: RenderersFactory =
@@ -50,19 +54,29 @@ fun rememberPlayer(context: Context): ExoPlayer {
                 repeatMode = Player.REPEAT_MODE_OFF
             }
     }
-    val lifecycleObserver = rememberMapLifecycleObserver(player)
+    val lifecycleObserver = rememberMapLifecycleObserver(
+        player = player,
+        setWakeLock = setWakeLock,
+        releaseWakeLock = releaseWakeLock
+    )
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     DisposableEffect(lifecycle) {
         lifecycle.addObserver(lifecycleObserver)
         onDispose {
             lifecycle.removeObserver(lifecycleObserver)
+            releaseWakeLock()
+            player.release()
         }
     }
     return  player
 }
 
 @Composable
-fun rememberMapLifecycleObserver(player: ExoPlayer): LifecycleEventObserver =
+fun rememberMapLifecycleObserver(
+    player: ExoPlayer,
+    setWakeLock: () -> Unit,
+    releaseWakeLock: () -> Unit,
+): LifecycleEventObserver =
     remember(player) {
         LifecycleEventObserver { _, event ->
             when (event) {
@@ -77,6 +91,7 @@ fun rememberMapLifecycleObserver(player: ExoPlayer): LifecycleEventObserver =
 
                 Lifecycle.Event.ON_RESUME -> {
                     player.play()
+                    setWakeLock()
                     Log.d("REST TELE TV", "on resume")
                 }
 
@@ -87,6 +102,7 @@ fun rememberMapLifecycleObserver(player: ExoPlayer): LifecycleEventObserver =
 
                 Lifecycle.Event.ON_PAUSE -> {
                     player.stop()
+                    releaseWakeLock()
                     Log.d("REST TELE TV", "on pause")
                 }
 

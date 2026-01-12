@@ -1,6 +1,7 @@
 package com.edurda77.impuls.tele_tv.channels_tv
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.edurda77.base_module.navigation.NavController
@@ -24,6 +25,12 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Снимаем флаг при паузе активности
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     /*Бренд: BBK
