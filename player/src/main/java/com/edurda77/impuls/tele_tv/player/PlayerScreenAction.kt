@@ -15,4 +15,6 @@ sealed interface PlayerScreenAction {
     data object GetEpgByFocusedChannelId:PlayerScreenAction
     data object DecrimentVolume:PlayerScreenAction
     data object IncrimentVolume:PlayerScreenAction
+    data object OnSetWakeLock:PlayerScreenAction
+    data object OnReleaseWakeLock: PlayerScreenAction
 }

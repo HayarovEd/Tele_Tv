@@ -1,6 +1,5 @@
 package com.edurda77.impuls.tele_tv.player
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +7,7 @@ import androidx.navigation.toRoute
 import com.edurda77.impuls.tele_tv.domain.repository.DataStoreRepository
 import com.edurda77.impuls.tele_tv.domain.repository.LocalRepository
 import com.edurda77.impuls.tele_tv.domain.repository.RemoteRepository
+import com.edurda77.impuls.tele_tv.domain.repository.ServiceRepository
 import com.edurda77.impuls.tele_tv.domain.utils.CHANNEL_LIMIT
 import com.edurda77.impuls.tele_tv.domain.utils.DELAY_MINUTE
 import com.edurda77.impuls.tele_tv.domain.utils.ResultWork
@@ -35,6 +35,7 @@ class PlayerScreenViewModel(
     private val remoteRepository: RemoteRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val localRepository: LocalRepository,
+    private val serviceRepository: ServiceRepository,
 ) : ViewModel() {
 
     private var volumeJob: Job? = null
@@ -188,6 +189,8 @@ class PlayerScreenViewModel(
                 )
                     .updateState()
             }
+            PlayerScreenAction.OnReleaseWakeLock -> serviceRepository.releaseWakeLock()
+            PlayerScreenAction.OnSetWakeLock -> acquireWakeLock()
         }
     }
 
@@ -464,16 +467,24 @@ class PlayerScreenViewModel(
         }
     }
 
+    private fun acquireWakeLock() {
+        viewModelScope.launch {
+            serviceRepository.setWakeLock()
+        }
+    }
+
     private fun PlayerScreenState.updateState() {
         _state.update {
             this
         }
     }
 
+
     override fun onCleared() {
         super.onCleared()
         volumeJob?.cancel()
         menuJob?.cancel()
         queryJob?.cancel()
+        serviceRepository.releaseWakeLock()
     }
 }

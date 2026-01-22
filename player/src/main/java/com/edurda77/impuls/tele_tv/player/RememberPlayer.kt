@@ -3,6 +3,7 @@ package com.edurda77.impuls.tele_tv.player
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.media.session.MediaSession
 import android.util.Log
 import android.view.WindowManager
 import androidx.compose.runtime.Composable
@@ -27,14 +28,21 @@ import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
-fun rememberPlayer(context: Context): ExoPlayer {
+fun rememberPlayer(
+    context: Context,
+    setWakeLock: () -> Unit,
+    releaseWakeLock: () -> Unit,
+): ExoPlayer {
     val player = remember {
         val decoder = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
         val renderersFactory: RenderersFactory =
             NextRenderersFactory(context).setEnableDecoderFallback(true)
                 .setExtensionRendererMode(decoder)
         val audioAttributes =
-            AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build()
+            AudioAttributes.Builder()
+                .setUsage(C.USAGE_MEDIA)
+                .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
+                .build()
         val trackSelector = DefaultTrackSelector(context)
         ExoPlayer.Builder(context, renderersFactory)
             .setTrackSelector(trackSelector)
@@ -43,26 +51,36 @@ fun rememberPlayer(context: Context): ExoPlayer {
             .setMediaSourceFactory(
                 ProgressiveMediaSource.Factory(DefaultDataSource.Factory(context))
             )
-            .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+            .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT)
             .build()
             .apply {
                 playWhenReady = true
                 repeatMode = Player.REPEAT_MODE_OFF
             }
     }
-    val lifecycleObserver = rememberMapLifecycleObserver(player)
+    val lifecycleObserver = rememberMapLifecycleObserver(
+        player = player,
+        setWakeLock = setWakeLock,
+        releaseWakeLock = releaseWakeLock
+    )
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     DisposableEffect(lifecycle) {
         lifecycle.addObserver(lifecycleObserver)
         onDispose {
             lifecycle.removeObserver(lifecycleObserver)
+            releaseWakeLock()
+            player.release()
         }
     }
     return  player
 }
 
 @Composable
-fun rememberMapLifecycleObserver(player: ExoPlayer): LifecycleEventObserver =
+fun rememberMapLifecycleObserver(
+    player: ExoPlayer,
+    setWakeLock: () -> Unit,
+    releaseWakeLock: () -> Unit,
+): LifecycleEventObserver =
     remember(player) {
         LifecycleEventObserver { _, event ->
             when (event) {
@@ -77,6 +95,7 @@ fun rememberMapLifecycleObserver(player: ExoPlayer): LifecycleEventObserver =
 
                 Lifecycle.Event.ON_RESUME -> {
                     player.play()
+                    setWakeLock()
                     Log.d("REST TELE TV", "on resume")
                 }
 
@@ -87,6 +106,7 @@ fun rememberMapLifecycleObserver(player: ExoPlayer): LifecycleEventObserver =
 
                 Lifecycle.Event.ON_PAUSE -> {
                     player.stop()
+                    releaseWakeLock()
                     Log.d("REST TELE TV", "on pause")
                 }
 
@@ -95,24 +115,6 @@ fun rememberMapLifecycleObserver(player: ExoPlayer): LifecycleEventObserver =
         }
     }
 
-@Composable
-fun KeepScreenOn() {
-    val context = LocalContext.current
-    DisposableEffect(Unit) {
-        val window = context.findActivity()?.window
-        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        onDispose {
-            window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        }
-    }
-}
 
-fun Context.findActivity(): Activity? {
-    var context = this
-    while (context is ContextWrapper) {
-        if (context is Activity) return context
-        context = context.baseContext
-    }
-    return null
-}
+
 

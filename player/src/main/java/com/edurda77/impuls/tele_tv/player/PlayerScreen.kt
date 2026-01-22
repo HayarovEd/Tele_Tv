@@ -2,6 +2,7 @@ package com.edurda77.impuls.tele_tv.player
 
 import android.util.Log
 import android.view.KeyEvent
+import android.view.SurfaceView
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,6 +34,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.keepScreenOn
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -40,12 +44,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.audio.AudioSink
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.compose.PlayerSurface
@@ -57,6 +64,7 @@ import com.edurda77.impuls.radio.RadioContent
 import com.edurda77.impuls.tele_tv.domain.model.Credintial
 import com.edurda77.impuls.tele_tv.resources.R
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
+import com.edurda77.impuls.tele_tv.resources.uikit.KeepScreenOn
 import kotlinx.coroutines.delay
 import okhttp3.Credentials
 import org.koin.androidx.compose.koinViewModel
@@ -88,7 +96,15 @@ fun PlayerScreenScreen(
     onNavigateToChannels: () -> Unit
 ) {
     val context = LocalContext.current
-    val exoPlayer = rememberPlayer(context)
+    val exoPlayer = rememberPlayer(
+        context = context,
+        setWakeLock = {
+            onAction(PlayerScreenAction.OnSetWakeLock)
+        },
+        releaseWakeLock = {
+            onAction(PlayerScreenAction.OnReleaseWakeLock)
+        }
+    )
     var isLoadingChannel by remember { mutableStateOf(true) }
     val playerListener = object : Player.Listener {
 
@@ -97,8 +113,22 @@ fun PlayerScreenScreen(
             val errorCode = error.errorCode
             Log.d("REST TELE TV", "errorCode play $errorCode")
             Log.d("REST TELE TV", "error play $error")
+            if (error.cause is AudioSink.UnexpectedDiscontinuityException) {
+                exoPlayer.prepare()
+                exoPlayer.play()
+            }
         }
 
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            when (playbackState) {
+                ExoPlayer.STATE_READY, ExoPlayer.STATE_BUFFERING -> {
+                    onAction(PlayerScreenAction.OnSetWakeLock)
+                }
+                ExoPlayer.STATE_ENDED, ExoPlayer.STATE_IDLE -> {
+                    onAction(PlayerScreenAction.OnReleaseWakeLock)
+                }
+            }
+        }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
@@ -110,6 +140,7 @@ fun PlayerScreenScreen(
 
     exoPlayer.addListener(playerListener)
     val focusRequester = remember { FocusRequester() }
+    var shouldRequestFocus by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val focusManager = LocalFocusManager.current
     val configuration = LocalWindowInfo.current.containerSize
@@ -149,28 +180,38 @@ fun PlayerScreenScreen(
         }
     }
     Box {
+       /* AndroidView(
+            factory = {
+                sf
+            }
+        )*/
         PlayerSurface(
             modifier = modifier
+                .keepScreenOn()
                 .resizeWithContentScale(
-                    contentScale = ContentScale.Fit,
+                    contentScale = ContentScale.FillHeight,
                     sourceSizeDp = null
                 )
+                //.aspectRatio(16/9f)
                 //.focusRequester(focusRequester)
+              //  .fillMaxHeight()
                 .focusable()
                 .onKeyEvent {
-                    Log.d("DeviceInfo TELE TV", "action ${it.nativeKeyEvent.keyCode}")
                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                         Log.d("DeviceInfo TELE TV", "action up ${it.nativeKeyEvent.keyCode}")
                         when (it.nativeKeyEvent.keyCode) {
                             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> {
                                 onAction(PlayerScreenAction.DecrementTvChannel)
+                                shouldRequestFocus = false
                             }
 
                             KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_PAGE_DOWN -> {
                                 onAction(PlayerScreenAction.IncrementTvChannel)
+                                shouldRequestFocus = false
                             }
 
                             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_ENTER -> {
+                                shouldRequestFocus = true
                                 onAction(PlayerScreenAction.ShowSideMenu)
                                 focusManager.moveFocus(FocusDirection.Left)
                             }
@@ -233,6 +274,10 @@ fun PlayerScreenScreen(
             )
         }
         val sChannel = state.tvChannels.find { it.tvgId == state.focusedChannelId }
+        var md by remember { mutableStateOf(modifier) }
+        LaunchedEffect(shouldRequestFocus) {
+            md = if (shouldRequestFocus) modifier.focusRequester(focusRequester) else modifier
+        }
         if (state.isVisibleSideMenu || isEpgVisible) {
             Row(
                 modifier = modifier
@@ -240,9 +285,9 @@ fun PlayerScreenScreen(
                     .background(MaterialTheme.colorScheme.background.copy(alpha = if (isEpgVisible) 0.9f else 0.5f))
             ) {
                 ChannelMenu(
-                    modifier = modifier
+                    modifier = md
                         .weight(1f)
-                        .focusRequester(focusRequester)
+                        // .focusRequester(focusRequester)
                         .focusable(interactionSource = interactionSource)
                         .onKeyEvent {
                             if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
@@ -405,7 +450,6 @@ private fun Preview() {
     }
 }
 
-@OptIn(UnstableApi::class)
 private fun intoMediaItem(
     credintial: Credintial,
     uri: String
@@ -427,3 +471,5 @@ private fun intoMediaItem(
 
     return mediaSource
 }
+
+
