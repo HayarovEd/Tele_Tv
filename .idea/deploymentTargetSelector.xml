@@ -15,10 +15,10 @@
       </SelectionState>
       <SelectionState runConfigName="app_tv">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-01-12T08:03:35.179017Z">
+        <DropdownSelection timestamp="2026-03-11T08:53:41.806117400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=RS55USTOP7VSP7JF" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Impuls\.android\avd\Television_1080p.avd" />
             </handle>
           </Target>
         </DropdownSelection>
