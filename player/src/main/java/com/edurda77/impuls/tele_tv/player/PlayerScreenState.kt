@@ -20,6 +20,7 @@ data class PlayerScreenState @OptIn(ExperimentalTime::class) constructor(
     val focusedChannelId: String? = null,
     val isVisibleTitle: Boolean = false,
     val isVisibleSideMenu: Boolean = false,
+    val isVisibleDrumMenu: Boolean = false,
     val channelInputQuery: String = "",
     val allTvEpg: List<TvEpg> = emptyList(),
     val currentTime: Long = Clock.System.now().epochSeconds,

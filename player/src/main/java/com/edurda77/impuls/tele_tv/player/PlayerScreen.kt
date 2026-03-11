@@ -2,7 +2,6 @@ package com.edurda77.impuls.tele_tv.player
 
 import android.util.Log
 import android.view.KeyEvent
-import android.view.SurfaceView
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
@@ -14,8 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -44,7 +41,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -124,6 +120,7 @@ fun PlayerScreenScreen(
                 ExoPlayer.STATE_READY, ExoPlayer.STATE_BUFFERING -> {
                     onAction(PlayerScreenAction.OnSetWakeLock)
                 }
+
                 ExoPlayer.STATE_ENDED, ExoPlayer.STATE_IDLE -> {
                     onAction(PlayerScreenAction.OnReleaseWakeLock)
                 }
@@ -180,11 +177,11 @@ fun PlayerScreenScreen(
         }
     }
     Box {
-       /* AndroidView(
-            factory = {
-                sf
-            }
-        )*/
+        /* AndroidView(
+             factory = {
+                 sf
+             }
+         )*/
         PlayerSurface(
             modifier = modifier
                 .keepScreenOn()
@@ -194,7 +191,7 @@ fun PlayerScreenScreen(
                 )
                 //.aspectRatio(16/9f)
                 //.focusRequester(focusRequester)
-              //  .fillMaxHeight()
+                //  .fillMaxHeight()
                 .focusable()
                 .onKeyEvent {
                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
@@ -434,6 +431,17 @@ fun PlayerScreenScreen(
                 volume = state.volume
             )
         }
+        if (state.isVisibleDrumMenu) {
+            state.selectedIndex?.let { index->
+                DrumMenu(
+                    modifier = modifier.align(alignment = Alignment.BottomCenter),
+                    channel = state.tvChannels[index],
+                    tvEpg = state.grouppedEpg[state.tvChannels[index].tvgId],
+                    currentTime = state.currentTime
+                )
+            }
+
+        }
     }
 }
 
@@ -450,6 +458,7 @@ private fun Preview() {
     }
 }
 
+@OptIn(UnstableApi::class)
 private fun intoMediaItem(
     credintial: Credintial,
     uri: String

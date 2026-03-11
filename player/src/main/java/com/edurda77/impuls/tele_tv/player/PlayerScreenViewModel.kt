@@ -41,6 +41,7 @@ class PlayerScreenViewModel(
     private var volumeJob: Job? = null
     private var menuJob: Job? = null
     private var queryJob: Job? = null
+    private var drumMenuJob: Job? = null
 
     private val _state = MutableStateFlow(PlayerScreenState())
     val state = _state
@@ -77,7 +78,7 @@ class PlayerScreenViewModel(
                             .updateState()
                     }
                     saveLastChannel()
-                    startTimerVisibleMenu(5)
+                    startTimerVisibleDrumMenu(5)
                     //startTimer()
                 }
             }
@@ -98,7 +99,7 @@ class PlayerScreenViewModel(
                             .updateState()
                     }
                     saveLastChannel()
-                    startTimerVisibleMenu(5)
+                    startTimerVisibleDrumMenu(5)
                     //startTimer()
                 }
             }
@@ -189,6 +190,7 @@ class PlayerScreenViewModel(
                 )
                     .updateState()
             }
+
             PlayerScreenAction.OnReleaseWakeLock -> serviceRepository.releaseWakeLock()
             PlayerScreenAction.OnSetWakeLock -> acquireWakeLock()
         }
@@ -304,6 +306,24 @@ class PlayerScreenViewModel(
                 .updateState()
         }
         menuJob?.start()
+    }
+
+    private fun startTimerVisibleDrumMenu(duration: Int) {
+        _state.value.copy(
+            isVisibleDrumMenu = true
+        )
+            .updateState()
+        drumMenuJob?.cancel()
+        drumMenuJob = viewModelScope.launch {
+            (duration downTo 0).forEach { _ ->
+                delay(1000)
+            }
+            _state.value.copy(
+                isVisibleDrumMenu = false
+            )
+                .updateState()
+        }
+        drumMenuJob?.start()
     }
 
 
