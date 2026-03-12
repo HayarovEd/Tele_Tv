@@ -208,9 +208,9 @@ fun PlayerScreenScreen(
                             }
 
                             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_ENTER -> {
+                                focusManager.moveFocus(FocusDirection.Left)
                                 shouldRequestFocus = true
                                 onAction(PlayerScreenAction.ShowSideMenu)
-                                focusManager.moveFocus(FocusDirection.Left)
                             }
 
                             KeyEvent.KEYCODE_BACK -> {
@@ -284,7 +284,7 @@ fun PlayerScreenScreen(
                 ChannelMenu(
                     modifier = md
                         .weight(1f)
-                        // .focusRequester(focusRequester)
+                        .focusRequester(focusRequester)
                         .focusable(interactionSource = interactionSource)
                         .onKeyEvent {
                             if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {

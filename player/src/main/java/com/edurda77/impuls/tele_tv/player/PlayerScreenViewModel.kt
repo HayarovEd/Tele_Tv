@@ -1,5 +1,6 @@
 package com.edurda77.impuls.tele_tv.player
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -65,12 +66,14 @@ class PlayerScreenViewModel(
             PlayerScreenAction.DecrementTvChannel -> {
                 state.value.selectedIndex?.let { selectedIndex ->
                     if (state.value.tvChannels[selectedIndex] == state.value.tvChannels.first()) {
+                        Log.d("DeviceInfo TELE TV", "action 1")
                         _state.value.copy(
                             selectedChannelId = state.value.tvChannels.last().tvgId,
                             focusedChannelId = state.value.tvChannels.last().tvgId,
                         )
                             .updateState()
                     } else {
+                        Log.d("DeviceInfo TELE TV", "action 2")
                         _state.value.copy(
                             selectedChannelId = state.value.tvChannels[selectedIndex - 1].tvgId,
                             focusedChannelId = state.value.tvChannels[selectedIndex - 1].tvgId,
@@ -86,12 +89,14 @@ class PlayerScreenViewModel(
             PlayerScreenAction.IncrementTvChannel -> {
                 state.value.selectedIndex?.let { selectedIndex ->
                     if (state.value.tvChannels[selectedIndex] == state.value.tvChannels.last()) {
+                        Log.d("DeviceInfo TELE TV", "action 3")
                         _state.value.copy(
                             selectedChannelId = state.value.tvChannels.first().tvgId,
                             focusedChannelId = state.value.tvChannels.first().tvgId
                         )
                             .updateState()
                     } else {
+                        Log.d("DeviceInfo TELE TV", "action 4")
                         _state.value.copy(
                             selectedChannelId = state.value.tvChannels[selectedIndex + 1].tvgId,
                             focusedChannelId = state.value.tvChannels[selectedIndex + 1].tvgId,
@@ -105,6 +110,7 @@ class PlayerScreenViewModel(
             }
 
             is PlayerScreenAction.UpdateSelectedIndex -> {
+                Log.d("DeviceInfo TELE TV", "action 5")
                 _state.value.copy(
                     selectedChannelId = state.value.focusedChannelId
                 )
@@ -203,6 +209,7 @@ class PlayerScreenViewModel(
             isLoading = true,
         )
             .updateState()
+        Log.d("DeviceInfo TELE TV", "action 6")
         state.value.copy(
             selectedChannelId = channelId,
             focusedChannelId = channelId
@@ -243,6 +250,7 @@ class PlayerScreenViewModel(
                         )
                             .updateState()
                         if (resultTvChannels.data.isNotEmpty() && state.value.selectedChannelId == null) {
+                            Log.d("DeviceInfo TELE TV", "action 7")
                             _state.value.copy(
                                 selectedChannelId = resultTvChannels.data.first().tvgId,
                                 focusedChannelId = resultTvChannels.data.first().tvgId,
@@ -359,6 +367,7 @@ class PlayerScreenViewModel(
         val number = state.value.channelInputQuery.toIntOrNull()
         number?.let {
             if (number in 1..<state.value.tvChannels.size) {
+                Log.d("DeviceInfo TELE TV", "action 8")
                 _state.value.copy(
                     selectedChannelId = state.value.tvChannels[number - 1].tvgId,
                     focusedChannelId = state.value.tvChannels[number - 1].tvgId,
