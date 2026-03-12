@@ -27,17 +27,9 @@ android {
         versionName = libs.versions.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        setProperty("archivesBaseName", "TeleTv_Tv_version-$versionName")
     }
 
-    signingConfigs {
-        create("debugProject") {
-            val keystorePath = debugKeystoreProperties.getProperty("storeFile", "debug.keystore")
-            storeFile = rootProject.file("keystore/$keystorePath")
-            storePassword = debugKeystoreProperties.getProperty("storePassword", "android")
-            keyAlias = debugKeystoreProperties.getProperty("keyAlias", "androiddebugkey")
-            keyPassword = debugKeystoreProperties.getProperty("keyPassword", "android")
-        }
-    }
 
     buildTypes {
         release {
@@ -46,9 +38,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-        getByName("debug") {
-            signingConfig = signingConfigs.getByName("debugProject")
         }
     }
     compileOptions {

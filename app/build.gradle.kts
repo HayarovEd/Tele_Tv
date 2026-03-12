@@ -8,15 +8,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
 }
-
-
-val debugKeystoreProperties = Properties().apply {
-    val propertiesFile = rootProject.file("keystore/debug.properties")
-    if (propertiesFile.exists()) {
-        load(FileInputStream(propertiesFile))
-    }
-}
-
 android {
     namespace = "com.edurda77.impuls.tele_tv"
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -27,17 +18,7 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = libs.versions.versionCode.get().toInt()
         versionName = libs.versions.versionName.get()
-
-    }
-
-    signingConfigs {
-        create("debugProject") {
-            val keystorePath = debugKeystoreProperties.getProperty("storeFile", "debug.keystore")
-            storeFile = rootProject.file("keystore/$keystorePath")
-            storePassword = debugKeystoreProperties.getProperty("storePassword", "android")
-            keyAlias = debugKeystoreProperties.getProperty("keyAlias", "androiddebugkey")
-            keyPassword = debugKeystoreProperties.getProperty("keyPassword", "android")
-        }
+        setProperty("archivesBaseName", "TeleTv-$versionName")
     }
 
     buildTypes {
@@ -47,9 +28,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-        getByName("debug") {
-            signingConfig = signingConfigs.getByName("debugProject")
         }
     }
     compileOptions {
