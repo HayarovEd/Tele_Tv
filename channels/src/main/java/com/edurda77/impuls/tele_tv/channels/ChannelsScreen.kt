@@ -33,12 +33,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -104,11 +107,14 @@ private fun ChannelsScreenScreen(
     onAction: (ChannelsScreenAction) -> Unit,
 ) {
     val scrollState = rememberLazyGridState()
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
+    val configuration = LocalWindowInfo.current.containerDpSize
+    val screenWidth = configuration.width
+   // val screenWidth = configuration.screenWidthDp.dp
+    //val screenHeight = configuration.screenHeightDp.dp
 
-    val focusRequester = remember { FocusRequester() }
+    val focusRequester = remember { FocusRequester().apply {
+        requestFocus(FocusDirection.Down)
+    } }
     Surface(
         modifier = modifier.fillMaxSize(),
         colors = SurfaceDefaults.colors(
