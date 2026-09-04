@@ -2,6 +2,7 @@ package com.edurda77.impuls.tele_tv.player
 
 import android.util.Log
 import android.view.KeyEvent
+import androidx.activity.compose.BackHandler
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
@@ -89,7 +90,7 @@ fun PlayerScreenRoot(
         }
     )
 
-    PlayerScreenScreen(
+    PlayerScreen(
         state = state,
         onAction = viewModel::onAction,
         isTv = isTv,
@@ -100,7 +101,7 @@ fun PlayerScreenRoot(
 
 @OptIn(UnstableApi::class)
 @Composable
-fun PlayerScreenScreen(
+private fun PlayerScreen(
     modifier: Modifier = Modifier,
     state: PlayerScreenState,
     isTv: Boolean,
@@ -115,8 +116,8 @@ fun PlayerScreenScreen(
             override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
                 val errorCode = error.errorCode
-                Log.d("REST TELE TV", "errorCode play $errorCode")
-                Log.d("REST TELE TV", "error play $error")
+                Log.d(PlayerConstants.TAG, "errorCode play $errorCode")
+                Log.d(PlayerConstants.TAG, "error play $error")
                 if (error.cause is AudioSink.UnexpectedDiscontinuityException) {
                     player?.prepare()
                     player?.play()
@@ -155,6 +156,14 @@ fun PlayerScreenScreen(
     val screenWidth = configuration.width.dp
     var isEpgVisible by remember { mutableStateOf(false) }
 
+    BackHandler(enabled = isEpgVisible || state.isVisibleSideMenu) {
+        if (isEpgVisible) {
+            isEpgVisible = false
+        } else {
+            onAction(PlayerScreenAction.OnResetMenuTimer)
+        }
+    }
+
     KeepScreenOn()
 
     LaunchedEffect(player, state.tvChannels, state.selectedChannelId) {
@@ -181,10 +190,12 @@ fun PlayerScreenScreen(
         player?.volume = state.volume
     }
 
-    LaunchedEffect(state.isVisibleSideMenu) {
+    LaunchedEffect(state.isVisibleSideMenu, isEpgVisible) {
         if (state.isVisibleSideMenu) {
             delay(300)
-            focusManager.moveFocus(FocusDirection.Left)
+            focusRequester.requestFocus()
+        } else if (!isEpgVisible) {
+            // Возвращаем фокус на плеер при закрытии всех меню
             focusRequester.requestFocus()
         }
     }
@@ -202,13 +213,11 @@ fun PlayerScreenScreen(
                         contentScale = ContentScale.FillHeight,
                         sourceSizeDp = null
                     )
-                    //.aspectRatio(16/9f)
-                    //.focusRequester(focusRequester)
-                    //  .fillMaxHeight()
+                    .focusRequester(focusRequester)
                     .focusable()
                     .onKeyEvent {
                         if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
-                            Log.d("DeviceInfo TELE TV", "action up ${it.nativeKeyEvent.keyCode}")
+                            Log.d(PlayerConstants.TAG, "action up ${it.nativeKeyEvent.keyCode}")
                             when (it.nativeKeyEvent.keyCode) {
                                 KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> {
                                     onAction(PlayerScreenAction.DecrementTvChannel)
@@ -404,7 +413,7 @@ fun PlayerScreenScreen(
                             verticalArrangement = Arrangement.spacedBy(15.dp)
                         ) {
                             state.focusedChannelEpg.forEach { entry ->
-                                stickyHeader {
+                                stickyHeader(key = entry.key) {
                                     Text(
                                         modifier = modifier
                                             .fillMaxWidth()
@@ -489,7 +498,7 @@ fun PlayerScreenPreview() {
         isVisibleSideMenu = true
     )
     Tele_TvTheme {
-        PlayerScreenScreen(
+        PlayerScreen(
             state = state,
             isTv = true,
             onAction = {},
@@ -504,7 +513,7 @@ private fun intoMediaItem(
     credintial: Credintial,
     uri: String
 ): MediaSource {
-    Log.d("TEST TELE TV", "uri $uri")
+    Log.d(PlayerConstants.TAG, "uri $uri")
     val credentials = Credentials.basic(credintial.username, credintial.password)
     val dataSourceFactory = DefaultHttpDataSource.Factory()
         .setDefaultRequestProperties(

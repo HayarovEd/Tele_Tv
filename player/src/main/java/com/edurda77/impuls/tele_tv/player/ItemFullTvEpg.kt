@@ -42,7 +42,7 @@ fun ItemFullTvEpg(
             .fillMaxWidth()
             .onFocusChanged {
                 if (it.hasFocus) {
-                    Log.d("REST TELE TV", "tvEpg ${it.isFocused}")
+                    Log.d(PlayerConstants.TAG, "tvEpg ${it.isFocused}")
                 }
             },
         colors = ClickableSurfaceDefaults.colors(

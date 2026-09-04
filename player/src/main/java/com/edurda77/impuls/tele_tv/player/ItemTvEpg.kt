@@ -16,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,81 +34,31 @@ fun ItemTvEpg(
     tvEpg: TvEpg,
     currentTime: Long,
 ) {
-    val localDensity = LocalDensity.current
-    var columnHeightDp by remember {
-        mutableStateOf(0.dp)
-    }
-
-    val percent =
-        if (currentTime > tvEpg.start) (currentTime - tvEpg.start) / tvEpg.duration.toFloat() else 0f
+    val secondaryColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+    val percent = if (tvEpg.duration > 0) {
+        ((currentTime - tvEpg.start).toFloat() / tvEpg.duration).coerceIn(0f, 1f)
+    } else 0f
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(5.dp))
-    ) {
-        Box(
-            modifier = modifier
-                .height(columnHeightDp)
-                .fillMaxWidth(percent)
-                .background(color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f))
-        )
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    columnHeightDp = with(localDensity) { coordinates.size.height.toDp() }
-                }
-                .padding(horizontal = 10.dp, vertical = 2.dp)
-        ) {
-            Text(
-                modifier = modifier
-                    .basicMarquee(),
-                text = tvEpg.title,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            /*Spacer(
-                modifier = modifier.height(5.dp)
-            )
-            tvEpg.description?.let {
-                Text(
-                    modifier = modifier
-                        .fillMaxWidth(),
-                    text = it,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(
-                    modifier = modifier.height(5.dp)
+            .drawBehind {
+                drawRect(
+                    color = secondaryColor,
+                    size = Size(width = size.width * percent, height = size.height)
                 )
             }
-            Text(
-                modifier = modifier,
-                text = "${stringResource(R.string.duration)}: ${duration.first} ${
-                    stringResource(
-                        R.string.hour_unit
-                    )
-                } ${duration.second} ${stringResource(R.string.minute_unit)}",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
-            tvEpg.ageRating?.let {
-                Spacer(
-                    modifier = modifier.height(5.dp)
-                )
-                Text(
-                    modifier = modifier,
-                    text = "${stringResource(R.string.age_rating)}: $it",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
-            }*/
-        }
+            .padding(horizontal = 10.dp, vertical = 2.dp)
+    ) {
+        Text(
+            modifier = Modifier.basicMarquee(),
+            text = tvEpg.title,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 

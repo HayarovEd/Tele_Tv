@@ -24,7 +24,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -46,16 +45,17 @@ class PlayerScreenViewModel(
 
     private val _state = MutableStateFlow(PlayerScreenState())
     val state = _state
-        .onStart {
-            getInitialData()
-            getCurrentTime()
-            getCurrentVolume()
-        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = PlayerScreenState()
         )
+
+    init {
+        getInitialData()
+        getCurrentTime()
+        getCurrentVolume()
+    }
 
     fun onAction(action: PlayerScreenAction) {
         when (action) {
@@ -64,95 +64,82 @@ class PlayerScreenViewModel(
             }
 
             PlayerScreenAction.DecrementTvChannel -> {
-                state.value.selectedIndex?.let { selectedIndex ->
-                    if (state.value.tvChannels[selectedIndex] == state.value.tvChannels.first()) {
-                        Log.d("DeviceInfo TELE TV", "action 1")
-                        _state.value.copy(
-                            selectedChannelId = state.value.tvChannels.last().tvgId,
-                            focusedChannelId = state.value.tvChannels.last().tvgId,
-                        )
-                            .updateState()
-                    } else {
-                        Log.d("DeviceInfo TELE TV", "action 2")
-                        _state.value.copy(
-                            selectedChannelId = state.value.tvChannels[selectedIndex - 1].tvgId,
-                            focusedChannelId = state.value.tvChannels[selectedIndex - 1].tvgId,
-                        )
-                            .updateState()
-                    }
-                    saveLastChannel()
-                    startTimerVisibleDrumMenu(5)
-                    //startTimer()
+                _state.update { currentState ->
+                    currentState.selectedIndex?.let { selectedIndex ->
+                        if (currentState.tvChannels[selectedIndex] == currentState.tvChannels.first()) {
+                            Log.d(PlayerConstants.TAG, "action 1")
+                            currentState.copy(
+                                selectedChannelId = currentState.tvChannels.last().tvgId,
+                                focusedChannelId = currentState.tvChannels.last().tvgId,
+                            )
+                        } else {
+                            Log.d(PlayerConstants.TAG, "action 2")
+                            currentState.copy(
+                                selectedChannelId = currentState.tvChannels[selectedIndex - 1].tvgId,
+                                focusedChannelId = currentState.tvChannels[selectedIndex - 1].tvgId,
+                            )
+                        }
+                    } ?: currentState
                 }
+                saveLastChannel()
+                startTimerVisibleDrumMenu(5)
             }
 
             PlayerScreenAction.IncrementTvChannel -> {
-                state.value.selectedIndex?.let { selectedIndex ->
-                    if (state.value.tvChannels[selectedIndex] == state.value.tvChannels.last()) {
-                        Log.d("DeviceInfo TELE TV", "action 3")
-                        _state.value.copy(
-                            selectedChannelId = state.value.tvChannels.first().tvgId,
-                            focusedChannelId = state.value.tvChannels.first().tvgId
-                        )
-                            .updateState()
-                    } else {
-                        Log.d("DeviceInfo TELE TV", "action 4")
-                        _state.value.copy(
-                            selectedChannelId = state.value.tvChannels[selectedIndex + 1].tvgId,
-                            focusedChannelId = state.value.tvChannels[selectedIndex + 1].tvgId,
-                        )
-                            .updateState()
-                    }
-                    saveLastChannel()
-                    startTimerVisibleDrumMenu(5)
-                    //startTimer()
+                _state.update { currentState ->
+                    currentState.selectedIndex?.let { selectedIndex ->
+                        if (currentState.tvChannels[selectedIndex] == currentState.tvChannels.last()) {
+                            Log.d(PlayerConstants.TAG, "action 3")
+                            currentState.copy(
+                                selectedChannelId = currentState.tvChannels.first().tvgId,
+                                focusedChannelId = currentState.tvChannels.first().tvgId
+                            )
+                        } else {
+                            Log.d(PlayerConstants.TAG, "action 4")
+                            currentState.copy(
+                                selectedChannelId = currentState.tvChannels[selectedIndex + 1].tvgId,
+                                focusedChannelId = currentState.tvChannels[selectedIndex + 1].tvgId,
+                            )
+                        }
+                    } ?: currentState
                 }
+                saveLastChannel()
+                startTimerVisibleDrumMenu(5)
             }
 
             is PlayerScreenAction.UpdateSelectedIndex -> {
-                Log.d("DeviceInfo TELE TV", "action 5")
-                _state.value.copy(
-                    selectedChannelId = state.value.focusedChannelId
-                )
-                    .updateState()
+                Log.d(PlayerConstants.TAG, "action 5")
+                _state.update { it.copy(selectedChannelId = it.focusedChannelId) }
                 saveLastChannel()
                 startTimerVisibleMenu(10)
             }
 
             PlayerScreenAction.DecrementFocusedIndex -> {
-                state.value.focusedIndex?.let { focusedIndex ->
-                    if (state.value.tvChannels[focusedIndex] == state.value.tvChannels.first()) {
-                        _state.value.copy(
-                            focusedChannelId = state.value.tvChannels.last().tvgId
-                        )
-                            .updateState()
-                    } else {
-                        _state.value.copy(
-                            focusedChannelId = state.value.tvChannels[focusedIndex - 1].tvgId
-                        )
-                            .updateState()
-                    }
-                    loadEpgByFocusedChannel()
-                    startTimerVisibleMenu(10)
+                _state.update { currentState ->
+                    currentState.focusedIndex?.let { focusedIndex ->
+                        if (currentState.tvChannels[focusedIndex] == currentState.tvChannels.first()) {
+                            currentState.copy(focusedChannelId = currentState.tvChannels.last().tvgId)
+                        } else {
+                            currentState.copy(focusedChannelId = currentState.tvChannels[focusedIndex - 1].tvgId)
+                        }
+                    } ?: currentState
                 }
+                loadEpgByFocusedChannel()
+                startTimerVisibleMenu(10)
             }
 
             PlayerScreenAction.IncrementFocusedIndex -> {
-                state.value.focusedIndex?.let { focusedIndex ->
-                    if (state.value.tvChannels[focusedIndex] == state.value.tvChannels.last()) {
-                        _state.value.copy(
-                            focusedChannelId = state.value.tvChannels.first().tvgId
-                        )
-                            .updateState()
-                    } else {
-                        _state.value.copy(
-                            focusedChannelId = state.value.tvChannels[focusedIndex + 1].tvgId
-                        )
-                            .updateState()
-                    }
-                    loadEpgByFocusedChannel()
-                    startTimerVisibleMenu(10)
+                _state.update { currentState ->
+                    currentState.focusedIndex?.let { focusedIndex ->
+                        if (currentState.tvChannels[focusedIndex] == currentState.tvChannels.last()) {
+                            currentState.copy(focusedChannelId = currentState.tvChannels.first().tvgId)
+                        } else {
+                            currentState.copy(focusedChannelId = currentState.tvChannels[focusedIndex + 1].tvgId)
+                        }
+                    } ?: currentState
                 }
+                loadEpgByFocusedChannel()
+                startTimerVisibleMenu(10)
             }
 
             PlayerScreenAction.ShowSideMenu -> {
@@ -191,10 +178,7 @@ class PlayerScreenViewModel(
 
             PlayerScreenAction.OnResetMenuTimer -> {
                 menuJob?.cancel()
-                _state.value.copy(
-                    isVisibleSideMenu = false
-                )
-                    .updateState()
+                _state.update { it.copy(isVisibleSideMenu = false) }
             }
 
             PlayerScreenAction.OnReleaseWakeLock -> serviceRepository.releaseWakeLock()
@@ -205,22 +189,11 @@ class PlayerScreenViewModel(
 
     private fun getInitialData() {
         val channelId = savedStateHandle.toRoute<NavigationRoute.Player>().channelId
-        _state.value.copy(
-            isLoading = true,
-        )
-            .updateState()
-        Log.d("DeviceInfo TELE TV", "action 6")
-        state.value.copy(
-            selectedChannelId = channelId,
-            focusedChannelId = channelId
-        )
-            .updateState()
+        _state.update { it.copy(isLoading = true, selectedChannelId = channelId, focusedChannelId = channelId) }
+        Log.d(PlayerConstants.TAG, "action 6")
         viewModelScope.launch {
             val credintial = dataStoreRepository.getCredintial()
-            _state.value.copy(
-                credintial = credintial,
-            )
-                .updateState()
+            _state.update { it.copy(credintial = credintial) }
             delay(300)
             credintial?.let {
                 val resultTvChannelsDiff = async {
@@ -238,42 +211,33 @@ class PlayerScreenViewModel(
 
                 when (val resultTvChannels = resultTvChannelsDiff.await()) {
                     is ResultWork.Error -> {
-                        _state.value.copy(
-                            message = resultTvChannels.error.asUiText()
-                        )
-                            .updateState()
+                        _state.update { it.copy(message = resultTvChannels.error.asUiText()) }
                     }
 
                     is ResultWork.Success -> {
-                        _state.value.copy(
-                            tvChannels = (resultTvChannels.data + radioCh).toImmutableList()
-                        )
-                            .updateState()
-                        if (resultTvChannels.data.isNotEmpty() && state.value.selectedChannelId == null) {
-                            Log.d("DeviceInfo TELE TV", "action 7")
-                            _state.value.copy(
-                                selectedChannelId = resultTvChannels.data.first().tvgId,
-                                focusedChannelId = resultTvChannels.data.first().tvgId,
+                        _state.update { currentState ->
+                            val updatedChannels = (resultTvChannels.data + radioCh).toImmutableList()
+                            var selectedId = currentState.selectedChannelId
+                            var focusedId = currentState.focusedChannelId
+                            if (resultTvChannels.data.isNotEmpty() && selectedId == null) {
+                                selectedId = resultTvChannels.data.first().tvgId
+                                focusedId = resultTvChannels.data.first().tvgId
+                            }
+                            currentState.copy(
+                                tvChannels = updatedChannels,
+                                selectedChannelId = selectedId,
+                                focusedChannelId = focusedId
                             )
-                                .updateState()
                         }
                     }
                 }
                 when (val resultTvEpgs = resultTvEpgDiff.await()) {
                     is ResultWork.Error -> {
-                        _state.value.copy(
-                            isLoading = false,
-                            message = resultTvEpgs.error.asUiText()
-                        )
-                            .updateState()
+                        _state.update { it.copy(isLoading = false, message = resultTvEpgs.error.asUiText()) }
                     }
 
                     is ResultWork.Success -> {
-                        _state.value.copy(
-                            isLoading = false,
-                            allTvEpg = resultTvEpgs.data.distinctBy { it.channelUuid }
-                        )
-                            .updateState()
+                        _state.update { it.copy(isLoading = false, allTvEpg = resultTvEpgs.data.distinctBy { it.channelUuid }) }
                     }
                 }
             }
@@ -282,72 +246,43 @@ class PlayerScreenViewModel(
 
     private fun timerVisibleVolumeProgress() {
         volumeJob?.cancel()
-        _state.value.copy(
-            isVisibleVolumeProgress = true
-        )
-            .updateState()
+        _state.update { it.copy(isVisibleVolumeProgress = true) }
         volumeJob = viewModelScope.launch {
-            (2 downTo 0).forEach { _ ->
-                delay(1000)
-            }
-            _state.value.copy(
-                isVisibleVolumeProgress = false
-            )
-                .updateState()
+            delay(3000)
+            _state.update { it.copy(isVisibleVolumeProgress = false) }
         }
-        volumeJob?.start()
     }
 
     private fun startTimerVisibleMenu(duration: Int) {
-        _state.value.copy(
-            isVisibleSideMenu = true
-        )
-            .updateState()
+        _state.update { it.copy(isVisibleSideMenu = true) }
         menuJob?.cancel()
         menuJob = viewModelScope.launch {
-            (duration downTo 0).forEach { _ ->
-                delay(1000)
-            }
-            _state.value.copy(
-                isVisibleSideMenu = false
-            )
-                .updateState()
+            delay(duration * 1000L)
+            _state.update { it.copy(isVisibleSideMenu = false) }
         }
-        menuJob?.start()
     }
 
     private fun startTimerVisibleDrumMenu(duration: Int) {
-        _state.value.copy(
-            isVisibleDrumMenu = true
-        )
-            .updateState()
+        _state.update { it.copy(isVisibleDrumMenu = true) }
         drumMenuJob?.cancel()
         drumMenuJob = viewModelScope.launch {
-            (duration downTo 0).forEach { _ ->
-                delay(1000)
-            }
-            _state.value.copy(
-                isVisibleDrumMenu = false
-            )
-                .updateState()
+            delay(duration * 1000L)
+            _state.update { it.copy(isVisibleDrumMenu = false) }
         }
-        drumMenuJob?.start()
     }
 
 
     private fun switchChannelByQuery(number: Int) {
-        if (state.value.channelInputQuery.length < 3) {
-            _state.value.copy(
-                channelInputQuery = "${state.value.channelInputQuery}$number"
-            )
-                .updateState()
+        _state.update { currentState ->
+            if (currentState.channelInputQuery.length < 3) {
+                currentState.copy(channelInputQuery = "${currentState.channelInputQuery}$number")
+            } else {
+                currentState.copy(channelInputQuery = currentState.channelInputQuery + number)
+            }
+        }
+        if (state.value.channelInputQuery.length < 4) {
             switchTimer()
         } else {
-            _state.value.copy(
-                channelInputQuery = state.value.channelInputQuery + number
-            )
-                .updateState()
-            // delay(300)
             processSwitchChannel()
         }
     }
@@ -355,41 +290,33 @@ class PlayerScreenViewModel(
     private fun switchTimer() {
         queryJob?.cancel()
         queryJob = viewModelScope.launch {
-            (3 downTo 0).forEach { _ ->
-                delay(1000)
-            }
+            delay(3000)
             processSwitchChannel()
         }
-        queryJob?.start()
     }
 
     private fun processSwitchChannel() {
         val number = state.value.channelInputQuery.toIntOrNull()
         number?.let {
-            if (number in 1..<state.value.tvChannels.size) {
-                Log.d("DeviceInfo TELE TV", "action 8")
-                _state.value.copy(
-                    selectedChannelId = state.value.tvChannels[number - 1].tvgId,
-                    focusedChannelId = state.value.tvChannels[number - 1].tvgId,
-                    channelInputQuery = ""
-                )
-                    .updateState()
-                saveLastChannel()
-            } else {
-                _state.value.copy(
-                    channelInputQuery = ""
-                )
-                    .updateState()
+            _state.update { currentState ->
+                if (number in 1..currentState.tvChannels.size) {
+                    Log.d(PlayerConstants.TAG, "action 8")
+                    currentState.copy(
+                        selectedChannelId = currentState.tvChannels[number - 1].tvgId,
+                        focusedChannelId = currentState.tvChannels[number - 1].tvgId,
+                        channelInputQuery = ""
+                    )
+                } else {
+                    currentState.copy(channelInputQuery = "")
+                }
             }
+            saveLastChannel()
         }
     }
 
     private fun deleteLastNumber() {
         if (state.value.channelInputQuery.isNotEmpty()) {
-            _state.value.copy(
-                channelInputQuery = state.value.channelInputQuery.dropLast(1)
-            )
-                .updateState()
+            _state.update { it.copy(channelInputQuery = it.channelInputQuery.dropLast(1)) }
             switchTimer()
         }
     }
@@ -411,49 +338,42 @@ class PlayerScreenViewModel(
     private fun getCurrentTime() {
         viewModelScope.launch {
             while (true) {
-                delay(DELAY_MINUTE)
                 val currentTime = Clock.System.now().epochSeconds
-                state.value.credintial?.let { credintial ->
-                    val newEpgs = state.value.allTvEpg.map { epg ->
-                        if (epg.stop > currentTime) {
-                            when (val result = remoteRepository.getEpgByChannelId(
-                                username = credintial.username,
-                                password = credintial.password,
-                                limit = SINGLE_LIMIT,
-                                channelId = epg.channelUuid
-                            )) {
-                                is ResultWork.Error -> {
-                                    _state.value.copy(
-                                        message = result.error.asUiText()
-                                    )
-                                        .updateState()
-                                    epg
-                                }
+                _state.update { it.copy(currentTime = currentTime) }
 
-                                is ResultWork.Success -> {
-                                    if (result.data.isEmpty()) epg else
-                                        result.data.first()
+                state.value.credintial?.let { credintial ->
+                    val outdatedEpgs = state.value.allTvEpg.filter { it.stop <= currentTime }
+                    if (outdatedEpgs.isNotEmpty()) {
+                        val newEpgs = state.value.allTvEpg.map { epg ->
+                            if (epg.stop <= currentTime) {
+                                when (val result = remoteRepository.getEpgByChannelId(
+                                    username = credintial.username,
+                                    password = credintial.password,
+                                    limit = SINGLE_LIMIT,
+                                    channelId = epg.channelUuid
+                                )) {
+                                    is ResultWork.Error -> {
+                                        _state.update { it.copy(message = result.error.asUiText()) }
+                                        epg
+                                    }
+                                    is ResultWork.Success -> {
+                                        result.data.firstOrNull() ?: epg
+                                    }
                                 }
-                            }
-                        } else epg
+                            } else epg
+                        }
+                        _state.update { it.copy(allTvEpg = newEpgs) }
                     }
-                    _state.value.copy(
-                        currentTime = currentTime,
-                        allTvEpg = newEpgs
-                    )
-                        .updateState()
                 }
+                delay(DELAY_MINUTE)
             }
         }
     }
 
     private fun getCurrentVolume() {
         viewModelScope.launch {
-            dataStoreRepository.getFlowVolume().collect {
-                _state.value.copy(
-                    volume = it
-                )
-                    .updateState()
+            dataStoreRepository.getFlowVolume().collect { volume ->
+                _state.update { it.copy(volume = volume) }
             }
         }
     }
@@ -461,10 +381,7 @@ class PlayerScreenViewModel(
     private fun loadEpgByFocusedChannel() {
         state.value.credintial?.let { credintial ->
             state.value.focusedChannelId?.let { id ->
-                _state.value.copy(
-                    isLoadingFocusedChannelEpg = true
-                )
-                    .updateState()
+                _state.update { it.copy(isLoadingFocusedChannelEpg = true) }
                 viewModelScope.launch {
                     when (val result = remoteRepository.getEpgByChannelId(
                         username = credintial.username,
@@ -473,22 +390,24 @@ class PlayerScreenViewModel(
                         channelId = id
                     )) {
                         is ResultWork.Error -> {
-                            _state.value.copy(
-                                isLoadingFocusedChannelEpg = false,
-                                message = result.error.asUiText()
-                            )
-                                .updateState()
+                            _state.update {
+                                it.copy(
+                                    isLoadingFocusedChannelEpg = false,
+                                    message = result.error.asUiText()
+                                )
+                            }
                         }
 
                         is ResultWork.Success -> {
-                            _state.value.copy(
-                                isLoadingFocusedChannelEpg = false,
-                                focusedChannelEpg = result.data
-                                    .groupBy {
-                                        it.start.convertToDate()
-                                    }
-                            )
-                                .updateState()
+                            _state.update {
+                                it.copy(
+                                    isLoadingFocusedChannelEpg = false,
+                                    focusedChannelEpg = result.data
+                                        .groupBy { epg ->
+                                            epg.start.convertToDate()
+                                        }
+                                )
+                            }
                         }
                     }
                 }
@@ -501,13 +420,6 @@ class PlayerScreenViewModel(
             serviceRepository.setWakeLock()
         }
     }
-
-    private fun PlayerScreenState.updateState() {
-        _state.update {
-            this
-        }
-    }
-
 
     override fun onCleared() {
         super.onCleared()

@@ -40,9 +40,7 @@ fun DrumMenu(
     baseTextSize: TextUnit = 30.sp,
 ) {
     val configuration = LocalWindowInfo.current.containerSize
-    val screenWidth = configuration.height.dp
-
-
+    val screenWidth = configuration.width.dp
 
     Column(
         modifier = modifier

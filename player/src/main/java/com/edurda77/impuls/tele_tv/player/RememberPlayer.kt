@@ -9,6 +9,7 @@ import android.view.WindowManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -33,7 +34,10 @@ fun rememberPlayer(
     setWakeLock: () -> Unit,
     releaseWakeLock: () -> Unit,
 ): ExoPlayer {
-    val player = remember {
+    val currentSetWakeLock = rememberUpdatedState(setWakeLock)
+    val currentReleaseWakeLock = rememberUpdatedState(releaseWakeLock)
+
+    val player = remember(context) {
         val decoder = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
         val renderersFactory: RenderersFactory =
             NextRenderersFactory(context).setEnableDecoderFallback(true)
@@ -60,15 +64,15 @@ fun rememberPlayer(
     }
     val lifecycleObserver = rememberMapLifecycleObserver(
         player = player,
-        setWakeLock = setWakeLock,
-        releaseWakeLock = releaseWakeLock
+        setWakeLock = { currentSetWakeLock.value() },
+        releaseWakeLock = { currentReleaseWakeLock.value() }
     )
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    DisposableEffect(lifecycle) {
+    DisposableEffect(lifecycle, player) {
         lifecycle.addObserver(lifecycleObserver)
         onDispose {
             lifecycle.removeObserver(lifecycleObserver)
-            releaseWakeLock()
+            currentReleaseWakeLock.value()
             player.release()
         }
     }
@@ -86,28 +90,28 @@ fun rememberMapLifecycleObserver(
             when (event) {
                 Lifecycle.Event.ON_STOP -> {
                    // player.release()
-                    Log.d("REST TELE TV", "on stop")
+                    Log.d(PlayerConstants.TAG, "on stop")
                 }
 
                 Lifecycle.Event.ON_CREATE -> {
-                    Log.d("REST TELE TV", "on create")
+                    Log.d(PlayerConstants.TAG, "on create")
                 }
 
                 Lifecycle.Event.ON_RESUME -> {
                     player.play()
                     setWakeLock()
-                    Log.d("REST TELE TV", "on resume")
+                    Log.d(PlayerConstants.TAG, "on resume")
                 }
 
                 Lifecycle.Event.ON_START -> {
                     player.prepare()
-                    Log.d("REST TELE TV", "on start")
+                    Log.d(PlayerConstants.TAG, "on start")
                 }
 
                 Lifecycle.Event.ON_PAUSE -> {
                     player.stop()
                     releaseWakeLock()
-                    Log.d("REST TELE TV", "on pause")
+                    Log.d(PlayerConstants.TAG, "on pause")
                 }
 
                 else -> {}
