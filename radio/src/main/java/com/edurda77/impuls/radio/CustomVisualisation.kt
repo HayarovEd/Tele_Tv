@@ -2,15 +2,10 @@ package com.edurda77.impuls.radio
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.ComposeShader
-import android.graphics.LinearGradient
 import android.graphics.Paint
-import android.graphics.PorterDuff
 import android.graphics.RadialGradient
 import android.graphics.RectF
 import android.graphics.Shader
-import android.graphics.SweepGradient
 import com.chibde.BaseVisualizer
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -18,54 +13,57 @@ import kotlin.math.ceil
 
 class CustomVisualisation(
     context: Context
-): BaseVisualizer(context) {
+) : BaseVisualizer(context) {
+
+    private val rect = RectF()
+    private val visualizerPaint = Paint().apply {
+        isAntiAlias = true
+    }
+    private val colorBuffer = IntArray(51)
 
     override fun init() {}
 
     override fun onDraw(canvas: Canvas) {
-        if (bytes != null) {
-            val colors = (0..50).map {
-                val x = ceil(it * 8.5).toInt()
-                val sr = -abs(bytes[x].toInt()) + 128
-                //val color = Color.rgb(sr*1.1.toFloat(), sr*1.3.toFloat(), sr*1.7.toFloat())
-                blueVioletColorsInt[sr%10]
+        val currentBytes = bytes
+        if (currentBytes != null && currentBytes.isNotEmpty()) {
+            val byteSize = currentBytes.size
+            val colorPaletteSize = blueVioletColorsIntArray.size
+            
+            for (i in 0 until 51) {
+                val x = ceil(i * 8.5).toInt()
+                colorBuffer[i] = if (x < byteSize) {
+                    val sr = -abs(currentBytes[x].toInt()) + 128
+                    blueVioletColorsIntArray[sr % colorPaletteSize]
+                } else {
+                    blueVioletColorsIntArray[0]
+                }
             }
-            val width = width.toFloat()
-            val height = height.toFloat()
-            val rect = RectF(0f, 0f, width, height)
-            val centerX = width / 2f
-            val centerY = height / 2f
-            val radius = width.coerceAtLeast(height) / 2f
-            val radialGradient = RadialGradient(
+
+            val widthF = width.toFloat()
+            val heightF = height.toFloat()
+            rect.set(0f, 0f, widthF, heightF)
+            val centerX = widthF / 2f
+            val centerY = heightF / 2f
+            val radius = widthF.coerceAtLeast(heightF) / 2f
+
+            // RadialGradient is immutable, so we have to create a new one when colors change.
+            // But we reuse the colorBuffer array to minimize allocations.
+            visualizerPaint.shader = RadialGradient(
                 centerX,
                 centerY,
                 radius,
-                colors.toIntArray(), // Массив цветов
-                null, // Позиции цветов (равномерное распределение)
-                Shader.TileMode.CLAMP // Режим заполнения
-            )
-            val linearGradient =
-                LinearGradient(0f, 0f, width, 0f, colors.toIntArray(), null, Shader.TileMode.CLAMP)
-            val sweepGradient = SweepGradient(
-                centerX, centerY,  // центр
-                colors.toIntArray(),  // цвета
-                null  // позиции
+                colorBuffer,
+                null,
+                Shader.TileMode.CLAMP
             )
 
-            val shader1 = radialGradient
-            val paint = Paint().apply {
-                shader = shader1
-                isAntiAlias = true
-            }
-
-            // Рисуем прямоугольник
-            canvas.drawRect(rect, paint)
+            canvas.drawRect(rect, visualizerPaint)
         }
         super.onDraw(canvas)
     }
 }
 
-val blueVioletColorsInt = listOf(
+private val blueVioletColorsIntArray = intArrayOf(
     -0xE5DC82, // 0xFF1A237E
     -0xD7C6AD, // 0xFF283593
     -0xCFC061, // 0xFF303F9F

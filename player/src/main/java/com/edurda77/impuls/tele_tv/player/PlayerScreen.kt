@@ -71,6 +71,7 @@ import kotlinx.coroutines.delay
 import okhttp3.Credentials
 import org.koin.androidx.compose.koinViewModel
 import java.util.Collections
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun PlayerScreenRoot(
@@ -192,7 +193,7 @@ private fun PlayerScreen(
 
     LaunchedEffect(state.isVisibleSideMenu, isEpgVisible) {
         if (state.isVisibleSideMenu) {
-            delay(300)
+            delay(300.milliseconds)
             focusRequester.requestFocus()
         } else if (!isEpgVisible) {
             // Возвращаем фокус на плеер при закрытии всех меню
@@ -294,7 +295,7 @@ private fun PlayerScreen(
                 RadioContent(
                     modifier = modifier.fillMaxWidth(),
                     radio = radio,
-                    audioSession = player?.audioSessionId ?: 0
+                    player = player
                 )
             }
         }

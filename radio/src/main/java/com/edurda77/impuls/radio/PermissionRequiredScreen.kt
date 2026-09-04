@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 
 data class PermissionContent(
@@ -34,7 +35,7 @@ fun PermissionRequiredScreen(
     ) { granted ->
         if (granted.values.all { it }) {
             scope.launch {
-                delay(300)
+                delay(300.milliseconds)
                 onPermissionGranted()
             }
         }
