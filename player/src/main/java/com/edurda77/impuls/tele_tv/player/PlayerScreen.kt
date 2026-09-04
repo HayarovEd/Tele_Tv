@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,8 +34,10 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.keepScreenOn
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -58,9 +61,11 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.edurda77.impuls.radio.RadioContent
 import com.edurda77.impuls.tele_tv.domain.model.Credintial
+import com.edurda77.impuls.tele_tv.domain.model.TvChannel
 import com.edurda77.impuls.tele_tv.resources.R
 import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 import com.edurda77.impuls.tele_tv.resources.uikit.KeepScreenOn
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import okhttp3.Credentials
 import org.koin.androidx.compose.koinViewModel
@@ -73,12 +78,23 @@ fun PlayerScreenRoot(
     onNavigateToChannels: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val exoPlayer = rememberPlayer(
+        context = context,
+        setWakeLock = {
+            viewModel.onAction(PlayerScreenAction.OnSetWakeLock)
+        },
+        releaseWakeLock = {
+            viewModel.onAction(PlayerScreenAction.OnReleaseWakeLock)
+        }
+    )
 
     PlayerScreenScreen(
         state = state,
         onAction = viewModel::onAction,
         isTv = isTv,
-        onNavigateToChannels = onNavigateToChannels
+        onNavigateToChannels = onNavigateToChannels,
+        player = exoPlayer
     )
 }
 
@@ -89,53 +105,47 @@ fun PlayerScreenScreen(
     state: PlayerScreenState,
     isTv: Boolean,
     onAction: (PlayerScreenAction) -> Unit,
-    onNavigateToChannels: () -> Unit
+    onNavigateToChannels: () -> Unit,
+    player: Player?
 ) {
-    val context = LocalContext.current
-    val exoPlayer = rememberPlayer(
-        context = context,
-        setWakeLock = {
-            onAction(PlayerScreenAction.OnSetWakeLock)
-        },
-        releaseWakeLock = {
-            onAction(PlayerScreenAction.OnReleaseWakeLock)
-        }
-    )
     var isLoadingChannel by remember { mutableStateOf(true) }
-    val playerListener = object : Player.Listener {
+    val playerListener = remember(player) {
+        object : Player.Listener {
 
-        override fun onPlayerError(error: PlaybackException) {
-            super.onPlayerError(error)
-            val errorCode = error.errorCode
-            Log.d("REST TELE TV", "errorCode play $errorCode")
-            Log.d("REST TELE TV", "error play $error")
-            if (error.cause is AudioSink.UnexpectedDiscontinuityException) {
-                exoPlayer.prepare()
-                exoPlayer.play()
-            }
-        }
-
-        override fun onPlaybackStateChanged(playbackState: Int) {
-            when (playbackState) {
-                ExoPlayer.STATE_READY, ExoPlayer.STATE_BUFFERING -> {
-                    onAction(PlayerScreenAction.OnSetWakeLock)
-                }
-
-                ExoPlayer.STATE_ENDED, ExoPlayer.STATE_IDLE -> {
-                    onAction(PlayerScreenAction.OnReleaseWakeLock)
+            override fun onPlayerError(error: PlaybackException) {
+                super.onPlayerError(error)
+                val errorCode = error.errorCode
+                Log.d("REST TELE TV", "errorCode play $errorCode")
+                Log.d("REST TELE TV", "error play $error")
+                if (error.cause is AudioSink.UnexpectedDiscontinuityException) {
+                    player?.prepare()
+                    player?.play()
                 }
             }
-        }
 
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
-            super.onIsPlayingChanged(isPlaying)
-            //  Log.d("REST TELE TV", "isPlaying $isPlaying")
-            isLoadingChannel = !isPlaying
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                when (playbackState) {
+                    ExoPlayer.STATE_READY, ExoPlayer.STATE_BUFFERING -> {
+                        onAction(PlayerScreenAction.OnSetWakeLock)
+                    }
+
+                    ExoPlayer.STATE_ENDED, ExoPlayer.STATE_IDLE -> {
+                        onAction(PlayerScreenAction.OnReleaseWakeLock)
+                    }
+                }
+            }
+
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                super.onIsPlayingChanged(isPlaying)
+                //  Log.d("REST TELE TV", "isPlaying $isPlaying")
+                isLoadingChannel = !isPlaying
+            }
         }
     }
 
-
-    exoPlayer.addListener(playerListener)
+    LaunchedEffect(player) {
+        player?.addListener(playerListener)
+    }
     val focusRequester = remember { FocusRequester() }
     var shouldRequestFocus by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -147,26 +157,28 @@ fun PlayerScreenScreen(
 
     KeepScreenOn()
 
-    LaunchedEffect(exoPlayer, state.tvChannels, state.selectedChannelId) {
+    LaunchedEffect(player, state.tvChannels, state.selectedChannelId) {
 
         if (state.tvChannels.isNotEmpty()) {
             state.credintial?.let {
                 state.selectedIndex?.let {
-                    exoPlayer.setMediaSource(
-                        intoMediaItem(
-                            credintial = state.credintial,
-                            uri = state.tvChannels[state.selectedIndex].url
+                    (player as? ExoPlayer)?.let { p ->
+                        p.setMediaSource(
+                            intoMediaItem(
+                                credintial = state.credintial,
+                                uri = state.tvChannels[state.selectedIndex].url
+                            )
                         )
-                    )
-                    exoPlayer.prepare()
-                    exoPlayer.playWhenReady = true
+                        p.prepare()
+                        p.playWhenReady = true
+                    }
                 }
             }
         }
     }
 
     LaunchedEffect(state.volume) {
-        exoPlayer.volume = state.volume
+        player?.volume = state.volume
     }
 
     LaunchedEffect(state.isVisibleSideMenu) {
@@ -182,84 +194,98 @@ fun PlayerScreenScreen(
                  sf
              }
          )*/
-        PlayerSurface(
-            modifier = modifier
-                .keepScreenOn()
-                .resizeWithContentScale(
-                    contentScale = ContentScale.FillHeight,
-                    sourceSizeDp = null
-                )
-                //.aspectRatio(16/9f)
-                //.focusRequester(focusRequester)
-                //  .fillMaxHeight()
-                .focusable()
-                .onKeyEvent {
-                    if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
-                        Log.d("DeviceInfo TELE TV", "action up ${it.nativeKeyEvent.keyCode}")
-                        when (it.nativeKeyEvent.keyCode) {
-                            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> {
-                                onAction(PlayerScreenAction.DecrementTvChannel)
-                                shouldRequestFocus = false
-                            }
-
-                            KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_PAGE_DOWN -> {
-                                onAction(PlayerScreenAction.IncrementTvChannel)
-                                shouldRequestFocus = false
-                            }
-
-                            KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_ENTER -> {
-                                focusManager.moveFocus(FocusDirection.Left)
-                                shouldRequestFocus = true
-                                onAction(PlayerScreenAction.ShowSideMenu)
-                            }
-
-                            KeyEvent.KEYCODE_BACK -> {
-                                onNavigateToChannels()
-                            }
-
-                            KeyEvent.KEYCODE_0,
-                            KeyEvent.KEYCODE_1,
-                            KeyEvent.KEYCODE_2,
-                            KeyEvent.KEYCODE_3,
-                            KeyEvent.KEYCODE_4,
-                            KeyEvent.KEYCODE_5,
-                            KeyEvent.KEYCODE_6,
-                            KeyEvent.KEYCODE_7,
-                            KeyEvent.KEYCODE_8,
-                            KeyEvent.KEYCODE_9,
-                                -> {
-                                onAction(PlayerScreenAction.EnterStringNumber(it.nativeKeyEvent.keyCode - 7))
-                            }
-
-                            KeyEvent.KEYCODE_DEL -> {
-                                onAction(PlayerScreenAction.DeleteLastNumber)
-                            }
-
-                            KeyEvent.KEYCODE_VOLUME_UP -> {
-                                if (!isTv) {
-                                    onAction(PlayerScreenAction.IncrimentVolume)
+        if (player != null && !LocalInspectionMode.current) {
+            PlayerSurface(
+                modifier = modifier
+                    .keepScreenOn()
+                    .resizeWithContentScale(
+                        contentScale = ContentScale.FillHeight,
+                        sourceSizeDp = null
+                    )
+                    //.aspectRatio(16/9f)
+                    //.focusRequester(focusRequester)
+                    //  .fillMaxHeight()
+                    .focusable()
+                    .onKeyEvent {
+                        if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
+                            Log.d("DeviceInfo TELE TV", "action up ${it.nativeKeyEvent.keyCode}")
+                            when (it.nativeKeyEvent.keyCode) {
+                                KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> {
+                                    onAction(PlayerScreenAction.DecrementTvChannel)
+                                    shouldRequestFocus = false
                                 }
-                            }
 
-                            KeyEvent.KEYCODE_VOLUME_DOWN -> {
-                                if (!isTv) {
-                                    onAction(PlayerScreenAction.DecrimentVolume)
+                                KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_PAGE_DOWN -> {
+                                    onAction(PlayerScreenAction.IncrementTvChannel)
+                                    shouldRequestFocus = false
+                                }
+
+                                KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_ENTER -> {
+                                    focusManager.moveFocus(FocusDirection.Left)
+                                    shouldRequestFocus = true
+                                    onAction(PlayerScreenAction.ShowSideMenu)
+                                }
+
+                                KeyEvent.KEYCODE_BACK -> {
+                                    onNavigateToChannels()
+                                }
+
+                                KeyEvent.KEYCODE_0,
+                                KeyEvent.KEYCODE_1,
+                                KeyEvent.KEYCODE_2,
+                                KeyEvent.KEYCODE_3,
+                                KeyEvent.KEYCODE_4,
+                                KeyEvent.KEYCODE_5,
+                                KeyEvent.KEYCODE_6,
+                                KeyEvent.KEYCODE_7,
+                                KeyEvent.KEYCODE_8,
+                                KeyEvent.KEYCODE_9,
+                                -> {
+                                    onAction(PlayerScreenAction.EnterStringNumber(it.nativeKeyEvent.keyCode - 7))
+                                }
+
+                                KeyEvent.KEYCODE_DEL -> {
+                                    onAction(PlayerScreenAction.DeleteLastNumber)
+                                }
+
+                                KeyEvent.KEYCODE_VOLUME_UP -> {
+                                    if (!isTv) {
+                                        onAction(PlayerScreenAction.IncrimentVolume)
+                                    }
+                                }
+
+                                KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                                    if (!isTv) {
+                                        onAction(PlayerScreenAction.DecrimentVolume)
+                                    }
                                 }
                             }
                         }
-                    }
-                    true
-                },
-            player = exoPlayer,
-            surfaceType = SURFACE_TYPE_SURFACE_VIEW
-        )
+                        true
+                    },
+                player = player,
+                surfaceType = SURFACE_TYPE_SURFACE_VIEW
+            )
+        } else {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color.Black)
+            ) {
+                Text(
+                    text = "Video Placeholder",
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.White
+                )
+            }
+        }
         state.selectedIndex?.let {
             val radio = state.tvChannels[state.selectedIndex]
             if (radio.isRadio) {
                 RadioContent(
                     modifier = modifier.fillMaxWidth(),
                     radio = radio,
-                    audioSession = exoPlayer.audioSessionId
+                    audioSession = player?.audioSessionId ?: 0
                 )
             }
         }
@@ -445,15 +471,30 @@ fun PlayerScreenScreen(
     }
 }
 
-@Preview
+@Preview(device = "id:tv_1080p", showBackground = true)
 @Composable
-private fun Preview() {
+fun PlayerScreenPreview() {
+    val state = PlayerScreenState(
+        tvChannels = Collections.singletonList(
+            TvChannel(
+                tvgId = "1",
+                tvgLogo = null,
+                tvgChannelNumber = 1,
+                name = "Test Channel",
+                url = "",
+                categoryIds = emptyList()
+            )
+        ).toImmutableList(),
+        selectedChannelId = "1",
+        isVisibleSideMenu = true
+    )
     Tele_TvTheme {
         PlayerScreenScreen(
-            state = PlayerScreenState(),
-            isTv = false,
+            state = state,
+            isTv = true,
             onAction = {},
-            onNavigateToChannels = {}
+            onNavigateToChannels = {},
+            player = null
         )
     }
 }

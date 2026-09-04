@@ -59,7 +59,7 @@ fun RadioContent(
             .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
-       /* WithPermission {
+        WithPermission {
             val context = LocalContext.current
             val customVis = remember { CustomVisualisation(context) }.apply {
                 setColor(MaterialTheme.colorScheme.primary.toArgb())
@@ -71,7 +71,7 @@ fun RadioContent(
                 factory = {
                     customVis
                 })
-        }*/
+        }
         /*AndroidView(
             modifier = Modifier
                 .fillMaxHeight(0.7f)
