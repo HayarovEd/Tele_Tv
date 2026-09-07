@@ -236,7 +236,7 @@ private fun PlayerScreen(
                                     onAction(PlayerScreenAction.ShowSideMenu)
                                 }
 
-                                KeyEvent.KEYCODE_BACK -> {
+                                KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
                                     onNavigateToChannels()
                                 }
 
