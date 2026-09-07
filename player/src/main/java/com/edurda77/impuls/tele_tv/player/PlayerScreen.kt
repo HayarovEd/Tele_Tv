@@ -334,7 +334,7 @@ private fun PlayerScreen(
                                         }
                                     }
 
-                                    KeyEvent.KEYCODE_BACK -> {
+                                    KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
                                         isEpgVisible = false
                                         onAction(PlayerScreenAction.OnResetMenuTimer)
                                     }
@@ -389,7 +389,7 @@ private fun PlayerScreen(
                                 .onKeyEvent {
                                     if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) {
                                         when (it.nativeKeyEvent.keyCode) {
-                                            KeyEvent.KEYCODE_BACK -> {
+                                            KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
                                                 isEpgVisible = false
                                                 onAction(PlayerScreenAction.OnResetMenuTimer)
                                             }
