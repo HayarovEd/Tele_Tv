@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background color (optional) -->
+    <item android:drawable="@color/tele_tv_background" />
+
+    <!-- Centered logo/image -->
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/logo2" />
+    </item>
+</layer-list>

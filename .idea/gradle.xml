@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="testRunner" value="CHOOSE_PER_TEST" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
+        <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/app_mobile" />
+            <option value="$PROJECT_DIR$/app_tv" />
+            <option value="$PROJECT_DIR$/base_module" />
+            <option value="$PROJECT_DIR$/channels" />
+            <option value="$PROJECT_DIR$/channels_mobile" />
+            <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/domain" />
+            <option value="$PROJECT_DIR$/login" />
+            <option value="$PROJECT_DIR$/login_mobile" />
+            <option value="$PROJECT_DIR$/player" />
+            <option value="$PROJECT_DIR$/ptk" />
+            <option value="$PROJECT_DIR$/ptk_tv" />
+            <option value="$PROJECT_DIR$/radio" />
+            <option value="$PROJECT_DIR$/resources" />
+            <option value="$PROJECT_DIR$/splash_screen" />
           </set>
         </option>
       </GradleProjectSettings>

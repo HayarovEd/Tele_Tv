@@ -21,4 +21,18 @@ dependencyResolutionManagement {
 
 rootProject.name = "Tele_Tv"
 include(":app")
- 
+include(":domain")
+include(":data")
+include(":resources")
+include(":login")
+include(":player")
+include(":channels")
+include(":app_tv")
+include(":splash_screen")
+include(":base_module")
+include(":app_mobile")
+include(":channels_mobile")
+include(":login_mobile")
+include(":ptk")
+include(":ptk_tv")
+include(":radio")

@@ -1,0 +1,43 @@
+<resources>
+
+    <string name="app_name">Теле ТВ для приставки</string>
+    <string name="app_name_tv">Теле ТВ для тв</string>
+    <string name="app_name_mobile">Теле ТВ для мобильных</string>
+
+    <string name="app_name_ptk">ПТК для приставки</string>
+    <string name="app_name_ptk_tv">ПТК для ТВ</string>
+
+    <string name="server_error">Ошибка сервера</string>
+    <string name="unknown_error">Незивестная ошибка</string>
+    <string name="email_empty">Email не может быть пустым</string>
+    <string name="email_unvalid">Неправильный email</string>
+    <string name="error_autorization">Ошибка авторизации</string>
+    <string name="not_data">Нет данных</string>
+    <string name="password_blank">Пароль не может быть пустым</string>
+    <string name="user_disabled">Пользователь неактивен</string>
+    <string name="not_unique_id">Неверный запрос</string>
+    <string name="name_is_blank">Имя не может быть пустым</string>
+    <string name="unique_id_is_blank">Идентификатор не может быть пустым</string>
+    <string name="read_error_data">Ошибка чтения локальных данных</string>
+    <string name="write_error_data">Ошибка записи локальных данных</string>
+    <string name="not_found">Не найдены данные</string>
+    <string name="error_take_data">Ошибка получения данных</string>
+    <string name="no_access">Пользователю не назначены доступы</string>
+    <string name="no_connect">Нет соединения</string>
+    <string name="bad_request">Неверный запрос</string>
+    <string name="request_timeout">Превышен интервал ожидания</string>
+
+    <string name="enter_to_system">Вход</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="enter">Войти</string>
+    <string name="checking">Проверка…</string>
+
+    <string name="enable_update">Доступно обновление</string>
+    <string name="update_downloading">Обновление загружается</string>
+    <string name="last_showed">Последние просмотренные</string>
+    <string name="channels">Каналы</string>
+    <string name="epg_udpating">Программа загружается</string>
+    <string name="channel_temporary_unvailable">Канал временно недоступен</string>
+    <string name="current_version">Версия</string>
+</resources>

@@ -1,47 +1,37 @@
 package com.edurda77.impuls.tele_tv
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.tv.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.tv.material3.ExperimentalTvMaterial3Api
-import androidx.tv.material3.Surface
-import com.edurda77.impuls.tele_tv.ui.theme.Tele_TvTheme
+import androidx.activity.enableEdgeToEdge
+import com.edurda77.base_module.navigation.NavController
+import com.edurda77.impuls.tele_tv.domain.utils.DOWNLOAD_URL
+import com.edurda77.impuls.tele_tv.domain.utils.IS_SCREEN_ON
+import com.edurda77.impuls.tele_tv.resources.model.NavigationRoute
+import com.edurda77.impuls.tele_tv.resources.model.TypeFactory
+import com.edurda77.impuls.tele_tv.resources.theme.Tele_TvTheme
 
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalTvMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val screenStateFilter = IntentFilter()
+        screenStateFilter.addAction(Intent.ACTION_USER_PRESENT)
+        screenStateFilter.addAction(Intent.ACTION_SCREEN_ON)
+        registerReceiver(UnlockReceiver(), screenStateFilter)
+        val isScreenOn = intent.getBooleanExtra(IS_SCREEN_ON, false)
+
+        enableEdgeToEdge()
         setContent {
             Tele_TvTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    shape = RectangleShape
-                ) {
-                    Greeting("Android")
-                }
+                NavController(
+                    isTv = false,
+                    startDestination = if (isScreenOn) NavigationRoute.Channels(DOWNLOAD_URL) else NavigationRoute.Splash(false),
+                    downloadUrl = DOWNLOAD_URL,
+                    typeFactory = TypeFactory.TELE
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Tele_TvTheme {
-        Greeting("Android")
     }
 }
